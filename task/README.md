@@ -2,6 +2,8 @@
 
 ![Design preview for the Personal finance app coding challenge](./preview.jpg)
 
+https://www.frontendmentor.io/challenges/personal-finance-app-JfjtZgyMt1
+
 ## Welcome! 👋
 
 Thanks for purchasing this premium Frontend Mentor coding challenge.
