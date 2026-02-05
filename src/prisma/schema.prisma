@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Back-relation to Balance (one-to-one) — NO fields/references here!
+  balance Balance?
+
+  transactions Transaction[]
+  budgets      Budget[]
+  pots         Pot[]
+}
+
+model Balance {
+  id        String   @id @default(uuid())
+  userId    String?  @unique
+  current   Float    @default(0)
+  income    Float    @default(0)
+  expenses  Float    @default(0)
+  updatedAt DateTime @updatedAt
+
+  // Foreign key is defined HERE (one side only)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Other models (one-to-many — these are already correct)
+model Transaction {
+  id        String   @id @default(uuid())
+  userId    String?
+  avatar    String?
+  name      String
+  category  String
+  date      DateTime
+  amount    Float
+  recurring Boolean  @default(false)
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@index([category])
+}
+
+model Budget {
+  id       String  @id @default(uuid())
+  userId   String?
+  category String
+  maximum  Float
+  theme    String
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category])
+}
+
+model Pot {
+  id     String  @id @default(uuid())
+  userId String?
+  name   String
+  target Float
+  total  Float   @default(0)
+  theme  String
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([name])
+}
