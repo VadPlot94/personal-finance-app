@@ -1,12 +1,12 @@
-import prisma from '@/prisma/prisma-client';
-const data = require('@/../initial-data/data.json');
+import prisma from "@/prisma/prisma-client";
+const data = require("@/../initial-data/data.json");
 
 async function main() {
   await prisma.balance.upsert({
-    where: { id: 'initial-balance' },
+    where: { id: "initial-balance" },
     update: {},
     create: {
-      id: 'initial-balance',
+      id: "initial-balance",
       current: data.balance.current,
       income: data.balance.income,
       expenses: data.balance.expenses,
@@ -25,9 +25,9 @@ async function main() {
     data: data.pots.map((p: any) => ({ ...p })),
   });
 
-  console.log('Seed completed');
+  console.log("Seed completed");
 }
 
 main()
-  .catch(e => console.error(e))
+  .catch((e) => console.error(e))
   .finally(async () => await prisma.$disconnect());

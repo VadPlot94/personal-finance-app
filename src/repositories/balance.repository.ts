@@ -1,7 +1,6 @@
-
-import prisma from '@/prisma/prisma-client';
-import { BaseRepository } from './base.repository';
-import { Balance } from '@prisma/client';
+import prisma from "@/prisma/prisma-client";
+import { BaseRepository } from "./base.repository";
+import { Balance } from "@prisma/client";
 
 export class BalanceRepository extends BaseRepository<typeof prisma.balance> {
   constructor() {
@@ -14,7 +13,7 @@ export class BalanceRepository extends BaseRepository<typeof prisma.balance> {
   async getCurrent(): Promise<Balance | null> {
     return this.findFirst({
       orderBy: {
-        updatedAt: 'desc',
+        updatedAt: "desc",
       },
     });
   }
@@ -31,11 +30,14 @@ export class BalanceRepository extends BaseRepository<typeof prisma.balance> {
   /**
    * Обновить текущий баланс (если запись уже существует)
    */
-  async updateBalance(id: string, data: {
-    current?: number;
-    income?: number;
-    expenses?: number;
-  }): Promise<Balance> {
+  async updateBalance(
+    id: string,
+    data: {
+      current?: number;
+      income?: number;
+      expenses?: number;
+    },
+  ): Promise<Balance> {
     return this.update({
       where: { id },
       data,

@@ -1,7 +1,6 @@
-
-import prisma from '@/prisma/prisma-client';
-import { BaseRepository } from './base.repository';
-import { Pot } from '@prisma/client';
+import prisma from "@/prisma/prisma-client";
+import { BaseRepository } from "./base.repository";
+import { Pot } from "@prisma/client";
 
 export class PotRepository extends BaseRepository<typeof prisma.pot> {
   constructor() {
@@ -13,7 +12,7 @@ export class PotRepository extends BaseRepository<typeof prisma.pot> {
    */
   async getAll(): Promise<Pot[]> {
     return this.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
   }
 
@@ -62,14 +61,16 @@ export class PotRepository extends BaseRepository<typeof prisma.pot> {
   /**
    * Получить прогресс всех копилок (сколько осталось до цели)
    */
-  async getProgress(): Promise<Array<{
-    name: string;
-    target: number;
-    total: number;
-    progress: number;
-  }>> {
+  async getProgress(): Promise<
+    Array<{
+      name: string;
+      target: number;
+      total: number;
+      progress: number;
+    }>
+  > {
     const pots = await this.findMany();
-    return pots.map(pot => ({
+    return pots.map((pot) => ({
       name: pot.name,
       target: pot.target,
       total: pot.total,

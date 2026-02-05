@@ -1,16 +1,17 @@
+import prisma from "@/prisma/prisma-client";
+import { BaseRepository } from "./base.repository";
+import { Transaction } from "@prisma/client";
 
-import prisma from '@/prisma/prisma-client';
-import { BaseRepository } from './base.repository';
-import { Transaction } from '@prisma/client';
-
-export class TransactionRepository extends BaseRepository<typeof prisma.transaction> {
+export class TransactionRepository extends BaseRepository<
+  typeof prisma.transaction
+> {
   constructor() {
     super(prisma.transaction);
   }
 
   async getRecent(limit = 10): Promise<Transaction[]> {
     return this.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
       take: limit,
       select: {
         id: true,
@@ -26,7 +27,7 @@ export class TransactionRepository extends BaseRepository<typeof prisma.transact
   async getByCategory(category: string): Promise<Transaction[]> {
     return this.findMany({
       where: { category },
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 

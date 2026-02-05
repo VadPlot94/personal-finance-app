@@ -6,7 +6,6 @@ export default async function OverviewLayout({
   recurring,
   budgets,
 }) {
-
   const balance = await balanceRepository.getCurrent();
 
   return (

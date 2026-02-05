@@ -1,7 +1,6 @@
-
-import prisma from '@/prisma/prisma-client';
-import { BaseRepository } from './base.repository';
-import { Budget } from '@prisma/client';
+import prisma from "@/prisma/prisma-client";
+import { BaseRepository } from "./base.repository";
+import { Budget } from "@prisma/client";
 
 export class BudgetRepository extends BaseRepository<typeof prisma.budget> {
   constructor() {
@@ -13,7 +12,7 @@ export class BudgetRepository extends BaseRepository<typeof prisma.budget> {
    */
   async getAll(): Promise<Budget[]> {
     return this.findMany({
-      orderBy: { category: 'asc' },
+      orderBy: { category: "asc" },
     });
   }
 
@@ -28,8 +27,6 @@ export class BudgetRepository extends BaseRepository<typeof prisma.budget> {
 
   /**
    * Создать или обновить бюджет (upsert)
-   * Если запись уже существует (по уникальному ключу) → обнови её (update)
-   * Если записи нет → создай новую (insert)
    */
   async upsertBudget(data: {
     userId: string;
@@ -38,7 +35,9 @@ export class BudgetRepository extends BaseRepository<typeof prisma.budget> {
     theme: string;
   }): Promise<Budget> {
     return this.upsert({
-      where: { userId_category: { userId: data.userId, category: data.category } }, // предполагаем уникальность по category
+      where: {
+        userId_category: { userId: data.userId, category: data.category },
+      }, // предполагаем уникальность по category
       update: {
         maximum: data.maximum,
         theme: data.theme,
