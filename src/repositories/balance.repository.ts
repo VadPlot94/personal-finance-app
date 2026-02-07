@@ -10,7 +10,7 @@ export class BalanceRepository extends BaseRepository<typeof prisma.balance> {
   /**
    * Получить текущий баланс (самый свежий по updatedAt)
    */
-  async getCurrent(): Promise<Balance | null> {
+  public async getCurrent(): Promise<Balance> {
     return this.findFirst({
       orderBy: {
         updatedAt: "desc",

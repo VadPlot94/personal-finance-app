@@ -9,8 +9,12 @@
     "lint": "biome check",
     "format": "biome format --write",
     "prisma:generate": "prisma generate --schema=src/prisma/schema.prisma",
-    "prisma:push": "prisma db push --schema=src/prisma/schema.prisma --force-reset",
-    "prisma:migrate": "prisma migrate dev --schema=src/prisma/schema.prisma"
+    "prisma:push": "prisma db push --schema=src/prisma/schema.prisma",
+    "prisma:push-force": "prisma db push --schema=src/prisma/schema.prisma --force-reset",
+    "prisma:migrate": "prisma migrate dev --schema=src/prisma/schema.prisma",
+    "init-db": "npx tsx src/prisma/seed.ts",
+    "recreate-db": "npm run prisma:generate && npm run prisma:push && npm run init-db",
+    "postinstall": "npm run prisma:generate && npm run prisma:push"
   },
   "dependencies": {
     "next": "16.1.6",
@@ -20,14 +24,14 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@prisma/client": "^6.15.0",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv": "^17.2.3",
     "prisma": "^6.15.0",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5"
   }
 }

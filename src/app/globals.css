@@ -1,17 +1,40 @@
-@import "tailwindcss";
+@import "tailwindcss"; /* main styles */
+@import 'tailwindcss/preflight' layer(base); /* reset browser styles - all browsers use one style settings now */
+@import 'tailwindcss/utilities' layer(utilities); /* utilities */
 
 :root {
-  --background: #ffffff;
+  --background: var(--color-amber-50);
   --foreground: #171717;
+  --foreground-2: white;
 }
 
+/*
+  Directive Tailwind CSS - switch themes, global variable creation and etc
+  We can add here variables and then use it through Tailwind CSS classes
+  Ex: bg-background → background-color: var(--color-background);
+  Ex: text-foreground → color: var(--foreground);
+  Ex: text-foreground-2 → color: var(--foreground-2);
+*/
+/*
+  @theme inline - override existing in Tailwind CSS variables
+  @theme - create new global variables
+*/
 @theme inline {
-  --color-background: var(--background);
+  --color-background: var(--color-amber-50);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-foreground-2: var(--foreground-2);
+  /*
+    --font-public-sans variable font was created in main layout.tsx
+    now we can use it here to override Tailwind CSS default fonts
+  */
+  --font-sans: var(--font-public-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+  System theme preference
+  If user include inside Windows OS dark theme - browser will react and use this block 
+*/
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -20,7 +43,7 @@
 }
 
 body {
-  background: var(--background);
+  background: var(--color-background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
