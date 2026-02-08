@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 // This fonts will load on build time and we get it from server on app launch
 // Place font in _next/static/css/...
-// Without next/font we have to load fonts with <link> on app launch (Additional HTTP requests, FOIT, FOUT) 
+// Without next/font we have to load fonts with <link> on app launch (Additional HTTP requests, FOIT, FOUT)
 import { Geist_Mono, Public_Sans } from "next/font/google";
 import "./globals.css";
 

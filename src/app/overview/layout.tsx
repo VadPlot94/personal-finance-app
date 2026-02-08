@@ -22,16 +22,24 @@ export default async function OverviewLayout({
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
           <div className="flex flex-col justify-center gap-3 h-26 rounded-lg p-2.5 bg-black shadow-sm">
-            <div className="font-semibold text-sm text-foreground-2">Current Balance</div>
-            <div className="font-bold text-xl text-foreground-2">${balance?.current?.toLocaleString('en-US')}</div>
+            <div className="font-semibold text-sm text-foreground-2">
+              Current Balance
+            </div>
+            <div className="font-bold text-xl text-foreground-2">
+              ${balance?.current?.toLocaleString("en-US")}
+            </div>
           </div>
           <div className="flex flex-col justify-center gap-3 h-26 rounded-lg p-2.5 bg-white shadow-sm">
             <div className="font-semibold text-sm">Income</div>
-            <div className="font-bold text-xl">${balance?.income?.toLocaleString('en-US')}</div>
+            <div className="font-bold text-xl">
+              ${balance?.income?.toLocaleString("en-US")}
+            </div>
           </div>
           <div className="flex flex-col justify-center gap-3 h-26 rounded-lg p-2.5 bg-white shadow-sm">
             <div className="font-semibold text-sm">Expenses</div>
-            <div className="font-bold text-xl">${balance?.expenses?.toLocaleString('en-US')}</div>
+            <div className="font-bold text-xl">
+              ${balance?.expenses?.toLocaleString("en-US")}
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-2">

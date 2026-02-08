@@ -1,6 +1,6 @@
 @import "tailwindcss"; /* main styles */
-@import 'tailwindcss/preflight' layer(base); /* reset browser styles - all browsers use one style settings now */
-@import 'tailwindcss/utilities' layer(utilities); /* utilities */
+@import "tailwindcss/preflight" layer(base); /* reset browser styles - all browsers use one style settings now */
+@import "tailwindcss/utilities" layer(utilities); /* utilities */
 
 :root {
   --background: var(--color-amber-50);
@@ -42,7 +42,8 @@
   }
 }
 
-html, body {
+html,
+body {
   /* The way to apply Tailwind CSS classes inside css. Not recommended. */
   @apply h-full;
 }
