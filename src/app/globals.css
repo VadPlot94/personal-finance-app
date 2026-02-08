@@ -42,6 +42,11 @@
   }
 }
 
+html, body {
+  /* The way to apply Tailwind CSS classes inside css. Not recommended. */
+  @apply h-full;
+}
+
 body {
   background: var(--color-background);
   color: var(--foreground);
