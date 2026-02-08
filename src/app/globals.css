@@ -3,7 +3,7 @@
 @import "tailwindcss/utilities" layer(utilities); /* utilities */
 
 :root {
-  --background: var(--color-amber-50);
+  --background: oklch(96.91% 0.0068 67.74);
   --foreground: #171717;
   --foreground-2: white;
 }
@@ -11,18 +11,21 @@
 /*
   Directive Tailwind CSS - switch themes, global variable creation and etc
   We can add here variables and then use it through Tailwind CSS classes
-  Ex: bg-background → background-color: var(--color-background);
-  Ex: text-foreground → color: var(--foreground);
-  Ex: text-foreground-2 → color: var(--foreground-2);
+  Each variable that start from `--color-..` Tailwind CSS create different classes:
+    - Ex: --color-app-color: 'green';
+    - Tailwind CSS will created:
+      - text-app-color → color: var(--color-app-color);
+      - bg-app-color → background-color: var(--color-app-color);
+      - border-app-color, fill-app-color and etc.
 */
 /*
   @theme inline - override existing in Tailwind CSS variables
   @theme - create new global variables
 */
 @theme inline {
-  --color-background: var(--color-amber-50);
+  --color-app-background: oklch(96.91% 0.0068 67.74);
   --color-foreground: var(--foreground);
-  --color-foreground-2: var(--foreground-2);
+  --color-app-color: var(--color-gray-500);
   /*
     --font-public-sans variable font was created in main layout.tsx
     now we can use it here to override Tailwind CSS default fonts
@@ -49,7 +52,7 @@ body {
 }
 
 body {
-  background: var(--color-background);
+  background: var(--color-app-background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-public-sans);
 }
