@@ -1,5 +1,6 @@
 "use client";
 import { IPotItemProps } from "../types";
+import { PotMenu } from "./pots-menu";
 
 export default function PotItem({ pot }: IPotItemProps) {
   const calculateProgressPercentage = (
@@ -19,6 +20,14 @@ export default function PotItem({ pot }: IPotItemProps) {
     console.log("clicked");
   };
 
+  const handleEdit = () => {
+    console.log("edit");
+  };
+
+  const handleDelete = () => {
+    console.log("delete");
+  };
+
   return (
     <div className="flex flex-col justify-between gap-5 h-63 rounded-lg p-5 bg-white shadow-sm">
       <div className="flex flex-col gap-8 justify-between">
@@ -30,8 +39,14 @@ export default function PotItem({ pot }: IPotItemProps) {
             ></div>
             <div className="font-bold text-xl">{pot.name}</div>
           </div>
-          <div className="cursor-pointer" onClick={handlePotMenuClick}>
-            <img className="w-5 h-5" src="/images/icon-ellipsis.svg" />
+          <div className="cursor-pointer p-1 hover:bg-gray-100 rounded">
+            <PotMenu pot={pot} onEdit={handleEdit} onDelete={handleDelete}>
+              <img
+                className="w-5 h-5"
+                src="/images/icon-ellipsis.svg"
+                alt="Actions"
+              />
+            </PotMenu>
           </div>
         </div>
         <div className="flex flex-col justify-between items-center gap-3">
