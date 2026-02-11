@@ -39,7 +39,7 @@ export default function PotItem({ pot }: IPotItemProps) {
             ></div>
             <div className="font-bold text-xl">{pot.name}</div>
           </div>
-          <div className="cursor-pointer p-1 hover:bg-gray-100 rounded">
+          <div className="cursor-pointer">
             <PotMenu pot={pot} onEdit={handleEdit} onDelete={handleDelete}>
               <img
                 className="w-5 h-5"
