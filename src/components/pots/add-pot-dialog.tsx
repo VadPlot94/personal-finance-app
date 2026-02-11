@@ -199,9 +199,15 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
                   </SelectTrigger>
 
                   <SelectContent>
-                    {Object.values(Theme).map((theme) => (
-                      <SelectItem key={theme} value={theme}>
-                        {theme}
+                    {Object.entries(Theme).map(([themeName, themeValue]) => (
+                      <SelectItem key={themeName} value={themeValue}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: themeValue }}
+                          />
+                          <span>{themeName}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
