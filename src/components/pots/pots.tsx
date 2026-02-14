@@ -6,13 +6,16 @@ import { AddPotDialog } from "./add-pot-dialog";
 import PotItem from "./pots-item";
 
 export default function Pots({ pots = [] }: IPotsProps) {
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  
+  const [isAddPotDialogOpen, setAddPotDialogOpen] = useState(false);
+
   return (
     <>
       <div className="flex flex-row justify-between">
         <div className="font-bold text-3xl">Pots</div>
-        <AddPotDialog isDialogOpen={isDialogOpen} setDialogOpen={setDialogOpen}>
+        <AddPotDialog
+          isDialogOpen={isAddPotDialogOpen}
+          setDialogOpen={setAddPotDialogOpen}
+        >
           <button className="cursor-pointer bg-black rounded-lg text-white text-sm p-2">
             + Add New Pot
           </button>

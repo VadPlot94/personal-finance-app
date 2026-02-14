@@ -44,7 +44,11 @@ export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
           Delete Pot
         </DropdownMenuItem>
       </DropdownMenuContent>
-      <AddPotDialog pot={pot} isDialogOpen={isEditDialogOpen} setDialogOpen={setEditDialogOpen} />
+      <AddPotDialog
+        pot={pot}
+        isDialogOpen={isEditDialogOpen}
+        setDialogOpen={setEditDialogOpen}
+      />
     </DropdownMenu>
   );
 }

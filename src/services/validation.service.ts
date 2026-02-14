@@ -11,7 +11,9 @@ class ValidationService {
       z
         .string()
         .min(3, { message: "The pot name must be at least 3 characters long" })
-        .max(constants.MaxPotNameCharacters, { message: "The pot name is too long (max. 10 characters)" })
+        .max(constants.MaxPotNameCharacters, {
+          message: `The pot name is too long (max. ${constants.MaxPotNameCharacters} characters)`,
+        })
         .regex(/^[a-zA-Z0-9\s\-_]+$/, {
           message:
             "Only letters, numbers, spaces, hyphens and underscores are allowed",

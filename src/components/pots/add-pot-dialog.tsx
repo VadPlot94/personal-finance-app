@@ -40,7 +40,12 @@ interface IAddPotFormData {
   theme: Theme;
 }
 
-export function AddPotDialog({ children, pot, isDialogOpen, setDialogOpen }: AddPotDialogProps) {
+export function AddPotDialog({
+  children,
+  pot,
+  isDialogOpen,
+  setDialogOpen,
+}: AddPotDialogProps) {
   const serverActionPotFn = useMemo(
     () => (pot?.id ? editPotServerAction : addPotServerAction),
     [pot?.id],
@@ -60,7 +65,9 @@ export function AddPotDialog({ children, pot, isDialogOpen, setDialogOpen }: Add
     setFormPotData(pot),
   );
 
-  const [formErrors, setFormErrors] = useState<Partial<Record<keyof IAddPotFormData, string>> | null>(null);
+  const [formErrors, setFormErrors] = useState<Partial<
+    Record<keyof IAddPotFormData, string>
+  > | null>(null);
 
   useEffect(() => {
     setFormData(setFormPotData(pot));
@@ -96,7 +103,10 @@ export function AddPotDialog({ children, pot, isDialogOpen, setDialogOpen }: Add
 
   const isFormValid = () => {
     return (
-      !formErrors && formPotData?.potName && formPotData?.target && formPotData?.theme
+      !formErrors &&
+      formPotData?.potName &&
+      formPotData?.target &&
+      formPotData?.theme
     );
   };
 
@@ -135,7 +145,9 @@ export function AddPotDialog({ children, pot, isDialogOpen, setDialogOpen }: Add
 
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
-          <DialogTitle className="font-bold text-3xl">{!formPotData?.id ? 'Add New Pot' : 'Edit New Pot'}</DialogTitle>
+          <DialogTitle className="font-bold text-3xl">
+            {!formPotData?.id ? "Add New Pot" : "Edit New Pot"}
+          </DialogTitle>
         </DialogHeader>
         {/*
         Two form cases:
@@ -181,7 +193,9 @@ export function AddPotDialog({ children, pot, isDialogOpen, setDialogOpen }: Add
                     {formErrors?.["potName"]}
                   </p>
                   <p className="text-app-color text-xs min-w-25">
-                    {constants.MaxPotNameCharacters - (formPotData?.potName?.length || 0)} Characters Left
+                    {constants.MaxPotNameCharacters -
+                      (formPotData?.potName?.length || 0)}{" "}
+                    Characters Left
                   </p>
                 </div>
               </div>
