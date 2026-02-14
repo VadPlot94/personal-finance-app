@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import validationService from "@/services/validation.service";
 import {
   Select,
@@ -19,53 +19,76 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Theme } from "@/services/constants.service";
-import { addPotServerAction } from "@/server-actions/pot-actions";
+import constants, { Theme } from "@/services/constants.service";
+import {
+  addPotServerAction,
+  editPotServerAction,
+} from "@/server-actions/pot-actions";
+import { Pot } from "@prisma/client";
 
 interface AddPotDialogProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  pot?: Pot;
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
 }
 
 interface IAddPotFormData {
+  id: string;
   potName: string;
   target: string;
   theme: Theme;
 }
 
-export function AddPotDialog({ children }: AddPotDialogProps) {
-  const [state, formAction, isPending] = useActionState(
-    addPotServerAction,
+export function AddPotDialog({ children, pot, isDialogOpen, setDialogOpen }: AddPotDialogProps) {
+  const serverActionPotFn = useMemo(
+    () => (pot?.id ? editPotServerAction : addPotServerAction),
+    [pot?.id],
+  );
+  const [formResultState, formAction, isPending] = useActionState(
+    serverActionPotFn,
     null,
   );
-  const formRef = useRef<HTMLFormElement>(null);
-  const [open, setOpen] = useState(false);
 
-  const [formData, setFormData] = useState<IAddPotFormData>({
-    potName: "",
-    target: "",
-    theme: "" as Theme,
+  const setFormPotData = (pot?: Pot | undefined) => ({
+    id: pot?.id || "",
+    potName: pot?.name || "",
+    target: pot?.target?.toString() || "",
+    theme: (pot?.theme || "") as Theme,
   });
-  const [formErrors, setFormErrors] = useState(null);
+  const [formPotData, setFormData] = useState<IAddPotFormData>(() =>
+    setFormPotData(pot),
+  );
+
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof IAddPotFormData, string>> | null>(null);
 
   useEffect(() => {
-    validateForm(formData);
-  }, [formData]);
+    setFormData(setFormPotData(pot));
+  }, [pot, isDialogOpen]);
 
   useEffect(() => {
-    if (state?.success) {
-      handleOpenChange(false);
+    validateForm(formPotData);
+  }, [formPotData]);
+
+  useEffect(() => {
+    // This trigger even with first component mount when formResultState = null
+    // Need to call handleOpenChange only when formResultState != null
+    if (!formResultState) {
+      return;
     }
-  }, [state]);
+    const isFormSavedSuccess = formResultState.success && !isPending;
+    handleOpenChange(!isFormSavedSuccess);
+  }, [formResultState]);
 
-  const validateForm = (formData: IAddPotFormData) => {
-    const result = validationService.validateAddPotSchema(formData);
+  const validateForm = (formPotData: IAddPotFormData) => {
+    const result = validationService.validateAddPotSchema(formPotData);
     if (result.success) {
       setFormErrors(null);
       return;
     }
-    const errors: any = {};
+    const errors: Partial<Record<keyof IAddPotFormData, string>> = {};
     result.error.issues.map((issue) => {
-      const path = issue.path[0] as keyof typeof formData;
+      const path = issue.path[0] as keyof typeof formPotData;
       errors[path] = issue.message;
     });
     setFormErrors(errors);
@@ -73,25 +96,24 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
 
   const isFormValid = () => {
     return (
-      !formErrors && formData?.potName && formData?.target && formData?.theme
+      !formErrors && formPotData?.potName && formPotData?.target && formPotData?.theme
     );
   };
 
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-
-    if (!newOpen) {
-      setFormData({ potName: "", target: "", theme: "" as Theme });
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setFormData(setFormPotData());
       setFormErrors(null);
     }
+    setDialogOpen(isOpen);
   };
 
   const handlePotNameInputChange = (value: string): void => {
-    setFormData({ ...formData, potName: value });
+    setFormData({ ...formPotData, potName: value });
   };
 
   const handleTargetInputChange = (value: string): void => {
-    setFormData({ ...formData, target: value.replaceAll(" ", "") });
+    setFormData({ ...formPotData, target: value.replaceAll(" ", "") });
   };
 
   const handleThemeInputChange = (value: string): void => {
@@ -108,12 +130,12 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
 
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
-          <DialogTitle className="font-bold text-3xl">Add New Pot</DialogTitle>
+          <DialogTitle className="font-bold text-3xl">{!formPotData?.id ? 'Add New Pot' : 'Edit New Pot'}</DialogTitle>
         </DialogHeader>
         {/*
         Two form cases:
@@ -127,13 +149,17 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
               - In case on NextJs we can use 'Server Actions' to get such client request on server side
           - name="potName" <inside input> — required for formData.get()
         */}
-        <form ref={formRef} action={formAction}>
+        <form action={formAction}>
           <div className="flex flex-col gap-5">
+            <div className="text-app-color text-xs">
+              {!formPotData?.id
+                ? "Create a pot to set savings targets. These can help keep you on track as you save for special purchases."
+                : "If your saving targets change, feel free to update your pots."}
+            </div>
             <div className="flex flex-col gap-2">
-              <div className="text-app-color text-xs">
-                Create a pot to set savings targets. These can help keep you on
-                track as you save for special purchases.
-              </div>
+              {formPotData?.id && (
+                <input type="hidden" name="id" value={formPotData.id} />
+              )}
               <div className="flex flex-col gap-2">
                 <Label
                   htmlFor="name"
@@ -145,17 +171,17 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
                   className="border-gray-300"
                   id="name"
                   name="potName"
-                  value={formData?.potName}
+                  value={formPotData?.potName}
                   onChange={(e) => handlePotNameInputChange(e.target.value)}
                   placeholder="e.g. For cookies"
-                  maxLength={10}
+                  maxLength={constants.MaxPotNameCharacters}
                 />
                 <div className="flex flex-row justify-between items-center">
                   <p className="text-xs text-red-500">
                     {formErrors?.["potName"]}
                   </p>
                   <p className="text-app-color text-xs min-w-25">
-                    {10 - (formData?.potName?.length || 0)} Characters Left
+                    {constants.MaxPotNameCharacters - (formPotData?.potName?.length || 0)} Characters Left
                   </p>
                 </div>
               </div>
@@ -170,7 +196,7 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
                   className="border-gray-300"
                   id="target"
                   name="target"
-                  value={formatNumber(formData.target)}
+                  value={formatNumber(formPotData.target)}
                   type="text"
                   inputMode="decimal"
                   maxLength={12}
@@ -191,7 +217,7 @@ export function AddPotDialog({ children }: AddPotDialogProps) {
 
                 <Select
                   name="theme"
-                  value={formData.theme}
+                  value={formPotData.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
                   <SelectTrigger className="border-gray-300 w-full">

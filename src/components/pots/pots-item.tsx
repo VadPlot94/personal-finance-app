@@ -16,10 +16,6 @@ export default function PotItem({ pot }: IPotItemProps) {
 
   const progress = calculateProgressPercentage(pot.total, pot.target);
 
-  const handlePotMenuClick = () => {
-    console.log("clicked");
-  };
-
   const handleEdit = () => {
     console.log("edit");
   };

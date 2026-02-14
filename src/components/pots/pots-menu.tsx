@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Pot } from "@prisma/client";
+import { AddPotDialog } from "./add-pot-dialog";
+import { useState } from "react";
 
 type PotAction = (pot: Pot) => void;
 
@@ -21,6 +23,7 @@ interface IPotMenuProps {
 }
 
 export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -30,10 +33,7 @@ export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
           Actions with "{pot.name}"
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={() => onEdit?.(pot)}
-        >
+        <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
           Edit Pot
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -44,6 +44,7 @@ export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
           Delete Pot
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <AddPotDialog pot={pot} isDialogOpen={isEditDialogOpen} setDialogOpen={setEditDialogOpen} />
     </DropdownMenu>
   );
 }

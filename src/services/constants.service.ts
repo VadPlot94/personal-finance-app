@@ -1,10 +1,10 @@
 export enum Theme {
-  Green = "#22C55E",
+  Green = "#277C78",
   Yellow = "#FACC15",
-  Cyan = "#06B6D4",
-  Navy = "#1E3A8A",
+  Cyan = "#82C9D7",
+  Navy = "#626070",
   Red = "#EF4444",
-  Purple = "#A855F7",
+  Purple = "#826CB0",
   Turquoise = "#14B8A6",
   Brown = "#92400E",
   Magenta = "#D946EF",
@@ -14,9 +14,12 @@ export enum Theme {
   Pink = "#EC4899",
   Gold = "#D97706",
   Orange = "#F97316",
+  Beige = "#F2CDAC",
 }
 
-class ConstantsService {}
+class ConstantsService {
+  public MaxPotNameCharacters = 20;
+}
 
 const constants = new ConstantsService();
 export default constants;

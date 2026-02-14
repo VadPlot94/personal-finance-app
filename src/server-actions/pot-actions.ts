@@ -18,8 +18,6 @@ export async function addPotServerAction(
       name: potModel.name,
       target: potModel.target,
       theme: potModel.theme,
-      total: potModel.total,
-      userId: potModel.userId || null,
     },
   });
 
@@ -42,8 +40,6 @@ export async function editPotServerAction(
       name: potModel.name,
       target: potModel.target,
       theme: potModel.theme,
-      total: potModel.total,
-      userId: potModel.userId || null,
     },
   });
 
