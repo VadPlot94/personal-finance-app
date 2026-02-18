@@ -18,10 +18,10 @@ class PotService {
     return isNaN(value) ? "--.--%" : `${value.toFixed(2)}%`;
   }
 
-  public createCacheNumberFormat(val: string | number | undefined): string  {
+  public createCacheNumberFormat(val: string | number | undefined): string {
     const value = val?.toString();
     if (!value || value.trim() === "" || isNaN(+value)) {
-      return value || '';
+      return value || "";
     }
     const [integer, decimal = ""] = value.split(".");
     const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, " ");

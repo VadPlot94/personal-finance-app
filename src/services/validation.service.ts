@@ -28,31 +28,33 @@ class ValidationService {
       );
   }
 
-  private getAddPotTargetSchema(potTotal: number | undefined): z.ZodType<string> {
+  private getAddPotTargetSchema(
+    potTotal: number | undefined,
+  ): z.ZodType<string> {
     return z
-    .string()
-    .trim()
-    .refine((val) => val !== "", { message: "" })
-    .pipe(
-      z
-        .string()
-        .regex(/^[1-9]\d*$/, {
-          message: "Please enter valid cash (only digits, no leading zero)",
-        })
-        .refine(
-          (val) => {
-            const num = Number(val);
-            return !isNaN(num);
-          },
-          { message: "Target must be a valid number" },
-        )
-        .refine(
-          (val) => {
-            return Number(val) >= (potTotal || 0);
-          },
-          { message: `Target can not be less then total: ${potTotal || 0}` },
-        ),
-    );
+      .string()
+      .trim()
+      .refine((val) => val !== "", { message: "" })
+      .pipe(
+        z
+          .string()
+          .regex(/^[1-9]\d*$/, {
+            message: "Please enter valid cash (only digits, no leading zero)",
+          })
+          .refine(
+            (val) => {
+              const num = Number(val);
+              return !isNaN(num);
+            },
+            { message: "Target must be a valid number" },
+          )
+          .refine(
+            (val) => {
+              return Number(val) >= (potTotal || 0);
+            },
+            { message: `Target can not be less then total: ${potTotal || 0}` },
+          ),
+      );
   }
 
   private getTotalSchema(

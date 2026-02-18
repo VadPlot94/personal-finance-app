@@ -56,12 +56,18 @@ export function EditPotDialog({
     pot?.id ? pots.filter((p) => p.name !== pot?.name) : pots
   ).map((p) => p.name);
 
-  const setFormPotData = (pot?: Partial<IAddPotFormData> | Partial<Pot> | undefined) => (pot ? {
-    id: pot?.id || "",
-    potName: (pot as Pot)?.name || (pot as IAddPotFormData)?.potName || "",
-    target: pot?.target?.toString() || "",
-    theme: (pot?.theme || "") as Theme,
-  }: null);
+  const setFormPotData = (
+    pot?: Partial<IAddPotFormData> | Partial<Pot> | undefined,
+  ) =>
+    pot
+      ? {
+          id: pot?.id || "",
+          potName:
+            (pot as Pot)?.name || (pot as IAddPotFormData)?.potName || "",
+          target: pot?.target?.toString() || "",
+          theme: (pot?.theme || "") as Theme,
+        }
+      : null;
   const [formPotData, setFormData] = useState<IAddPotFormData | null>(() =>
     setFormPotData(pot),
   );
@@ -142,7 +148,12 @@ export function EditPotDialog({
   };
 
   const handleTargetInputChange = (value: string): void => {
-    setFormData(setFormPotData({ ...formPotData, target: (value.replaceAll(" ", "") as any) }));
+    setFormData(
+      setFormPotData({
+        ...formPotData,
+        target: value.replaceAll(" ", "") as any,
+      }),
+    );
   };
 
   const handleThemeInputChange = (value: string): void => {
@@ -220,7 +231,9 @@ export function EditPotDialog({
                   className="border-gray-300"
                   id="target"
                   name="target"
-                  value={potService.createCacheNumberFormat(formPotData?.target)}
+                  value={potService.createCacheNumberFormat(
+                    formPotData?.target,
+                  )}
                   type="text"
                   inputMode="decimal"
                   maxLength={12}

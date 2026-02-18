@@ -4,7 +4,9 @@ import { IPotsTileProps } from "../types";
 import potService from "@/services/pot.service";
 
 export default function PotsTile({ pots = [] }: IPotsTileProps) {
-  const totalSum = potService.getAllSavedPotsMoney(pots).toLocaleString("en-US");
+  const totalSum = potService
+    .getAllSavedPotsMoney(pots)
+    .toLocaleString("en-US");
   const filteredPots = [...pots].sort((a, b) => b.total - a.total).slice(0, 4);
   const tilePots = Array.from({ length: 4 }, (_, i) => filteredPots[i] || null);
 

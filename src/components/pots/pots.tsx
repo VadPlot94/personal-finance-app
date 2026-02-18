@@ -28,7 +28,11 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
         {pots
           ?.filter((pot) => !!pot)
           ?.map((pot) => (
-            <PotItem key={pot.id} pot={pot} availableBalance={availableBalance} />
+            <PotItem
+              key={pot.id}
+              pot={pot}
+              availableBalance={availableBalance}
+            />
           ))}
       </div>
     </PotsContext>
