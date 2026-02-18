@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 // Without next/font we have to load fonts with <link> on app launch (Additional HTTP requests, FOIT, FOUT)
 import { Geist_Mono, Public_Sans } from "next/font/google";
 import "./globals.css";
+import NotificationBanner from "@/components/notification-banner/notification-banner";
 
 // ! Need to replace with Public_Sans font - Tailwind CSS default fonts. It is done in global.css
 
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body
         className={`${publicSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NotificationBanner />
         {children}
       </body>
     </html>

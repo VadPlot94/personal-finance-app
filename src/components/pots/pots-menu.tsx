@@ -8,22 +8,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Pot } from "@prisma/client";
-import { AddPotDialog } from "./add-pot-dialog";
+import { EditPotDialog } from "./dialogs/edit-pot-dialog";
 import { useState } from "react";
-
-type PotAction = (pot: Pot) => void;
-
-interface IPotMenuProps {
-  pot: Pot;
-  children: React.ReactNode;
-  onAddMoney?: PotAction;
-  onEdit?: PotAction;
-  onDelete?: PotAction;
-}
+import { DeletePotDialog } from "./dialogs/delete-pot-dialog";
+import { IPotMenuProps } from "../types";
 
 export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
-  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
+  const [isDeletePotDialogOpen, setDeletePotDialogOpen] = useState(false);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -33,22 +26,31 @@ export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
           Actions with "{pot.name}"
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+        <DropdownMenuItem onClick={() => setEditPotDialogOpen(true)}>
           Edit Pot
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-          onClick={() => onDelete?.(pot)}
+          onClick={() => setDeletePotDialogOpen(true)}
         >
           Delete Pot
         </DropdownMenuItem>
       </DropdownMenuContent>
-      <AddPotDialog
-        pot={pot}
-        isDialogOpen={isEditDialogOpen}
-        setDialogOpen={setEditDialogOpen}
-      />
+      {isEditPotDialogOpen && (
+        <EditPotDialog
+          pot={pot}
+          isDialogOpen={isEditPotDialogOpen}
+          setDialogOpen={setEditPotDialogOpen}
+        />
+      )}
+      {isDeletePotDialogOpen && (
+        <DeletePotDialog
+          pot={pot}
+          isDialogOpen={isDeletePotDialogOpen}
+          setDialogOpen={setDeletePotDialogOpen}
+        />
+      )}
     </DropdownMenu>
   );
 }

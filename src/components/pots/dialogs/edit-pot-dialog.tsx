@@ -10,7 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useActionState,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import validationService from "@/services/validation.service";
 import {
   Select,
@@ -18,34 +24,24 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../../ui/select";
 import constants, { Theme } from "@/services/constants.service";
 import {
   addPotServerAction,
   editPotServerAction,
 } from "@/server-actions/pot-actions";
 import { Pot } from "@prisma/client";
+import potService from "@/services/pot.service";
+import { IEditPotDialogProps, IAddPotFormData } from "@/components/types";
+import { toast } from "sonner";
+import { PotsContext } from "../pots";
 
-interface AddPotDialogProps {
-  children?: React.ReactNode;
-  pot?: Pot;
-  isDialogOpen: boolean;
-  setDialogOpen: (isDialogOpen: boolean) => void;
-}
-
-interface IAddPotFormData {
-  id: string;
-  potName: string;
-  target: string;
-  theme: Theme;
-}
-
-export function AddPotDialog({
+export function EditPotDialog({
   children,
   pot,
   isDialogOpen,
   setDialogOpen,
-}: AddPotDialogProps) {
+}: IEditPotDialogProps) {
   const serverActionPotFn = useMemo(
     () => (pot?.id ? editPotServerAction : addPotServerAction),
     [pot?.id],
@@ -55,13 +51,18 @@ export function AddPotDialog({
     null,
   );
 
-  const setFormPotData = (pot?: Pot | undefined) => ({
+  const pots = useContext<Pot[]>(PotsContext);
+  const potNames = (
+    pot?.id ? pots.filter((p) => p.name !== pot?.name) : pots
+  ).map((p) => p.name);
+
+  const setFormPotData = (pot?: Partial<IAddPotFormData> | Partial<Pot> | undefined) => (pot ? {
     id: pot?.id || "",
-    potName: pot?.name || "",
+    potName: (pot as Pot)?.name || (pot as IAddPotFormData)?.potName || "",
     target: pot?.target?.toString() || "",
     theme: (pot?.theme || "") as Theme,
-  });
-  const [formPotData, setFormData] = useState<IAddPotFormData>(() =>
+  }: null);
+  const [formPotData, setFormData] = useState<IAddPotFormData | null>(() =>
     setFormPotData(pot),
   );
 
@@ -74,7 +75,9 @@ export function AddPotDialog({
   }, [pot, isDialogOpen]);
 
   useEffect(() => {
-    validateForm(formPotData);
+    if (formPotData) {
+      validateForm(formPotData);
+    }
   }, [formPotData]);
 
   useEffect(() => {
@@ -84,11 +87,25 @@ export function AddPotDialog({
       return;
     }
     const isFormSavedSuccess = formResultState.success && !isPending;
+
+    if (isFormSavedSuccess) {
+      toast.success("Success", {
+        description: formResultState.message || "OK",
+      });
+    } else {
+      toast.error("Error", {
+        description: formResultState.error || "ERROR",
+      });
+    }
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
 
   const validateForm = (formPotData: IAddPotFormData) => {
-    const result = validationService.validateAddPotSchema(formPotData);
+    const result = validationService.validateAddPotSchema(
+      formPotData,
+      potNames,
+      pot?.total,
+    );
     if (result.success) {
       setFormErrors(null);
       return;
@@ -96,7 +113,9 @@ export function AddPotDialog({
     const errors: Partial<Record<keyof IAddPotFormData, string>> = {};
     result.error.issues.map((issue) => {
       const path = issue.path[0] as keyof typeof formPotData;
-      errors[path] = issue.message;
+      if (!errors[path]) {
+        errors[path] = issue.message;
+      }
     });
     setFormErrors(errors);
   };
@@ -119,24 +138,15 @@ export function AddPotDialog({
   };
 
   const handlePotNameInputChange = (value: string): void => {
-    setFormData({ ...formPotData, potName: value });
+    setFormData(setFormPotData({ ...formPotData, name: value }));
   };
 
   const handleTargetInputChange = (value: string): void => {
-    setFormData({ ...formPotData, target: value.replaceAll(" ", "") });
+    setFormData(setFormPotData({ ...formPotData, target: (value.replaceAll(" ", "") as any) }));
   };
 
   const handleThemeInputChange = (value: string): void => {
-    setFormData((prev) => ({ ...prev, theme: value as Theme }));
-  };
-
-  const formatNumber = (value: string): string => {
-    if (!value || value.trim() === "" || isNaN(+value)) {
-      return value;
-    }
-    const [integer, decimal = ""] = value.split(".");
-    const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    return decimal ? `${formattedInteger}.${decimal}` : formattedInteger;
+    setFormData((prev) => setFormPotData({ ...prev, theme: value as Theme }));
   };
 
   return (
@@ -210,7 +220,7 @@ export function AddPotDialog({
                   className="border-gray-300"
                   id="target"
                   name="target"
-                  value={formatNumber(formPotData.target)}
+                  value={potService.createCacheNumberFormat(formPotData?.target)}
                   type="text"
                   inputMode="decimal"
                   maxLength={12}
@@ -231,7 +241,7 @@ export function AddPotDialog({
 
                 <Select
                   name="theme"
-                  value={formPotData.theme}
+                  value={formPotData?.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
                   <SelectTrigger className="border-gray-300 w-full">

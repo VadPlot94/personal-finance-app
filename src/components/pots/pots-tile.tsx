@@ -1,15 +1,15 @@
 "use client";
 import Link from "next/link";
-import { IPotsProps } from "../types";
+import { IPotsTileProps } from "../types";
+import potService from "@/services/pot.service";
 
-export default function PotsTile({ pots = [] }: IPotsProps) {
-  const totalSum =
-    pots.reduce((acc, val) => acc + val.total, 0).toLocaleString("en-US") || 0;
+export default function PotsTile({ pots = [] }: IPotsTileProps) {
+  const totalSum = potService.getAllSavedPotsMoney(pots).toLocaleString("en-US");
   const filteredPots = [...pots].sort((a, b) => b.total - a.total).slice(0, 4);
   const tilePots = Array.from({ length: 4 }, (_, i) => filteredPots[i] || null);
 
   return (
-    <div className="flex flex-col justify-between gap-5 h-46 rounded-lg p-5 bg-white shadow-sm">
+    <div className="flex flex-col justify-between gap-5 h-46 rounded-lg p-5 bg-white shadow-sm min-w-127.5">
       <div className="flex flex-row justify-between items-center">
         <div className="font-bold text-[20px]">Pots</div>
         <Link
@@ -34,13 +34,15 @@ export default function PotsTile({ pots = [] }: IPotsProps) {
           {tilePots.map((pot, index) => {
             const key = pot ? pot.name + pot.total : index;
             return (
-              <div key={key} className="flex flex-row gap-4">
+              <div key={key} className="flex flex-row gap-4 items-center">
                 <div
                   className="h-full min-w-1 w-1 rounded"
                   style={{ backgroundColor: pot?.theme || "grey" }}
                 ></div>
-                <div className="flex flex-col justify-between h-10 text-xs">
-                  <div className="text-app-color w-25">{pot?.name || "--"}</div>
+                <div className="flex flex-col justify-between min-w-0 max-w-25 h-10 text-xs overflow-hidden">
+                  <div className="text-app-color truncate">
+                    {pot?.name || "--"}
+                  </div>
                   <div className={`font-bold ${!pot && "text-app-color"}`}>
                     ${pot?.total || "0.0"}
                   </div>

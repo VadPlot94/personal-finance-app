@@ -26,6 +26,27 @@ export class PotRepository extends BaseRepository<typeof prisma.pot> {
   }
 
   /**
+   * Checks if a name can be used for a pot.
+   * - When creating (no id provided): the name must not exist at all.
+   * - When editing (id provided): the name must not be used by any other pot (excluding the current one).
+   */
+  public async isNameUnique(
+    name: string | undefined,
+    excludeId?: string,
+  ): Promise<boolean> {
+    const pot = await this.findFirst({
+      where: {
+        name,
+        // If id is provided — exclude the current pot from the check
+        id: excludeId ? { not: excludeId } : undefined,
+      },
+      select: { id: true }, // minimal data
+    });
+
+    return !pot; // true = name is available, false = name is taken
+  }
+
+  /**
    * Создать новую копилку
    */
   async createPot(data: {
