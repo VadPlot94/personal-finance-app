@@ -1,5 +1,5 @@
 import { Theme } from "@/services/constants.service";
-import { Balance, Pot } from "@prisma/client";
+import { Pot, Transaction } from "@prisma/client";
 
 export interface IPotsProps {
   pots: Pot[];
@@ -38,12 +38,18 @@ export interface IAddPotFormData {
   theme: Theme;
 }
 
-type PotAction = (pot: Pot) => void;
-
 export interface IPotMenuProps {
   pot: Pot;
   children: React.ReactNode;
-  onAddMoney?: PotAction;
-  onEdit?: PotAction;
-  onDelete?: PotAction;
+}
+
+export interface IPaginationData {
+  page: number;
+  transactionsCount: number;
+  allTransactionsCount: number;
+}
+
+export interface ITransactionsProps {
+  transactions: Transaction[] | undefined;
+  paginationData: IPaginationData | undefined;
 }

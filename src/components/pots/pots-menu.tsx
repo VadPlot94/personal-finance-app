@@ -13,7 +13,7 @@ import { useState } from "react";
 import { DeletePotDialog } from "./dialogs/delete-pot-dialog";
 import { IPotMenuProps } from "../types";
 
-export function PotMenu({ pot, children, onEdit, onDelete }: IPotMenuProps) {
+export function PotMenu({ pot, children }: IPotMenuProps) {
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
   const [isDeletePotDialogOpen, setDeletePotDialogOpen] = useState(false);
 

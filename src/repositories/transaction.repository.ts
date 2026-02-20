@@ -1,12 +1,37 @@
 import prisma from "@/prisma/prisma-client";
 import { BaseRepository } from "./base.repository";
 import { Transaction } from "@prisma/client";
+import { IGetTransactionsParams } from "@/server-actions/types";
+import { SortBy, TransactionCategory } from "@/services/constants.service";
+import { ITransactionDataResponse } from "./types";
 
 export class TransactionRepository extends BaseRepository<
   typeof prisma.transaction
 > {
   constructor() {
     super(prisma.transaction);
+  }
+
+  public async getTransactions(
+    params: IGetTransactionsParams,
+  ): Promise<ITransactionDataResponse> {
+    const { page, transactionsCount, category, order, sortBy } = params;
+    const skip = (page - 1) * transactionsCount;
+    const where = category ? { category } : {};
+    const orderBy = { [sortBy as string]: order };
+    const transactions = await prisma.transaction.findMany({
+      where,
+      orderBy,
+      skip,
+      take: transactionsCount,
+    });
+
+    const allTransactionsCount = await prisma.transaction.count({ where });
+
+    return {
+      transactions,
+      paginationData: { allTransactionsCount, page, transactionsCount },
+    };
   }
 
   async getRecent(limit = 10): Promise<Transaction[]> {
@@ -18,6 +43,7 @@ export class TransactionRepository extends BaseRepository<
         name: true,
         amount: true,
         category: true,
+        avatar: true,
         date: true,
         recurring: true,
       },

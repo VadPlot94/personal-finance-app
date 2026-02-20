@@ -4,12 +4,7 @@ import { potRepository } from "@/repositories/pot.repository";
 import { Theme } from "@/services/constants.service";
 import { Pot } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
-type ServerActionResult = {
-  success: boolean;
-  error?: string;
-  message?: string;
-};
+import { ServerActionResult } from "./types";
 
 export async function addPotServerAction(
   prevState: { success: boolean } | null,
@@ -82,7 +77,7 @@ export async function editPotServerAction(
         theme: potModel.theme,
       },
     });
-    revalidatePath("/pots");
+    syncChanges();
 
     return { success: true, message: "Pot updated successfully" };
   } catch (error) {
@@ -103,7 +98,7 @@ export async function deletePotServerAction(
       where: { id },
     });
 
-    revalidatePath("/pots");
+    syncChanges();
 
     return { success: true, message: "Pot deleted successfully" };
   } catch (error) {
@@ -130,7 +125,7 @@ export async function setPotTotalServerAction(
       data: { total: newTotal },
     });
 
-    revalidatePath("/pots");
+    syncChanges();
 
     return { success: true, message: "Pot total was updated successfully" };
   } catch (error) {
@@ -166,5 +161,5 @@ function getPotModel(formData: FormData): Partial<Pot> | null {
 }
 
 function syncChanges() {
-  revalidatePath("/posts");
+  revalidatePath("/pots");
 }

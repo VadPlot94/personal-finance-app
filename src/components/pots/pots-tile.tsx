@@ -19,13 +19,13 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
           className="flex flex-row gap-1 text-app-color text-sm"
         >
           <span className="font-weight w-20">See details</span>
-          <img src="/images/icon-caret-right.svg" />
+          <img src="assets/images/icon-caret-right.svg" />
         </Link>
       </div>
       <div className="flex flex-row justify-between h-full gap-5">
         <div className="flex flex-row justify-start items-center w-full gap-3 rounded-lg pl-5 bg-app-background shadow-sm">
-          <div className="">
-            <img src="/images/icon-pot.svg" />
+          <div>
+            <img src="assets/images/icon-pot.svg" />
           </div>
           <div className="flex flex-col justify-between items-stretch">
             <div className="text-app-color text-sm">Total Saved</div>

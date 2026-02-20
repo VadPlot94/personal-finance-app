@@ -1,3 +1,5 @@
+import { Transaction } from "@prisma/client";
+
 export enum Theme {
   Green = "#277C78",
   Yellow = "#FACC15",
@@ -17,8 +19,41 @@ export enum Theme {
   Beige = "#F2CDAC",
 }
 
+export enum SortBy {
+  Latest = "Latest",
+  Oldest = "Oldest",
+  AtoZ = "A to Z",
+  ZtoA = "Z to A",
+  Highest = "Highest",
+  Lowest = "Lowest",
+}
+
+export enum TransactionCategory {
+  AllTransactions = "All Transactions",
+  Entertainment = "Entertainment",
+  Bills = "Bills",
+  Groceries = "Groceries",
+  DiningOut = "Dining Out",
+  Transportation = "Transportation",
+  PersonalCare = "Personal Care",
+  Education = "Education",
+  Lifestyle = "Lifestyle",
+  Shopping = "Shopping",
+  General = "General",
+}
+
+export const sortByDataBaseFieldMap: Record<SortBy, keyof Transaction> = {
+  [SortBy.Latest]: "date",
+  [SortBy.Oldest]: "date",
+  [SortBy.Highest]: "amount",
+  [SortBy.Lowest]: "amount",
+  [SortBy.AtoZ]: "name",
+  [SortBy.ZtoA]: "name",
+};
+
 class ConstantsService {
   public MaxPotNameCharacters = 20;
+  public TransactionRecordsPerPage = 5;
 }
 
 const constants = new ConstantsService();

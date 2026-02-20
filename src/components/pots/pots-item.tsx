@@ -12,14 +12,6 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
     potService.calculateProgressPercentage(pot.total, pot.target),
   );
 
-  const handleEdit = () => {
-    console.log("edit");
-  };
-
-  const handleDelete = () => {
-    console.log("delete");
-  };
-
   return (
     <>
       <div className="flex flex-col justify-between gap-5 h-63 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
@@ -33,10 +25,10 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
               <div className="font-bold text-xl">{pot.name}</div>
             </div>
             <div className="cursor-pointer">
-              <PotMenu pot={pot} onEdit={handleEdit} onDelete={handleDelete}>
+              <PotMenu pot={pot}>
                 <img
                   className="w-5 h-5"
-                  src="/images/icon-ellipsis.svg"
+                  src="assets/images/icon-ellipsis.svg"
                   alt="Actions"
                 />
               </PotMenu>
