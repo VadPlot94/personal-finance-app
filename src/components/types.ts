@@ -1,5 +1,5 @@
 import { Theme } from "@/services/constants.service";
-import { Pot, Transaction } from "@prisma/client";
+import { Budget, Pot, Transaction } from "@prisma/client";
 
 export interface IPotsProps {
   pots: Pot[];
@@ -9,11 +9,6 @@ export interface IPotsProps {
 export interface IPotsTileProps {
   pots: Pot[];
 }
-
-export interface ITransactionsTileProps {
-  transactions: Transaction[] | undefined;
-}
-
 export interface IPotItemProps {
   pot: Pot;
   availableBalance: number;
@@ -53,7 +48,15 @@ export interface IPaginationData {
   allTransactionsCount: number;
 }
 
+export interface ITransactionsTileProps {
+  transactions: Transaction[] | undefined;
+}
+
 export interface ITransactionsProps {
   transactions: Transaction[] | undefined;
   paginationData: IPaginationData | undefined;
+}
+
+export interface IBudgetsProps {
+  budgets: Budget[] | undefined;
 }

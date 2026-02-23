@@ -24,7 +24,7 @@ export async function getTransactionsServerAction(
       message: "Transactions get successfully",
     };
   } catch (error) {
-    console.error("Error getting transactions pot:", error);
+    console.error("Error getting transactions:", error);
     return {
       success: false,
       error: "Failed to get transactions. Please try again.",

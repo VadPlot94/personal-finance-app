@@ -2,7 +2,6 @@ import prisma from "@/prisma/prisma-client";
 import { BaseRepository } from "./base.repository";
 import { Prisma, Transaction } from "@prisma/client";
 import { IGetTransactionsParams } from "@/server-actions/types";
-import { SortBy, TransactionCategory } from "@/services/constants.service";
 import { ITransactionDataResponse } from "./types";
 
 export class TransactionRepository extends BaseRepository<

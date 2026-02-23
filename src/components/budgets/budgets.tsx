@@ -1,4 +1,6 @@
-export default function Budgets() {
+import { IBudgetsProps } from "../types";
+
+export default function Budgets({ budgets = [] }: IBudgetsProps) {
   return (
     <>
       <div className="flex flex-row justify-between">
