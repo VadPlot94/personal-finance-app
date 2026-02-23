@@ -1,5 +1,9 @@
-import Transactions from "@/components/transactions/transactions";
+import TransactionsTile from "@/components/transactions/transactions-tile";
+import { getTransactionsServerAction } from "@/server-actions/transaction-actions";
 
-export default function TransactionsTile() {
-  return <Transactions />;
+export default async function TransactionsTilePage() {
+  const { data: { transactions } = {} } = await getTransactionsServerAction({
+    transactionsCount: 5,
+  });
+  return <TransactionsTile transactions={transactions} />;
 }

@@ -4,7 +4,7 @@ import { transactionRepository } from "@/repositories/transaction.repository";
 import { IGetTransactionsParams, ServerActionResult } from "./types";
 import constants, {
   SortBy,
-  sortByDataBaseFieldMap,
+  sortByPrismaMap,
   TransactionCategory,
 } from "@/services/constants.service";
 import { revalidatePath } from "next/cache";
@@ -35,16 +35,20 @@ export async function getTransactionsServerAction(
 function getTransactionsModel(
   data: Partial<IGetTransactionsParams> | undefined,
 ): Required<IGetTransactionsParams> {
+  const [sortByField, orderField] = Object.entries(
+    sortByPrismaMap[data?.sortBy || SortBy.Latest],
+  )[0];
   return {
     page: data?.page || 1,
     transactionsCount:
       data?.transactionsCount || constants.TransactionRecordsPerPage,
-    sortBy: sortByDataBaseFieldMap[data?.sortBy || SortBy.Latest] as SortBy,
-    order: "desc",
+    sortBy: sortByField as SortBy,
+    order: orderField,
     category: (data?.category &&
     data?.category !== TransactionCategory.AllTransactions
       ? data?.category
       : null) as TransactionCategory,
+    search: data?.search as string,
   };
 }
 

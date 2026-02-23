@@ -13,4 +13,5 @@ export interface IGetTransactionsParams {
   sortBy?: SortBy;
   order?: string;
   category?: TransactionCategory;
+  search?: string;
 }

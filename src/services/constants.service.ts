@@ -42,13 +42,16 @@ export enum TransactionCategory {
   General = "General",
 }
 
-export const sortByDataBaseFieldMap: Record<SortBy, keyof Transaction> = {
-  [SortBy.Latest]: "date",
-  [SortBy.Oldest]: "date",
-  [SortBy.Highest]: "amount",
-  [SortBy.Lowest]: "amount",
-  [SortBy.AtoZ]: "name",
-  [SortBy.ZtoA]: "name",
+export const sortByPrismaMap: Record<
+  SortBy,
+  { [key: string]: "asc" | "desc" }
+> = {
+  [SortBy.Latest]: { date: "desc" },
+  [SortBy.Oldest]: { date: "asc" },
+  [SortBy.Highest]: { amount: "desc" },
+  [SortBy.Lowest]: { amount: "asc" },
+  [SortBy.AtoZ]: { name: "asc" },
+  [SortBy.ZtoA]: { name: "desc" },
 };
 
 class ConstantsService {

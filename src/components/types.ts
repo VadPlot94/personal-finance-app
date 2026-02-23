@@ -10,6 +10,10 @@ export interface IPotsTileProps {
   pots: Pot[];
 }
 
+export interface ITransactionsTileProps {
+  transactions: Transaction[] | undefined;
+}
+
 export interface IPotItemProps {
   pot: Pot;
   availableBalance: number;
