@@ -28,7 +28,7 @@ export enum SortBy {
   Lowest = "Lowest",
 }
 
-export enum TransactionCategory {
+export enum TransactionUICategory {
   AllTransactions = "All Transactions",
   Entertainment = "Entertainment",
   Bills = "Bills",
@@ -57,6 +57,7 @@ export const sortByPrismaMap: Record<
 class ConstantsService {
   public MaxPotNameCharacters = 20;
   public TransactionRecordsPerPage = 5;
+  public MathDegreePercent = 3.6; // → 360 / 100;
 }
 
 const constants = new ConstantsService();

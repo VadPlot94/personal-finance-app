@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IPaginationData, ITransactionsProps } from "../types";
 import { Input } from "../ui/input";
 import {
@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { SortBy, TransactionCategory } from "@/services/constants.service";
+import { SortBy, TransactionUICategory } from "@/services/constants.service";
 import { getTransactionsServerAction } from "@/server-actions/transaction-actions";
 import { Transaction } from "@prisma/client";
 import { toast } from "sonner";
@@ -18,16 +18,23 @@ import { cn } from "@/lib/utils";
 import transactionService from "@/services/transaction.service";
 import { IGetTransactionsParams } from "@/server-actions/types";
 import { useUpdateEffect } from "react-use";
+import PageContentHeader from "../page-content-header/page-content-header";
 
 export default function Transactions({
   transactions = [],
   paginationData,
+  category,
 }: ITransactionsProps) {
+  const [isAddTransactionDialogOpen, setAddTransactionDialogOpen] =
+    useState(false);
+
   const [searchValue, setSearch] = useState("");
   const [searchDBValue, setDBSearch] = useState("");
   const [selectedSortByValue, setSortByValue] = useState<SortBy>(SortBy.Latest);
   const [selectedCategory, setTransactionCategory] =
-    useState<TransactionCategory>(TransactionCategory.AllTransactions);
+    useState<TransactionUICategory>(
+      category || TransactionUICategory.AllTransactions,
+    );
   const [selectedPageNumber, setPageNumber] = useState<number>(
     paginationData?.page || 1,
   );
@@ -80,7 +87,7 @@ export default function Transactions({
     setSortByValue(value);
   };
 
-  const handleCategoryChange = (value: TransactionCategory) => {
+  const handleCategoryChange = (value: TransactionUICategory) => {
     setTransactionCategory(value);
   };
 
@@ -121,9 +128,11 @@ export default function Transactions({
 
   return (
     <>
-      <div className="flex flex-row justify-between">
-        <div className="font-bold text-3xl">Transactions</div>
-      </div>
+      <PageContentHeader
+        name="Transactions"
+        buttonName="Add Transaction"
+        handleButtonClick={() => setAddTransactionDialogOpen(true)}
+      />
       {transactions?.length ? (
         <div className="flex flex-col justify-between w-full h-full rounded-lg p-5 bg-white shadow-sm gap-6">
           <div className="flex flex-col justify-start gap-6 h-full">
@@ -176,7 +185,7 @@ export default function Transactions({
                   <Select
                     name="category"
                     value={selectedCategory}
-                    onValueChange={(value: TransactionCategory) =>
+                    onValueChange={(value: TransactionUICategory) =>
                       handleCategoryChange(value)
                     }
                   >
@@ -185,7 +194,7 @@ export default function Transactions({
                     </SelectTrigger>
 
                     <SelectContent>
-                      {Object.entries(TransactionCategory).map(
+                      {Object.entries(TransactionUICategory).map(
                         ([name, value]) => (
                           <SelectItem key={name} value={value}>
                             <span>{value}</span>
@@ -211,7 +220,7 @@ export default function Transactions({
                     <tr>
                       <th
                         scope="col"
-                        className="py-3 w-[40%] text-left text-xs text-app-color tracking-wider"
+                        className="py-3 px-3 w-[40%] text-left text-xs text-app-color tracking-wider"
                       >
                         Recipient/Sender
                       </th>
@@ -229,7 +238,7 @@ export default function Transactions({
                       </th>
                       <th
                         scope="col"
-                        className="py-3 text-right text-xs text-app-color tracking-wider"
+                        className="py-3 px-3 text-right text-xs text-app-color tracking-wider"
                       >
                         Amount
                       </th>
@@ -238,7 +247,7 @@ export default function Transactions({
                   <tbody className="divide-y divide-gray-200 text-sm">
                     {transactionsItems.map((tx) => (
                       <tr key={tx.id} className="hover:bg-gray-50 transition">
-                        <td className="py-4">
+                        <td className="py-4 px-3">
                           <div className="flex items-center gap-4">
                             <img
                               src={tx.avatar as string}
@@ -254,7 +263,7 @@ export default function Transactions({
                         <td className="py-4 whitespace-nowrap text-app-color w-30">
                           {transactionService.getTransactionDate(tx.date)}
                         </td>
-                        <td className="py-4 whitespace-nowrap font-bold text-right">
+                        <td className="py-4 whitespace-nowrap font-bold text-right px-3">
                           <span
                             className={
                               tx.amount > 0 ? "text-green-600" : "text-red-600"

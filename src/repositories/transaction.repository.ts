@@ -40,6 +40,58 @@ export class TransactionRepository extends BaseRepository<
     };
   }
 
+  public async getMonthlyExpensesByCategory(
+    userId: string,
+  ): Promise<Transaction[]> {
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1,
+    );
+    const endOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      1,
+    );
+
+    const userBudgets = await prisma.budget.findMany({
+      where: { userId },
+      select: { category: true },
+    });
+
+    const budgetCategories = userBudgets.map((b) => b.category);
+
+    if (budgetCategories.length === 0) {
+      return [];
+    }
+
+    const expenses = await prisma.transaction.findMany({
+      where: {
+        userId,
+        amount: { lt: 0 },
+        category: { in: budgetCategories },
+        // ! This can be activated when we will have current month transactions
+        // ! But data json has only old transactions then we proceed without date
+        // date: {
+        //   gte: startOfMonth,
+        //   lt: endOfMonth,
+        // },
+      },
+      select: {
+        id: true,
+        name: true,
+        amount: true,
+        date: true,
+        avatar: true,
+        recurring: true,
+        category: true,
+      },
+      orderBy: [{ date: "desc" }, { amount: "asc" }],
+    });
+
+    return expenses as Transaction[];
+  }
+
   async getRecent(limit = 10): Promise<Transaction[]> {
     return this.findMany({
       orderBy: { date: "desc" },

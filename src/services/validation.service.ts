@@ -1,9 +1,31 @@
 import { z } from "zod";
 import logger from "./logger.service";
 import constants from "./constants.service";
-import { IAddPotFormData } from "@/components/types";
+import { IAddBudgetFormData, IAddPotFormData } from "@/components/types";
 
 class ValidationService {
+  private addBudgetSchema = z.object({
+    maximum: z
+      .string()
+      .trim()
+      .refine((val) => val !== "", { message: "" })
+      .pipe(
+        z
+          .string()
+          .regex(/^[1-9]\d*$/, {
+            message:
+              "Please enter valid maximum (only digits, no leading zero)",
+          })
+          .refine(
+            (val) => {
+              const num = Number(val);
+              return !isNaN(num);
+            },
+            { message: "Maximum must be a valid number" },
+          ),
+      ),
+  });
+
   private getPotNameSchema(potNames: string[]): z.ZodType<string> {
     return z
       .string()
@@ -134,6 +156,24 @@ class ValidationService {
       });
     }
 
+    return validationObj;
+  }
+
+  public validateAddBudgetSchema(
+    formData: IAddBudgetFormData,
+  ): z.ZodSafeParseResult<object> {
+    const validationObj = this.addBudgetSchema.safeParse(formData);
+    if (validationObj.error) {
+      validationObj.error.issues.forEach((issue) => {
+        const path = issue.path.join(".") || "root";
+        const code = issue.code;
+        const message = Array.isArray(issue.message)
+          ? issue.message.join(", ")
+          : issue.message;
+
+        logger.logError(`Validation failed at "${path}": ${code} - ${message}`);
+      });
+    }
     return validationObj;
   }
 }

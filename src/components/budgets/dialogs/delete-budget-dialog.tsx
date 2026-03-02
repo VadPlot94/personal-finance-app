@@ -1,17 +1,17 @@
 "use client";
 
-import { deletePotServerAction } from "@/server-actions/pot-actions";
 import { toast } from "sonner";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
-import { IDeletePotDialogProps } from "@/components/types";
+import { IDeleteBudgetDialogProps } from "@/components/types";
+import { deleteBudgetServerAction } from "@/server-actions/budget-actions";
 
-export function DeletePotDialog({
-  pot,
+export function DeleteBudgetDialog({
+  budget,
   isDialogOpen,
   setDialogOpen,
-}: IDeletePotDialogProps) {
-  const handlePotDelete = async (): Promise<void> => {
-    const response = await deletePotServerAction(pot?.id);
+}: IDeleteBudgetDialogProps) {
+  const handleBudgetDelete = async (): Promise<void> => {
+    const response = await deleteBudgetServerAction(budget?.id);
     if (response?.success) {
       toast.success("Success", {
         description: response.message || "OK",
@@ -25,10 +25,10 @@ export function DeletePotDialog({
 
   return (
     <DeleteDialog
-      data={pot}
+      data={{ id: budget.id, name: budget.category }}
       isDialogOpen={isDialogOpen}
       setDialogOpen={setDialogOpen}
-      handleDeleteClick={handlePotDelete}
+      handleDeleteClick={handleBudgetDelete}
     />
   );
 }

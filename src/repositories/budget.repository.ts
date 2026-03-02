@@ -26,6 +26,27 @@ export class BudgetRepository extends BaseRepository<typeof prisma.budget> {
   }
 
   /**
+   * Checks if a category can be used for a budget.
+   * - When creating (no id provided): the category must not exist at all.
+   * - When editing (id provided): the category must not be used by any other budget (excluding the current one).
+   */
+  public async isCategoryUnique(
+    category: string | undefined,
+    excludeId?: string,
+  ): Promise<boolean> {
+    const budget = await this.findFirst({
+      where: {
+        category,
+        // If id is provided — exclude the current pot from the check
+        id: excludeId ? { not: excludeId } : undefined,
+      },
+      select: { id: true }, // minimal data
+    });
+
+    return !budget; // true = category is available, false = category is taken
+  }
+
+  /**
    * Создать или обновить бюджет (upsert)
    */
   async upsertBudget(data: {

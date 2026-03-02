@@ -1,5 +1,45 @@
-import { Theme } from "@/services/constants.service";
+import { ITransactionsForCategoryData } from "@/repositories/types";
+import { Theme, TransactionUICategory } from "@/services/constants.service";
 import { Budget, Pot, Transaction } from "@prisma/client";
+
+export interface IPageContentHeaderProps {
+  name: string;
+  buttonName?: string;
+  handleButtonClick?: () => void;
+}
+
+export interface IDeleteDialogProps {
+  data: { id: string; name: string };
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
+  handleDeleteClick?: () => void;
+}
+
+export interface IDeletePotDialogProps {
+  pot: Pot;
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
+}
+
+export interface IDeleteBudgetDialogProps {
+  budget: Budget;
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
+}
+
+export interface IEditBudgetDialogProps {
+  children?: React.ReactNode;
+  budget?: Budget;
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
+}
+
+export interface IAddBudgetFormData {
+  id: string;
+  budgetCategory: string;
+  maximum: string;
+  theme: Theme;
+}
 
 export interface IPotsProps {
   pots: Pot[];
@@ -50,13 +90,35 @@ export interface IPaginationData {
 
 export interface ITransactionsTileProps {
   transactions: Transaction[] | undefined;
+  isBudgetTile?: boolean;
+  category: TransactionUICategory;
 }
 
 export interface ITransactionsProps {
   transactions: Transaction[] | undefined;
   paginationData: IPaginationData | undefined;
+  category?: TransactionUICategory;
 }
 
 export interface IBudgetsProps {
+  transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
   budgets: Budget[] | undefined;
+}
+
+export interface IBudgetsTileProps {
+  transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
+  budgets: Budget[] | undefined;
+}
+
+export interface IBudgetMenuProps {
+  budget: Budget;
+  children: React.ReactNode;
+}
+
+export interface IBudgetDonutChartProps {
+  budgets: Budget[];
+  size?: number; // px
+  holeRatio?: number; // 0–1, ex: 0.55 = 55% hole in the middle of the chart
+  className?: string;
+  transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
 }

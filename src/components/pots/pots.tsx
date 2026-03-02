@@ -5,6 +5,7 @@ import { IPotsProps } from "../types";
 import { EditPotDialog } from "./dialogs/edit-pot-dialog";
 import PotItem from "./pots-item";
 import { Pot } from "@prisma/client";
+import PageContentHeader from "../page-content-header/page-content-header";
 
 export const PotsContext = createContext<Pot[]>([]);
 
@@ -13,17 +14,11 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
 
   return (
     <PotsContext value={pots}>
-      <div className="flex flex-row justify-between">
-        <div className="font-bold text-3xl">Pots</div>
-        <EditPotDialog
-          isDialogOpen={isEditPotDialogOpen}
-          setDialogOpen={setEditPotDialogOpen}
-        >
-          <button className="cursor-pointer bg-black rounded-lg text-white text-sm p-2">
-            + Add New Pot
-          </button>
-        </EditPotDialog>
-      </div>
+      <PageContentHeader
+        name="Pots"
+        buttonName="+ Add New Pot"
+        handleButtonClick={() => setEditPotDialogOpen(true)}
+      />
       {pots?.length ? (
         <div className="grid grid-cols-2 justify-between gap-5">
           {pots
@@ -45,6 +40,12 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
             button at the corner of the page to create your first pot.
           </p>
         </div>
+      )}
+      {isEditPotDialogOpen && (
+        <EditPotDialog
+          isDialogOpen={isEditPotDialogOpen}
+          setDialogOpen={setEditPotDialogOpen}
+        />
       )}
     </PotsContext>
   );

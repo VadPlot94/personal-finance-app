@@ -25,67 +25,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import constants, { Theme } from "@/services/constants.service";
-import {
-  addPotServerAction,
-  editPotServerAction,
-} from "@/server-actions/pot-actions";
-import { Pot } from "@prisma/client";
-import potService from "@/services/pot.service";
-import { IEditPotDialogProps, IAddPotFormData } from "@/components/types";
+import { Theme, TransactionUICategory } from "@/services/constants.service";
+import { Budget } from "@prisma/client";
+import { IAddBudgetFormData, IEditBudgetDialogProps } from "@/components/types";
 import { toast } from "sonner";
-import { PotsContext } from "../pots";
+import {
+  addBudgetServerAction,
+  editBudgetServerAction,
+} from "@/server-actions/budget-actions";
+import { BudgetsContext } from "../budgets";
 import financeService from "@/services/finance.service";
 
-export function EditPotDialog({
+export function EditBudgetDialog({
   children,
-  pot,
+  budget,
   isDialogOpen,
   setDialogOpen,
-}: IEditPotDialogProps) {
-  const serverActionPotFn = useMemo(
-    () => (pot?.id ? editPotServerAction : addPotServerAction),
-    [pot?.id],
+}: IEditBudgetDialogProps) {
+  const serverActionBudgetFn = useMemo(
+    () => (budget?.id ? editBudgetServerAction : addBudgetServerAction),
+    [budget?.id],
   );
   const [formResultState, formAction, isPending] = useActionState(
-    serverActionPotFn,
+    serverActionBudgetFn,
     null,
   );
 
-  const pots = useContext<Pot[]>(PotsContext);
-  const potNames = (
-    pot?.id ? pots.filter((p) => p.name !== pot?.name) : pots
-  ).map((p) => p.name);
+  const budgets = useContext<Budget[]>(BudgetsContext);
+  const busyBudgets = budget?.id
+    ? budgets.filter((p) => p.category !== budget?.category)
+    : budgets;
+  const busyBudgetCategories = busyBudgets.map((p) => p.category);
+  const busyBudgetThemes = busyBudgets.map((p) => p.theme);
 
-  const setFormPotData = (
-    pot?: Partial<IAddPotFormData> | Partial<Pot> | undefined,
+  const setFormBudgetData = (
+    budget?: Partial<IAddBudgetFormData> | Partial<Budget> | undefined,
   ) =>
-    pot
+    budget
       ? {
-          id: pot?.id || "",
-          potName:
-            (pot as Pot)?.name || (pot as IAddPotFormData)?.potName || "",
-          target: pot?.target?.toString() || "",
-          theme: (pot?.theme || "") as Theme,
+          id: budget?.id || "",
+          budgetCategory:
+            (budget as Budget)?.category ||
+            (budget as IAddBudgetFormData)?.budgetCategory ||
+            "",
+          maximum: budget?.maximum?.toString() || "",
+          theme: (budget?.theme || "") as Theme,
         }
       : null;
-  const [formPotData, setFormData] = useState<IAddPotFormData | null>(() =>
-    setFormPotData(pot),
+  const [formBudgetData, setFormData] = useState<IAddBudgetFormData | null>(
+    () => setFormBudgetData(budget),
   );
 
   const [formErrors, setFormErrors] = useState<Partial<
-    Record<keyof IAddPotFormData, string>
+    Record<keyof IAddBudgetFormData, string>
   > | null>(null);
 
   useEffect(() => {
-    setFormData(setFormPotData(pot));
-  }, [pot, isDialogOpen]);
+    setFormData(setFormBudgetData(budget));
+  }, [budget, isDialogOpen]);
 
   useEffect(() => {
-    if (formPotData) {
-      validateForm(formPotData);
+    if (formBudgetData) {
+      validateForm(formBudgetData);
     }
-  }, [formPotData]);
+  }, [formBudgetData]);
 
   useEffect(() => {
     // This trigger even with first component mount when formResultState = null
@@ -107,19 +110,15 @@ export function EditPotDialog({
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
 
-  const validateForm = (formPotData: IAddPotFormData) => {
-    const result = validationService.validateAddPotSchema(
-      formPotData,
-      potNames,
-      pot?.total,
-    );
+  const validateForm = (formBudgetData: IAddBudgetFormData) => {
+    const result = validationService.validateAddBudgetSchema(formBudgetData);
     if (result.success) {
       setFormErrors(null);
       return;
     }
-    const errors: Partial<Record<keyof IAddPotFormData, string>> = {};
+    const errors: Partial<Record<keyof IAddBudgetFormData, string>> = {};
     result.error.issues.map((issue) => {
-      const path = issue.path[0] as keyof typeof formPotData;
+      const path = issue.path[0] as keyof typeof formBudgetData;
       if (!errors[path]) {
         errors[path] = issue.message;
       }
@@ -130,35 +129,39 @@ export function EditPotDialog({
   const isFormValid = () => {
     return (
       !formErrors &&
-      formPotData?.potName &&
-      formPotData?.target &&
-      formPotData?.theme
+      formBudgetData?.budgetCategory &&
+      formBudgetData?.maximum &&
+      formBudgetData?.theme
     );
   };
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      setFormData(setFormPotData());
+      setFormData(setFormBudgetData());
       setFormErrors(null);
     }
     setDialogOpen(isOpen);
   };
 
-  const handlePotNameInputChange = (value: string): void => {
-    setFormData(setFormPotData({ ...formPotData, name: value }));
+  const handleBudgetCategoryInputChange = (
+    value: TransactionUICategory,
+  ): void => {
+    setFormData(setFormBudgetData({ ...formBudgetData, category: value }));
   };
 
-  const handleTargetInputChange = (value: string): void => {
+  const handleMaximumInputChange = (value: string): void => {
     setFormData(
-      setFormPotData({
-        ...formPotData,
-        target: value.replaceAll(" ", "") as any,
+      setFormBudgetData({
+        ...formBudgetData,
+        maximum: value.replaceAll(" ", "") as any,
       }),
     );
   };
 
   const handleThemeInputChange = (value: string): void => {
-    setFormData((prev) => setFormPotData({ ...prev, theme: value as Theme }));
+    setFormData((prev) =>
+      setFormBudgetData({ ...prev, theme: value as Theme }),
+    );
   };
 
   return (
@@ -168,82 +171,85 @@ export function EditPotDialog({
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
           <DialogTitle className="font-bold text-3xl">
-            {!formPotData?.id ? "Add New Pot" : "Edit New Pot"}
+            {!formBudgetData?.id ? "Add New Budget" : "Edit New Budget"}
           </DialogTitle>
         </DialogHeader>
-        {/*
-        Two form cases:
-          1) <form onSubmit={handleSubmit}></form>
-              - send formData from fields to handleSubmit listener on client side
-              - then inside handleSubmit - we can send request to server
-              - new FormData(e.currentTarget) - get data from fields inside handleSubmit listener
-              - !such approach useful when you would like validate data before server request or send data not like FormData but in JSON format for ex 
-          2) <form action={formAction}></form>
-              - send formData directly on server without handling on client (lik post http request with FormData)
-              - In case on NextJs we can use 'Server Actions' to get such client request on server side
-          - name="potName" <inside input> — required for formData.get()
-        */}
         <form action={formAction}>
           <div className="flex flex-col gap-5">
             <div className="text-app-color text-xs">
-              {!formPotData?.id
-                ? "Create a pot to set savings targets. These can help keep you on track as you save for special purchases."
-                : "If your saving targets change, feel free to update your pots."}
+              {!formBudgetData?.id
+                ? "Choose a category to set a spending budget. These categories can help you monitor spending."
+                : "As your budgets change, feel free to update your spending limits."}
             </div>
             <div className="flex flex-col gap-2">
-              {formPotData?.id && (
-                <input type="hidden" name="id" value={formPotData.id} />
+              {formBudgetData?.id && (
+                <input type="hidden" name="id" value={formBudgetData.id} />
               )}
               <div className="flex flex-col gap-2">
                 <Label
-                  htmlFor="name"
+                  htmlFor="budgetCategory"
                   className="text-app-color text-xs font-bold"
                 >
-                  Pot Name
+                  Budget Category
                 </Label>
-                <Input
-                  className="border-gray-300"
-                  id="name"
-                  name="potName"
-                  value={formPotData?.potName}
-                  onChange={(e) => handlePotNameInputChange(e.target.value)}
-                  placeholder="e.g. For cookies"
-                  maxLength={constants.MaxPotNameCharacters}
-                />
-                <div className="flex flex-row justify-between items-center">
-                  <p className="text-xs text-red-500">
-                    {formErrors?.["potName"]}
-                  </p>
-                  <p className="text-app-color text-xs min-w-25">
-                    {constants.MaxPotNameCharacters -
-                      (formPotData?.potName?.length || 0)}{" "}
-                    Characters Left
-                  </p>
-                </div>
+
+                <Select
+                  name="budgetCategory"
+                  value={formBudgetData?.budgetCategory}
+                  onValueChange={(value) =>
+                    handleBudgetCategoryInputChange(
+                      value as TransactionUICategory,
+                    )
+                  }
+                >
+                  <SelectTrigger className="border-gray-300 w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {Object.entries(TransactionUICategory)
+                      .filter(
+                        (c) => c[1] !== TransactionUICategory.AllTransactions,
+                      )
+                      .map(([categoryName, categoryValue]) => (
+                        <SelectItem
+                          key={categoryName}
+                          value={categoryValue}
+                          disabled={busyBudgetCategories.includes(
+                            categoryValue,
+                          )}
+                        >
+                          <span>{categoryName}</span>
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-2">
                 <Label
-                  htmlFor="target"
+                  htmlFor="maximum"
                   className="text-app-color text-xs font-bold"
                 >
-                  Target ($)
+                  Maximum ($)
                 </Label>
                 <Input
                   className="border-gray-300"
-                  id="target"
-                  name="target"
+                  id="maximum"
+                  name="maximum"
                   value={financeService.createCacheNumberFormat(
-                    formPotData?.target,
+                    formBudgetData?.maximum,
                   )}
                   type="text"
                   inputMode="decimal"
                   maxLength={12}
                   onChange={(e) => {
-                    handleTargetInputChange(e.target.value);
+                    handleMaximumInputChange(e.target.value);
                   }}
                   placeholder="$ e.g. 2000"
                 />
-                <p className="text-xs text-red-500">{formErrors?.["target"]}</p>
+                <p className="text-xs text-red-500">
+                  {formErrors?.["maximum"]}
+                </p>
               </div>
               <div className="flex flex-col gap-2">
                 <Label
@@ -255,7 +261,7 @@ export function EditPotDialog({
 
                 <Select
                   name="theme"
-                  value={formPotData?.theme}
+                  value={formBudgetData?.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
                   <SelectTrigger className="border-gray-300 w-full">
@@ -264,7 +270,11 @@ export function EditPotDialog({
 
                   <SelectContent>
                     {Object.entries(Theme).map(([themeName, themeValue]) => (
-                      <SelectItem key={themeName} value={themeValue}>
+                      <SelectItem
+                        key={themeName}
+                        value={themeValue}
+                        disabled={busyBudgetThemes.includes(themeValue)}
+                      >
                         <div className="flex items-center gap-2">
                           <div
                             className="w-2 h-2 rounded-full"

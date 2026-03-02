@@ -13,9 +13,9 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import validationService from "@/services/validation.service";
 import { setPotTotalServerAction } from "@/server-actions/pot-actions";
-import potService from "@/services/pot.service";
 import { IAddMoneyPotDialogProps } from "@/components/types";
 import { toast } from "sonner";
+import financeService from "@/services/finance.service";
 
 export function ChangeMoneyDialog({
   children,
@@ -58,7 +58,7 @@ export function ChangeMoneyDialog({
     }
     setValidationError(null);
 
-    const amountProgress = potService.calculateProgressPercentage(
+    const amountProgress = financeService.calculateProgressPercentage(
       +newAmount,
       pot.target,
     );
@@ -86,7 +86,7 @@ export function ChangeMoneyDialog({
     }
   };
 
-  const totalValue = potService.createCacheNumberFormat(newAmount);
+  const totalValue = financeService.createCacheNumberFormat(newAmount);
 
   const isFormValid = () => {
     return !validationError && newAmount;
@@ -97,7 +97,7 @@ export function ChangeMoneyDialog({
     return isWithdraw ? total - currentAmount : total + currentAmount;
   };
 
-  const initialPotTotalProgress = potService.calculateProgressPercentage(
+  const initialPotTotalProgress = financeService.calculateProgressPercentage(
     pot.total,
     pot.target,
   );
@@ -131,7 +131,7 @@ export function ChangeMoneyDialog({
                 className="rounded-sm rounded-r-none h-full transition-[width] duration-500 ease-in-out w-0"
                 style={{
                   backgroundColor: pot.theme,
-                  width: potService.getStrPercentage(
+                  width: financeService.getStrPercentage(
                     isWithdraw
                       ? initialPotTotalProgress - amountProgress
                       : initialPotTotalProgress,
@@ -142,13 +142,13 @@ export function ChangeMoneyDialog({
                 className="rounded-sm rounded-l-none h-full transition-[width] duration-500 ease-in-out w-0 opacity-50"
                 style={{
                   backgroundColor: pot.theme,
-                  width: potService.getStrPercentage(amountProgress),
+                  width: financeService.getStrPercentage(amountProgress),
                 }}
               ></div>
             </div>
             <div className="flex flex-row justify-between items-center w-full">
               <div className="font-bold text-xs">
-                {potService.getStrPercentage(
+                {financeService.getStrPercentage(
                   validationError
                     ? NaN
                     : isWithdraw

@@ -1,3 +1,4 @@
+import { TransactionUICategory } from "@/services/constants.service";
 import { Transaction } from "@prisma/client";
 
 export interface ITransactionDataResponse {
@@ -7,4 +8,9 @@ export interface ITransactionDataResponse {
     page: number;
     transactionsCount: number;
   };
+}
+
+export interface ITransactionsForCategoryData {
+  category: TransactionUICategory;
+  transactions: Transaction[];
 }

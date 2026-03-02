@@ -1,15 +1,16 @@
 "use client";
-import potService from "@/services/pot.service";
+
 import { IPotItemProps } from "../types";
 import { PotMenu } from "./pots-menu";
 import { ChangeMoneyDialog } from "./dialogs/change-money-dialog";
 import { useState } from "react";
+import financeService from "@/services/finance.service";
 
 export default function PotItem({ pot, availableBalance }: IPotItemProps) {
   const [isAddMoneyDialogOpen, setAddMoneyDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
-  const targetPotProgress = potService.getStrPercentage(
-    potService.calculateProgressPercentage(pot.total, pot.target),
+  const targetPotProgress = financeService.getStrPercentage(
+    financeService.calculateProgressPercentage(pot.total, pot.target),
   );
 
   return (
