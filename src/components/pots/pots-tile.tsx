@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { IPotsTileProps } from "../types";
 import potService from "@/services/pot.service";
+import { cn } from "@/lib/utils";
 
 export default function PotsTile({ pots = [] }: IPotsTileProps) {
   const totalSum = potService
@@ -11,7 +12,7 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
   const tilePots = Array.from({ length: 4 }, (_, i) => filteredPots[i] || null);
 
   return (
-    <div className="flex flex-col justify-between gap-5 h-46 rounded-lg p-5 bg-white shadow-sm min-w-127.5">
+    <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm">
       <div className="flex flex-row justify-between items-center">
         <div className="font-bold text-[20px]">Pots</div>
         <Link
@@ -22,8 +23,13 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
           <img src="assets/images/icon-caret-right.svg" />
         </Link>
       </div>
-      <div className="flex flex-row justify-between h-full gap-5">
-        <div className="flex flex-row justify-start items-center w-full gap-3 rounded-lg pl-5 bg-app-background shadow-sm">
+      <div
+        className={cn(
+          "flex flex-row justify-between h-full gap-5",
+          "max-sm:flex-col",
+        )}
+      >
+        <div className="flex flex-row justify-start items-center w-full gap-3 rounded-lg pl-5 bg-app-background shadow-sm min-h-25">
           <div>
             <img src="assets/images/icon-pot.svg" />
           </div>

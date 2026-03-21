@@ -8,7 +8,7 @@ export default function BudgetsTile({
   transactionsByCategoryList = [],
 }: IBudgetsTileProps) {
   return (
-    <div className="flex flex-col justify-between gap-5 h-fit rounded-lg p-5 bg-white shadow-sm min-w-100">
+    <div className="flex flex-col justify-between gap-5 h-fit rounded-lg p-5 bg-white shadow-sm">
       <div className="flex flex-row justify-between items-center">
         <div className="font-bold text-[20px]">Budgets</div>
         <Link

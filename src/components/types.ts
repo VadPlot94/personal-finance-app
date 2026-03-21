@@ -27,6 +27,12 @@ export interface IDeleteBudgetDialogProps {
   setDialogOpen: (isDialogOpen: boolean) => void;
 }
 
+export interface IDeleteRecurringDialogProps {
+  recurringTransaction: Transaction;
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
+}
+
 export interface IEditBudgetDialogProps {
   children?: React.ReactNode;
   budget?: Budget;
@@ -100,6 +106,20 @@ export interface ITransactionsProps {
   category?: TransactionUICategory;
 }
 
+export interface ITransactionsTableLayoutProps extends ITransactionsProps {
+  isRecurringOnly?: boolean;
+  referenceDate?: Date | null;
+}
+
+export interface IBillsTableProps {
+  transactions: Transaction[];
+  referenceDate: Date | null | undefined;
+}
+
+export interface ITransactionsTableProps {
+  transactions: Transaction[];
+}
+
 export interface IBudgetsProps {
   transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
   budgets: Budget[] | undefined;
@@ -121,4 +141,18 @@ export interface IBudgetDonutChartProps {
   holeRatio?: number; // 0–1, ex: 0.55 = 55% hole in the middle of the chart
   className?: string;
   transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
+}
+
+export interface IRecurringProps {
+  recurringTransactions: Transaction[] | undefined;
+  paginationData: IPaginationData | undefined;
+}
+
+export interface IRecurringTileProps {
+  recurringTransactions: Transaction[] | undefined;
+}
+
+export interface IRecurringMenuProps {
+  recurringTransaction: Transaction;
+  children: React.ReactNode;
 }

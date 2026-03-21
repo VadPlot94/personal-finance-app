@@ -15,7 +15,7 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
 
   return (
     <>
-      <div className="flex flex-col justify-between gap-5 h-63 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+      <div className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm min-w-100 hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
         <div className="flex flex-col gap-8 justify-between">
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row justify-between items-center gap-3">

@@ -58,6 +58,30 @@ class ConstantsService {
   public MaxPotNameCharacters = 20;
   public TransactionRecordsPerPage = 5;
   public MathDegreePercent = 3.6; // → 360 / 100;
+  public RecurringDueSoonDays = 15;
+  public SideBarMenuItemsConfig = [
+    {
+      href: "/overview",
+      icon: "assets/images/icon-nav-overview.svg",
+      title: "Overview",
+    },
+    {
+      href: "/transactions",
+      icon: "assets/images/icon-nav-transactions.svg",
+      title: "Transactions",
+    },
+    {
+      href: "/budgets",
+      icon: "assets/images/icon-nav-budgets.svg",
+      title: "Budgets",
+    },
+    { href: "/pots", icon: "assets/images/icon-nav-pots.svg", title: "Pots" },
+    {
+      href: "/recurring",
+      icon: "assets/images/icon-nav-recurring-bills.svg",
+      title: "Recurring Bills",
+    },
+  ];
 }
 
 const constants = new ConstantsService();

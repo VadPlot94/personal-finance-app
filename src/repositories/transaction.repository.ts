@@ -14,7 +14,16 @@ export class TransactionRepository extends BaseRepository<
   public async getTransactions(
     params: IGetTransactionsParams,
   ): Promise<ITransactionDataResponse> {
-    const { page, transactionsCount, category, order, sortBy, search } = params;
+    const {
+      page,
+      transactionsCount,
+      category,
+      order,
+      sortBy,
+      search,
+      isRecurring,
+    } = params;
+
     const skip = (page - 1) * transactionsCount;
     const orderBy = { [sortBy as string]: order };
     const searchVal = search?.trim();
@@ -23,6 +32,7 @@ export class TransactionRepository extends BaseRepository<
       ...(searchVal && {
         name: { contains: searchVal, mode: Prisma.QueryMode.insensitive },
       }),
+      ...(isRecurring && { recurring: true }),
     };
 
     const transactions = await prisma.transaction.findMany({

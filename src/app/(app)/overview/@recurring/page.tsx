@@ -1,5 +1,11 @@
-import Recurring from "@/components/recurring/recurring";
+import RecurringTile from "@/components/recurring/recurring-tile";
+import { getTransactionsServerAction } from "@/server-actions/transaction-actions";
 
-export default function RecurringTile() {
-  return <Recurring />;
+export default async function RecurringTilePage() {
+  // TODO: Need to get recurring not by transactionsCount by time - for ex last 2 months
+  const { data: { transactions } = {} } = await getTransactionsServerAction({
+    isRecurring: true,
+    transactionsCount: 500,
+  });
+  return <RecurringTile recurringTransactions={transactions} />;
 }

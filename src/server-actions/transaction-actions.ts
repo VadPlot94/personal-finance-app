@@ -24,8 +24,10 @@ export async function getTransactionsServerAction(
 ): Promise<ServerActionResult<ITransactionDataResponse>> {
   return await validationObjectWrapper<ITransactionDataResponse>(
     "get",
-    async () =>
-      transactionRepository.getTransactions(getTransactionsModel(data)),
+    async () => {
+      const transactionModel = getTransactionsModel(data);
+      return await transactionRepository.getTransactions(transactionModel);
+    },
   );
 }
 
@@ -92,6 +94,7 @@ function getTransactionsModel(
   const [sortByField, orderField] = Object.entries(
     sortByPrismaMap[data?.sortBy || SortBy.Latest],
   )[0];
+
   return {
     page: data?.page || 1,
     transactionsCount:
@@ -103,7 +106,33 @@ function getTransactionsModel(
       ? data?.category
       : null) as TransactionUICategory,
     search: data?.search as string,
+    isRecurring: data?.isRecurring || false,
   };
+}
+
+export async function deleteRecurringServerAction(
+  id: string,
+): Promise<ServerActionResult> {
+  try {
+    if (!id) {
+      return { success: false, error: "ID is required" };
+    }
+
+    // TODO: not sure that delete bill means delete transaction
+    // await transactionRepository.delete({
+    //   where: { id },
+    // });
+
+    syncChanges();
+
+    return { success: true, message: "Recurring bill deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting recurring bill:", error);
+    return {
+      success: false,
+      error: "Failed to delete recurring bill. Please try again.",
+    };
+  }
 }
 
 function syncChanges() {

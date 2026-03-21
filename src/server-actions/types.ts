@@ -14,6 +14,7 @@ export interface IGetTransactionsParams {
   order?: string;
   category?: TransactionUICategory;
   search?: string;
+  isRecurring?: boolean;
 }
 
 export interface IGetTransactionForCategoryParams {

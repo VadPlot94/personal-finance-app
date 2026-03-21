@@ -6,6 +6,7 @@ import { EditPotDialog } from "./dialogs/edit-pot-dialog";
 import PotItem from "./pots-item";
 import { Pot } from "@prisma/client";
 import PageContentHeader from "../page-content-header/page-content-header";
+import { cn } from "@/lib/utils";
 
 export const PotsContext = createContext<Pot[]>([]);
 
@@ -20,7 +21,12 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
         handleButtonClick={() => setEditPotDialogOpen(true)}
       />
       {pots?.length ? (
-        <div className="grid grid-cols-2 justify-between gap-5">
+        <div
+          className={cn(
+            "grid grid-cols-2 justify-between gap-5",
+            "max-lg:grid-cols-1",
+          )}
+        >
           {pots
             ?.filter((pot) => !!pot)
             ?.map((pot) => (

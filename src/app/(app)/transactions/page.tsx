@@ -1,6 +1,6 @@
 import Transactions from "@/components/transactions/transactions";
 import { getTransactionsServerAction } from "@/server-actions/transaction-actions";
-import { TransactionUICategory } from "@/services/constants.service";
+import constants, { TransactionUICategory } from "@/services/constants.service";
 import { notFound } from "next/navigation";
 
 interface ITransactionsPageProps {
@@ -20,7 +20,9 @@ export default async function TransactionsPage({
     notFound();
   }
   const { data: { paginationData, transactions } = {} } =
-    await getTransactionsServerAction();
+    await getTransactionsServerAction({
+      transactionsCount: constants.TransactionRecordsPerPage,
+    });
   return (
     <Transactions
       transactions={transactions}

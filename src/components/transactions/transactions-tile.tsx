@@ -14,7 +14,7 @@ export default function TransactionsTile({
     category === TransactionUICategory.AllTransactions ? null : category;
   return (
     <div
-      className={`flex flex-col justify-between gap-5 h-full rounded-lg p-5 shadow-sm ${isBudgetTile ? "bg-app-background" : "bg-white min-w-127.5"}`}
+      className={`flex flex-col justify-between gap-5 h-full rounded-lg p-5 shadow-sm ${isBudgetTile ? "bg-app-background" : "bg-white"}`}
     >
       <div className="flex flex-row justify-between items-center">
         <div className="font-bold text-[20px]">

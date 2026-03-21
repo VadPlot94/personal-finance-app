@@ -10,6 +10,7 @@ import PageContentHeader from "../page-content-header/page-content-header";
 import { createContext, useState } from "react";
 import { Budget } from "@prisma/client";
 import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
+import { cn } from "@/lib/utils";
 
 export const BudgetsContext = createContext<Budget[]>([]);
 
@@ -26,8 +27,18 @@ export default function Budgets({
         handleButtonClick={() => setAddBudgetDialogOpen(true)}
       />
       {budgets?.length ? (
-        <div className="grid min-[1000px]:grid-cols-2 justify-between gap-5">
-          <div className="min-[1000px]:sticky min-[1000px]:top-4 self-start">
+        <div
+          className={cn(
+            "grid grid-cols-2 justify-between gap-5",
+            "max-lg:grid-cols-1",
+          )}
+        >
+          <div
+            className={cn(
+              "sticky top-4 self-start",
+              "max-lg:static max-lg:top-0",
+            )}
+          >
             <div className="rounded-lg p-5 bg-white min-w-100 h-fit shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
               <BudgetDonutChart
                 budgets={budgets}
@@ -54,7 +65,7 @@ export default function Budgets({
               return (
                 <div
                   key={budget.id}
-                  className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white min-w-100 shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
+                  className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm min-w-100 hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
                 >
                   <div className="flex flex-col gap-3 justify-between">
                     <div className="flex flex-row justify-between items-center">
