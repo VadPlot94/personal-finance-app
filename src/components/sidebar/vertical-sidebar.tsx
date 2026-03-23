@@ -10,33 +10,41 @@ export default function VerticalSideBar() {
   const [isMenuOpened, toggleMenu] = useState(false);
 
   const menuItemWidth = isMenuOpened ? "w-40" : "w-fit";
+  const transition = "transition-all duration-300 ease-in-out";
+  const menuTransition = "transition-all duration-300 ease-in-out delay-100"; // задержка 400 мс после текста
 
   return (
     <div
-      className={`
-        sticky top-8 self-start bg-black rounded-br-lg
+      className={cn(
+        `sticky top-8 self-start bg-black rounded-br-lg
         rounded-tr-lg min-w-20 shadow-sm h-[calc(100vh-2rem)] max-h-screen
-        [@media(max-height:500px)]:static [@media(max-height:500px)]:min-h-full
-        ${isMenuOpened ? "min-w-70" : "min-w-20"}
-      `}
+        [@media(max-height:500px)]:static [@media(max-height:500px)]:min-h-full`,
+        menuTransition,
+        isMenuOpened ? "min-w-70" : "min-w-20",
+      )}
     >
       <div className="flex flex-col gap-6 items-center justify-evenly text-app-color h-full mr-2 [@media(max-height:500px)]:max-h-105">
         <div className="w-full">
           <div className="flex flex-col items-center h-25 justify-center w-full">
             <div className={menuItemWidth}>
-              {!isMenuOpened ? (
-                <img
-                  src="assets/images/logo-small.svg"
-                  alt="Finance"
-                  title="Finance"
-                />
-              ) : (
-                <img
-                  src="assets/images/logo-large.svg"
-                  alt="Finance"
-                  title="Finance"
-                />
-              )}
+              <img
+                className={cn(
+                  "transition-opacity duration-300",
+                  isMenuOpened ? "opacity-100" : "opacity-0 h-0",
+                )}
+                src="assets/images/logo-large.svg"
+                alt="Finance"
+                title="Finance"
+              />
+              <img
+                className={cn(
+                  "transition-opacity duration-300",
+                  isMenuOpened ? "opacity-0 h-0" : "opacity-100",
+                )}
+                src="assets/images/logo-small.svg"
+                alt="Finance"
+                title="Finance"
+              />
             </div>
           </div>
           <div className="flex flex-col">
@@ -56,8 +64,10 @@ export default function VerticalSideBar() {
                 >
                   <div
                     className={cn(
-                      "flex flex-row items-start justify-start gap-3",
+                      isMenuOpened &&
+                        "flex flex-row items-start justify-start gap-3",
                       menuItemWidth,
+                      transition,
                     )}
                   >
                     <img
@@ -66,7 +76,14 @@ export default function VerticalSideBar() {
                       title={item.title}
                       className="h-5 w-5"
                     />
-                    {isMenuOpened && <span>{item.title}</span>}
+                    <span
+                      className={cn(
+                        "transition-opacity duration-300",
+                        isMenuOpened ? "opacity-100" : "opacity-0 h-0",
+                      )}
+                    >
+                      {isMenuOpened ? item.title : ""}
+                    </span>
                   </div>
                 </a>
               ))}
@@ -81,6 +98,7 @@ export default function VerticalSideBar() {
             className={cn(
               "flex flex-col items-center justify-center h-10 transition cursor-pointer",
               menuItemWidth,
+              transition,
             )}
           >
             {!isMenuOpened ? (
