@@ -10,8 +10,9 @@ export default function VerticalSideBar() {
   const [isMenuOpened, toggleMenu] = useState(false);
 
   const menuItemWidth = isMenuOpened ? "w-40" : "w-fit";
-  const transition = "transition-all duration-300 ease-in-out";
-  const menuTransition = "transition-all duration-300 ease-in-out delay-100"; // задержка 400 мс после текста
+  const transition = "transition-all duration-500 ease-in-out";
+  const menuTransition = "transition-all duration-400 ease-in-out delay-500";
+  const opacityTransition = "transition-opacity duration-300";
 
   return (
     <div
@@ -29,7 +30,7 @@ export default function VerticalSideBar() {
             <div className={menuItemWidth}>
               <img
                 className={cn(
-                  "transition-opacity duration-300",
+                  opacityTransition,
                   isMenuOpened ? "opacity-100" : "opacity-0 h-0",
                 )}
                 src="assets/images/logo-large.svg"
@@ -38,7 +39,7 @@ export default function VerticalSideBar() {
               />
               <img
                 className={cn(
-                  "transition-opacity duration-300",
+                  opacityTransition,
                   isMenuOpened ? "opacity-0 h-0" : "opacity-100",
                 )}
                 src="assets/images/logo-small.svg"
@@ -54,7 +55,7 @@ export default function VerticalSideBar() {
                   key={item.href}
                   href={item.href}
                   className={`flex flex-col justify-center items-center
-                  p-3 rounded-tr-md rounded-br-md transition cursor-pointer w-full
+                  p-3 rounded-tr-md rounded-br-md cursor-pointer w-full
                   ${
                     pathname === item.href
                       ? "bg-white text-black"
@@ -64,10 +65,9 @@ export default function VerticalSideBar() {
                 >
                   <div
                     className={cn(
-                      isMenuOpened &&
-                        "flex flex-row items-start justify-start gap-3",
+                      "flex flex-row",
+                      isMenuOpened ? "items-start justify-start gap-3" : "h-6",
                       menuItemWidth,
-                      transition,
                     )}
                   >
                     <img
@@ -78,11 +78,14 @@ export default function VerticalSideBar() {
                     />
                     <span
                       className={cn(
-                        "transition-opacity duration-300",
-                        isMenuOpened ? "opacity-100" : "opacity-0 h-0",
+                        transition,
+                        "origin-left whitespace-nowrap",
+                        isMenuOpened
+                          ? "opacity-100 translate-x-0 w-30"
+                          : "opacity-0 -translate-x-20 max-w-0",
                       )}
                     >
-                      {isMenuOpened ? item.title : ""}
+                      {item.title}
                     </span>
                   </div>
                 </a>
@@ -96,7 +99,7 @@ export default function VerticalSideBar() {
         >
           <div
             className={cn(
-              "flex flex-col items-center justify-center h-10 transition cursor-pointer",
+              "flex flex-col items-center justify-center h-10 cursor-pointer",
               menuItemWidth,
               transition,
             )}
