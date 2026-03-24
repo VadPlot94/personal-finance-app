@@ -101,23 +101,34 @@ export default function VerticalSideBar() {
             className={cn(
               "flex flex-col items-center justify-center h-10 cursor-pointer",
               menuItemWidth,
-              transition,
             )}
           >
-            {!isMenuOpened ? (
+            <div
+              className={cn(
+                "flex flex-row items-center justify-start w-full",
+                isMenuOpened ? "gap-3" : "gap-0",
+              )}
+            >
               <img
                 className="h-5 w-5"
-                src="assets/images/icon-maximize-menu.svg"
+                src={
+                  isMenuOpened
+                    ? "assets/images/icon-minimize-menu.svg"
+                    : "assets/images/icon-maximize-menu.svg"
+                }
               />
-            ) : (
-              <div className="flex flex-row gap-3 items-center justify-start w-full">
-                <img
-                  className="h-5 w-5"
-                  src="assets/images/icon-minimize-menu.svg"
-                />
-                <div>Minimize Menu</div>
+              <div
+                className={cn(
+                  transition,
+                  "origin-left whitespace-nowrap",
+                  isMenuOpened
+                    ? "opacity-100 translate-x-0 w-30"
+                    : "opacity-0 -translate-x-20 max-w-0",
+                )}
+              >
+                Minimize Menu
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
