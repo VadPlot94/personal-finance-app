@@ -1,5 +1,9 @@
 import { ITransactionsForCategoryData } from "@/repositories/types";
-import { Theme, TransactionUICategory } from "@/services/constants.service";
+import {
+  Theme,
+  TransactionType,
+  TransactionUICategory,
+} from "@/services/constants.service";
 import { Budget, Pot, Transaction } from "@prisma/client";
 
 export interface IPageContentHeaderProps {
@@ -109,6 +113,24 @@ export interface ITransactionsProps {
 export interface ITransactionsTableLayoutProps extends ITransactionsProps {
   isRecurringOnly?: boolean;
   referenceDate?: Date | null;
+}
+
+export interface ICreateTransactionDialogProps {
+  isDialogOpen: boolean;
+  setDialogOpen: (isDialogOpen: boolean) => void;
+}
+
+export type TransactionCategory = Exclude<
+  TransactionUICategory,
+  TransactionUICategory.AllTransactions
+>;
+
+export interface ICreateTransactionFormData {
+  transactionType: TransactionType;
+  recipientOrSender: string;
+  category: TransactionCategory;
+  amount: number;
+  date: string;
 }
 
 export interface IBillsTableProps {

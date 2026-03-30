@@ -10,7 +10,7 @@ export class CustomError extends Error {
 }
 
 export async function validationObjectWrapper<T = unknown>(
-  action: "get" | "update" | "delete",
+  action: "get" | "update" | "delete" | "create",
   callback: () => Promise<T>,
 ) {
   try {

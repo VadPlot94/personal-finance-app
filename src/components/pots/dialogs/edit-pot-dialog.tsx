@@ -117,13 +117,8 @@ export function EditPotDialog({
       setFormErrors(null);
       return;
     }
-    const errors: Partial<Record<keyof IAddPotFormData, string>> = {};
-    result.error.issues.map((issue) => {
-      const path = issue.path[0] as keyof typeof formPotData;
-      if (!errors[path]) {
-        errors[path] = issue.message;
-      }
-    });
+    const errors =
+      validationService.createErrorsWithPath<Partial<IAddPotFormData>>(result);
     setFormErrors(errors);
   };
 

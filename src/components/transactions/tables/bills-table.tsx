@@ -54,7 +54,7 @@ export default function BillsTable({
             scope="col"
             className={cn(
               "py-3 text-left text-xs text-app-color tracking-wider",
-              "@max-[580px]:hidden",
+              `${constants.whenLessQueryBreakpoint}:hidden`,
             )}
           >
             Due Date
@@ -89,7 +89,7 @@ export default function BillsTable({
                     <span
                       className={cn(
                         "whitespace-nowrap text-app-color text-xs",
-                        "@[580px]:hidden",
+                        `${constants.whenMoreQueryBreakpoint}:hidden`,
                       )}
                     >
                       {getTimeCell(status, tx)}
@@ -98,7 +98,9 @@ export default function BillsTable({
                 </div>
               </td>
 
-              <td className="@max-[580px]:hidden">{getTimeCell(status, tx)}</td>
+              <td className={`${constants.whenLessQueryBreakpoint}:hidden`}>
+                {getTimeCell(status, tx)}
+              </td>
 
               <td className="py-4 whitespace-nowrap font-bold text-right">
                 <span

@@ -9,6 +9,7 @@ import {
 import constants, {
   SortBy,
   sortByPrismaMap,
+  TransactionType,
   TransactionUICategory,
 } from "@/services/constants.service";
 import { revalidatePath } from "next/cache";
@@ -18,6 +19,19 @@ import {
 } from "@/repositories/types";
 import { Transaction } from "@prisma/client";
 import { validationObjectWrapper } from "./common";
+
+export async function createTransactionServerAction(
+  prevState: { success: boolean } | null,
+  formData: FormData,
+): Promise<ServerActionResult<Transaction>> {
+  const newTransactionModel = getNewTransactionModel(formData);
+  return await validationObjectWrapper<Transaction>("create", async () => {
+    const data =
+      await transactionRepository.createTransaction(newTransactionModel);
+    syncChanges();
+    return data;
+  });
+}
 
 export async function getTransactionsServerAction(
   data?: Partial<IGetTransactionsParams>,
@@ -86,6 +100,23 @@ export async function getTransactionsForCategoryServerAction(
       error: "Failed to get transactions by category. Please try again.",
     };
   }
+}
+
+function getNewTransactionModel(
+  data: FormData,
+): Required<Omit<Transaction, "id" | "userId">> {
+  const mark = data.get("transactionType") === TransactionType.Income ? 1 : -1;
+  const date = data.get("date")?.toString();
+  return {
+    amount: mark * +(data.get("amount")?.toString()?.replaceAll(" ", "") || 0),
+    avatar:
+      (data.get("avatar") as string) ??
+      "./assets/images/avatars/dummy-avatar.jpg",
+    category: data.get("category") as string,
+    date: date ? new Date(date) : new Date(),
+    name: data.get("recipientOrSender") as string,
+    recurring: false,
+  };
 }
 
 function getTransactionsModel(

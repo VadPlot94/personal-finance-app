@@ -5,6 +5,7 @@ import { PotMenu } from "./pots-menu";
 import { ChangeMoneyDialog } from "./dialogs/change-money-dialog";
 import { useState } from "react";
 import financeService from "@/services/finance.service";
+import constants from "@/services/constants.service";
 
 export default function PotItem({ pot, availableBalance }: IPotItemProps) {
   const [isAddMoneyDialogOpen, setAddMoneyDialogOpen] = useState(false);
@@ -43,7 +44,7 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
               <div className="font-bold text-2xl">
                 $
                 {pot.total.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
+                  minimumFractionDigits: constants.NumberFractionDigits,
                 })}
               </div>
             </div>

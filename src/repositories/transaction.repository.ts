@@ -125,16 +125,13 @@ export class TransactionRepository extends BaseRepository<
     });
   }
 
-  async createTransaction(data: {
-    name: string;
-    amount: number;
-    category: string;
-    date?: Date;
-    recurring?: boolean;
-  }): Promise<Transaction> {
+  public async createTransaction(
+    data: Omit<Transaction, "id" | "userId">,
+  ): Promise<Transaction> {
     return this.create({
       data: {
         name: data.name,
+        avatar: data.avatar,
         amount: data.amount,
         category: data.category,
         date: data.date ?? new Date(),

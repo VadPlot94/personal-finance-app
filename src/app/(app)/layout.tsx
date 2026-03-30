@@ -18,10 +18,17 @@ export default async function AppLayout({
       <div className="w-fit max-md:hidden bg-black">
         <VerticalSideBar />
       </div>
-      <div className="@container flex flex-col gap-4 mx-6 my-4 pb-12">
+      <div
+        className={cn(
+          "@container flex flex-col gap-4 mx-6 my-4",
+          "md:pb-0",
+          "max-md:pb-12",
+          "sm:pb-22",
+        )}
+      >
         {children}
       </div>
-      <div className="md:hidden flex flex-col justify-end fixed bottom-0 left-0 right-0 z-50 h-12 bg-black">
+      <div className="md:hidden flex flex-col justify-end fixed bottom-0 left-0 right-0 z-50 bg-black">
         <HorizontalSideBar />
       </div>
     </div>

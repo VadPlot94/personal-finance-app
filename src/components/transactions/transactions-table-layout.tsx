@@ -1,6 +1,9 @@
 "use client";
 
-import { SortBy, TransactionUICategory } from "@/services/constants.service";
+import constants, {
+  SortBy,
+  TransactionUICategory,
+} from "@/services/constants.service";
 import { useState } from "react";
 import { IPaginationData, ITransactionsTableLayoutProps } from "../types";
 import { Transaction } from "@prisma/client";
@@ -135,7 +138,10 @@ export default function TransactionsTableLayout({
       <div className="flex flex-col justify-start gap-6 h-full">
         <div className="flex flex-row gap-3 justify-between items-center">
           <div
-            className={cn("relative w-full max-w-sm", "@max-[580px]:w-auto")}
+            className={cn(
+              "relative w-full max-w-sm",
+              `${constants.whenLessQueryBreakpoint}:w-auto`,
+            )}
           >
             <Input
               autoComplete="off"
@@ -167,8 +173,10 @@ export default function TransactionsTableLayout({
           <div
             className={cn(
               "flex flex-row justify-start items-center gap-5",
-              "@max-[580px]:justify-evenly @max-[580px]:grow-2",
-              isRecurringOnly ? "@max-[580px]:justify-start" : "",
+              `${constants.whenLessQueryBreakpoint}:justify-evenly ${constants.whenLessQueryBreakpoint}:grow-2`,
+              isRecurringOnly
+                ? `${constants.whenLessQueryBreakpoint}:justify-start`
+                : "",
             )}
           >
             <div className="flex flex-row items-center gap-1">
@@ -180,7 +188,7 @@ export default function TransactionsTableLayout({
                 <SelectTrigger
                   className={cn(
                     "border-gray-300 w-full",
-                    "@max-[580px]:hidden",
+                    `${constants.whenLessQueryBreakpoint}:hidden`,
                   )}
                 >
                   <SelectValue placeholder="Sort By" />
@@ -188,7 +196,7 @@ export default function TransactionsTableLayout({
                 <SelectPrimitive.Trigger
                   className={cn(
                     "border-none w-full size-6 outline-none cursor-pointer",
-                    "@[580px]:hidden",
+                    `${constants.whenMoreQueryBreakpoint}:hidden`,
                   )}
                 >
                   <div className="flex flex-row gap-2">
@@ -226,7 +234,7 @@ export default function TransactionsTableLayout({
                   <SelectTrigger
                     className={cn(
                       "border-gray-300 w-full min-w-40",
-                      "@max-[580px]:hidden",
+                      `${constants.whenLessQueryBreakpoint}:hidden`,
                     )}
                   >
                     <SelectValue placeholder="Transaction category" />
@@ -234,7 +242,7 @@ export default function TransactionsTableLayout({
                   <SelectPrimitive.Trigger
                     className={cn(
                       "border-none w-full size-6 outline-none cursor-pointer",
-                      "@[580px]:hidden",
+                      `${constants.whenMoreQueryBreakpoint}:hidden`,
                     )}
                   >
                     <img

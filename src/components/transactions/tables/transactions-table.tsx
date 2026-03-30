@@ -2,6 +2,7 @@
 
 import { ITransactionsTableProps } from "@/components/types";
 import { cn } from "@/lib/utils";
+import constants from "@/services/constants.service";
 import transactionService from "@/services/transaction.service";
 
 export default function TransactionsTable({
@@ -21,7 +22,7 @@ export default function TransactionsTable({
             scope="col"
             className={cn(
               "py-3 px-6 text-left text-xs text-app-color tracking-wider",
-              "@max-[580px]:hidden",
+              `${constants.whenLessQueryBreakpoint}:hidden`,
             )}
           >
             Category
@@ -30,7 +31,7 @@ export default function TransactionsTable({
             scope="col"
             className={cn(
               "py-3 text-left text-xs text-app-color tracking-wider",
-              "@max-[580px]:hidden",
+              `${constants.whenLessQueryBreakpoint}:hidden`,
             )}
           >
             Transaction Date
@@ -60,7 +61,7 @@ export default function TransactionsTable({
                   <span
                     className={cn(
                       "whitespace-nowrap text-app-color text-xs",
-                      "@[580px]:hidden",
+                      `${constants.whenMoreQueryBreakpoint}:hidden`,
                     )}
                   >
                     {tx.category}
@@ -72,7 +73,7 @@ export default function TransactionsTable({
             <td
               className={cn(
                 "py-4 px-6 text-app-color w-30 whitespace-nowrap",
-                "@max-[580px]:hidden",
+                `${constants.whenLessQueryBreakpoint}:hidden`,
               )}
             >
               {tx.category}
@@ -81,7 +82,7 @@ export default function TransactionsTable({
             <td
               className={cn(
                 "py-4 text-app-color w-30 whitespace-nowrap",
-                "@max-[580px]:hidden",
+                `${constants.whenLessQueryBreakpoint}:hidden`,
               )}
             >
               {transactionService.getTransactionDate(tx.date)}
@@ -110,7 +111,7 @@ export default function TransactionsTable({
               <span
                 className={cn(
                   "whitespace-nowrap text-app-color text-xs",
-                  "@[580px]:hidden",
+                  `${constants.whenMoreQueryBreakpoint}:hidden`,
                 )}
               >
                 {transactionService.getTransactionDate(tx.date)}

@@ -1,6 +1,7 @@
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { balanceRepository } from "@/repositories/balance.repository";
+import constants from "@/services/constants.service";
 import { ReactNode } from "react";
 
 export default async function OverviewLayout({
@@ -13,9 +14,6 @@ export default async function OverviewLayout({
 }) {
   const balance = await balanceRepository.getCurrent();
 
-  // Content queries - connected with @container
-  const containerQueryBreakpoint = "@max-[580px]";
-
   return (
     <>
       <div className="h-15 flex items-center justify-start font-bold text-3xl">
@@ -25,7 +23,7 @@ export default async function OverviewLayout({
         className={cn(
           "grid grid-cols-3 gap-4",
           "max-md:grid-cols-1",
-          `${containerQueryBreakpoint}:grid-cols-1`,
+          `${constants.whenLessQueryBreakpoint}:grid-cols-1`,
         )}
       >
         <div className="flex flex-col justify-center gap-3 h-26 rounded-lg pl-5 bg-black shadow-sm">
@@ -33,7 +31,7 @@ export default async function OverviewLayout({
           <div className="text-white font-bold text-3xl">
             $
             {balance?.current?.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
+              minimumFractionDigits: constants.NumberFractionDigits,
             })}
           </div>
         </div>
@@ -42,7 +40,7 @@ export default async function OverviewLayout({
           <div className="font-bold text-3xl">
             $
             {balance?.income?.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
+              minimumFractionDigits: constants.NumberFractionDigits,
             })}
           </div>
         </div>
@@ -51,7 +49,7 @@ export default async function OverviewLayout({
           <div className="font-bold text-3xl">
             $
             {balance?.expenses?.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
+              minimumFractionDigits: constants.NumberFractionDigits,
             })}
           </div>
         </div>

@@ -116,13 +116,10 @@ export function EditBudgetDialog({
       setFormErrors(null);
       return;
     }
-    const errors: Partial<Record<keyof IAddBudgetFormData, string>> = {};
-    result.error.issues.map((issue) => {
-      const path = issue.path[0] as keyof typeof formBudgetData;
-      if (!errors[path]) {
-        errors[path] = issue.message;
-      }
-    });
+    const errors =
+      validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
+        result,
+      );
     setFormErrors(errors);
   };
 

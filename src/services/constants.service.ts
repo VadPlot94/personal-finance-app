@@ -54,11 +54,21 @@ export const sortByPrismaMap: Record<
   [SortBy.ZtoA]: { name: "desc" },
 };
 
+export enum TransactionType {
+  Income = "Income",
+  Expense = "Expense",
+}
+
 class ConstantsService {
   public MaxPotNameCharacters = 20;
   public TransactionRecordsPerPage = 5;
   public MathDegreePercent = 3.6; // → 360 / 100;
   public RecurringDueSoonDays = 15;
+  // Content queries - connected with @container
+  private containerQueryBreakpoint = "580px";
+  public whenLessQueryBreakpoint = `@max-[${this.containerQueryBreakpoint}]`;
+  public whenMoreQueryBreakpoint = `@[${this.containerQueryBreakpoint}]`;
+  public NumberFractionDigits = 2;
   public SideBarMenuItemsConfig = [
     {
       href: "/overview",
