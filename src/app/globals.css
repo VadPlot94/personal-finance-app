@@ -57,6 +57,12 @@
   @theme - create new global variables
 */
 @theme inline {
+  /*
+    @container breakpoints define through --container-{some_name}: 820px
+    usage: className="@max-{some_name}:hidden" or className="@{some_name}:hidden" 
+  */
+  --container-containerQueryBreakpoint820: 820px;
+
   --color-app-background: oklch(96.91% 0.0068 67.74);
   --color-foreground: var(--foreground);
   --color-app-color: var(--color-gray-500);

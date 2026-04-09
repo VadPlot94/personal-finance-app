@@ -10,6 +10,7 @@ import PageContentHeader from "../page-content-header/page-content-header";
 import { createContext, useState } from "react";
 import { Budget } from "@prisma/client";
 import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
+import EmptyContainer from "../empty-container/empty-container";
 import { cn } from "@/lib/utils";
 
 export const BudgetsContext = createContext<Budget[]>([]);
@@ -26,20 +27,29 @@ export default function Budgets({
         buttonName="Add Budget"
         handleButtonClick={() => setAddBudgetDialogOpen(true)}
       />
-      {budgets?.length ? (
+      <EmptyContainer
+        hasItems={!!budgets?.length}
+        emptyTitle="No budgets are available."
+        emptyBody={
+          <>
+            Click <span className="font-semibold">'Add Budget'</span> button at
+            the corner of the page to create your first budget.
+          </>
+        }
+      >
         <div
           className={cn(
             "grid grid-cols-2 justify-between gap-5",
-            "max-lg:grid-cols-1",
+            "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
           )}
         >
           <div
             className={cn(
               "sticky top-4 self-start",
-              "max-lg:static max-lg:top-0",
+              "@max-containerQueryBreakpoint820/mainLayout:static @max-containerQueryBreakpoint820/mainLayout:top-0",
             )}
           >
-            <div className="rounded-lg p-5 bg-white min-w-100 h-fit shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+            <div className="rounded-lg p-5 bg-white min-w-60 h-fit shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
               <BudgetDonutChart
                 budgets={budgets}
                 size={300}
@@ -49,7 +59,7 @@ export default function Budgets({
             </div>
           </div>
           <div className="flex flex-col justify-between gap-5">
-            {budgets.map((budget) => {
+            {budgets?.map((budget) => {
               const currentCategoryTransactionsData =
                 transactionsByCategoryList?.find(
                   ({ category }) => category === budget?.category,
@@ -65,7 +75,7 @@ export default function Budgets({
               return (
                 <div
                   key={budget.id}
-                  className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm min-w-100 hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
+                  className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm min-w-60 hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
                 >
                   <div className="flex flex-col gap-3 justify-between">
                     <div className="flex flex-row justify-between items-center">
@@ -175,16 +185,7 @@ export default function Budgets({
             })}
           </div>
         </div>
-      ) : (
-        <div className="flex flex-col w-full h-full justify-center items-center text-app-color">
-          <p className="font-semibold">No budgets are available.</p>
-          <p>
-            Click{" "}
-            <span className="font-semibold">&nbsp;'Add Budget'&nbsp;</span>{" "}
-            button at the corner of the page to create your first budget.
-          </p>
-        </div>
-      )}
+      </EmptyContainer>
       {isAddBudgetDialogOpen && (
         <EditBudgetDialog
           isDialogOpen={isAddBudgetDialogOpen}

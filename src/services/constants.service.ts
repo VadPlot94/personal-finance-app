@@ -60,16 +60,22 @@ export enum TransactionType {
 }
 
 class ConstantsService {
-  public MaxPotNameCharacters = 20;
-  public TransactionRecordsPerPage = 5;
-  public MathDegreePercent = 3.6; // → 360 / 100;
-  public RecurringDueSoonDays = 15;
+  public readonly MaxPotNameCharacters = 20;
+  public readonly TransactionRecordsPerPage = 5;
+  public readonly MathDegreePercent = 3.6; // → 360 / 100;
+  public readonly RecurringDueSoonDays = 15;
+  // ! We can not use interpolation in Tailwind CSS
+  // ! It work in build time mode and interpolation happens in run-time
+  // ! https://v2.tailwindcss.com/docs/just-in-time-mode
   // Content queries - connected with @container
-  private containerQueryBreakpoint = "580px";
-  public whenLessQueryBreakpoint = `@max-[${this.containerQueryBreakpoint}]`;
-  public whenMoreQueryBreakpoint = `@[${this.containerQueryBreakpoint}]`;
-  public NumberFractionDigits = 2;
-  public SideBarMenuItemsConfig = [
+  // Move this to @theme {} - to --container.. variable
+  public readonly ContainerQueryBreakpoint = 820;
+  // public readonly WhenLessQueryBreakpoint =
+  //   `@max-[${this.ContainerQueryBreakpoint}px]`;
+  // public readonly WhenMoreQueryBreakpoint =
+  //   `@[${this.ContainerQueryBreakpoint}px]`;
+  public readonly NumberFractionDigits = 2;
+  public readonly SideBarMenuItemsConfig = [
     {
       href: "/overview",
       icon: "assets/images/icon-nav-overview.svg",

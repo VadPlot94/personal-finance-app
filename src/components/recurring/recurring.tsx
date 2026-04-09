@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useMemo } from "react";
 import PageContentHeader from "../page-content-header/page-content-header";
 import TransactionsTableLayout from "../transactions/transactions-table-layout";
@@ -6,6 +7,8 @@ import { IRecurringProps } from "../types";
 import recurringService from "@/services/recurring.service";
 import constants from "@/services/constants.service";
 import { cn } from "@/lib/utils";
+import BillsTable from "../transactions/tables/bills-table";
+import { RecurringSummaryItem } from "./recurring-summary-item";
 
 export default function Recurring({
   recurringTransactions = [],
@@ -122,7 +125,7 @@ export default function Recurring({
         <div
           className={cn(
             "grid grid-cols-[minmax(288px,1fr)_2fr] justify-between gap-6",
-            "max-lg:grid-cols-1",
+            "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
           )}
         >
           <div className="flex flex-col gap-6">
@@ -156,32 +159,29 @@ export default function Recurring({
             <div className="flex flex-col gap-5 justify-start rounded-lg p-5 bg-white shadow-sm">
               <div className="font-bold">Summary</div>
               <div className="flex flex-col justify-between text-xs">
-                <div className="flex flex-row gap-6 justify-between">
-                  <div className="text-app-color font-semibold">Paid Bills</div>
-                  <div className="font-bold">
-                    {stats.paidCount} (${stats.paidAmount})
-                  </div>
-                </div>
+                <RecurringSummaryItem
+                  label="Paid Bills"
+                  count={stats.paidCount}
+                  amount={stats.paidAmount}
+                />
 
                 <div className="my-3 h-px bg-gray-200 w-full" />
 
-                <div className="flex flex-row gap-6 justify-between">
-                  <div className="text-app-color font-semibold">
-                    Total Upcoming
-                  </div>
-                  <div className="font-bold">
-                    {stats.upcomingCount} (${stats.upcomingAmount})
-                  </div>
-                </div>
+                <RecurringSummaryItem
+                  label="Total Upcoming"
+                  count={stats.upcomingCount}
+                  amount={stats.upcomingAmount}
+                />
 
                 <div className="my-3 h-px bg-gray-200 w-full" />
 
-                <div className="flex flex-row gap-6 justify-between">
-                  <div className="text-red-500 font-semibold">Due Soon</div>
-                  <div className="text-red-500 font-bold">
-                    {stats.dueSoonCount} (${stats.dueSoonAmount})
-                  </div>
-                </div>
+                <RecurringSummaryItem
+                  label="Due Soon"
+                  count={stats.dueSoonCount}
+                  amount={stats.dueSoonAmount}
+                  labelClassName="text-red-500 font-semibold"
+                  valueClassName="text-red-500 font-bold"
+                />
               </div>
             </div>
           </div>
@@ -192,7 +192,14 @@ export default function Recurring({
               paginationData={paginationData}
               isRecurringOnly={true}
               referenceDate={referenceDate}
-            />
+            >
+              {(transactionsItems) => (
+                <BillsTable
+                  transactions={transactionsItems}
+                  referenceDate={referenceDate}
+                />
+              )}
+            </TransactionsTableLayout>
           </div>
         </div>
       ) : (

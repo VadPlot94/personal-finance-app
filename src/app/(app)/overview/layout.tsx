@@ -1,7 +1,7 @@
 import "@/app/globals.css";
+import { BalanceCard } from "@/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
 import { balanceRepository } from "@/repositories/balance.repository";
-import constants from "@/services/constants.service";
 import { ReactNode } from "react";
 
 export default async function OverviewLayout({
@@ -22,42 +22,23 @@ export default async function OverviewLayout({
       <div
         className={cn(
           "grid grid-cols-3 gap-4",
-          "max-md:grid-cols-1",
-          `${constants.whenLessQueryBreakpoint}:grid-cols-1`,
+          "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
         )}
       >
-        <div className="flex flex-col justify-center gap-3 h-26 rounded-lg pl-5 bg-black shadow-sm">
-          <div className="text-white text-sm">Current Balance</div>
-          <div className="text-white font-bold text-3xl">
-            $
-            {balance?.current?.toLocaleString("en-US", {
-              minimumFractionDigits: constants.NumberFractionDigits,
-            })}
-          </div>
-        </div>
-        <div className="flex flex-col justify-center gap-3 h-26 rounded-lg pl-5 bg-white shadow-sm">
-          <div className="text-app-color font-semibold text-sm">Income</div>
-          <div className="font-bold text-3xl">
-            $
-            {balance?.income?.toLocaleString("en-US", {
-              minimumFractionDigits: constants.NumberFractionDigits,
-            })}
-          </div>
-        </div>
-        <div className="flex flex-col justify-center gap-3 h-26 rounded-lg pl-5 bg-white shadow-sm">
-          <div className="text-app-color font-semibold text-sm">Expenses</div>
-          <div className="font-bold text-3xl">
-            $
-            {balance?.expenses?.toLocaleString("en-US", {
-              minimumFractionDigits: constants.NumberFractionDigits,
-            })}
-          </div>
-        </div>
+        <BalanceCard
+          title="Current Balance"
+          amount={balance?.current}
+          bgColor="bg-black"
+          textTitleColor="text-white"
+          textAmountColor="text-white"
+        />
+        <BalanceCard title="Income" amount={balance?.income} />
+        <BalanceCard title="Expenses" amount={balance?.expenses} />
       </div>
       <div
         className={cn(
           "grid grid-cols-[repeat(2,minmax(355px,1fr))] gap-5",
-          "max-lg:grid-cols-1",
+          "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
         )}
       >
         <div className="flex flex-col gap-4">

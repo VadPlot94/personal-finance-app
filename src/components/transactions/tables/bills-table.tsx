@@ -54,7 +54,7 @@ export default function BillsTable({
             scope="col"
             className={cn(
               "py-3 text-left text-xs text-app-color tracking-wider",
-              `${constants.whenLessQueryBreakpoint}:hidden`,
+              "@max-containerQueryBreakpoint820/mainLayout:hidden",
             )}
           >
             Due Date
@@ -84,12 +84,13 @@ export default function BillsTable({
                     className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
                   />
                   <div className="flex flex-col">
-                    <div className="font-bold truncate">{tx.name}</div>
-
+                    <div className="font-bold @max-containerQueryBreakpoint820/mainLayout:truncate">
+                      {tx.name}
+                    </div>
                     <span
                       className={cn(
                         "whitespace-nowrap text-app-color text-xs",
-                        `${constants.whenMoreQueryBreakpoint}:hidden`,
+                        "@containerQueryBreakpoint820/mainLayout:hidden",
                       )}
                     >
                       {getTimeCell(status, tx)}
@@ -98,7 +99,7 @@ export default function BillsTable({
                 </div>
               </td>
 
-              <td className={`${constants.whenLessQueryBreakpoint}:hidden`}>
+              <td className="@max-containerQueryBreakpoint820/mainLayout:hidden">
                 {getTimeCell(status, tx)}
               </td>
 

@@ -22,7 +22,7 @@ export default function TransactionsTable({
             scope="col"
             className={cn(
               "py-3 px-6 text-left text-xs text-app-color tracking-wider",
-              `${constants.whenLessQueryBreakpoint}:hidden`,
+              "@max-containerQueryBreakpoint820/mainLayout:hidden",
             )}
           >
             Category
@@ -31,7 +31,7 @@ export default function TransactionsTable({
             scope="col"
             className={cn(
               "py-3 text-left text-xs text-app-color tracking-wider",
-              `${constants.whenLessQueryBreakpoint}:hidden`,
+              "@max-containerQueryBreakpoint820/mainLayout:hidden",
             )}
           >
             Transaction Date
@@ -61,7 +61,7 @@ export default function TransactionsTable({
                   <span
                     className={cn(
                       "whitespace-nowrap text-app-color text-xs",
-                      `${constants.whenMoreQueryBreakpoint}:hidden`,
+                      "@containerQueryBreakpoint820/mainLayout:hidden",
                     )}
                   >
                     {tx.category}
@@ -73,7 +73,7 @@ export default function TransactionsTable({
             <td
               className={cn(
                 "py-4 px-6 text-app-color w-30 whitespace-nowrap",
-                `${constants.whenLessQueryBreakpoint}:hidden`,
+                "@max-containerQueryBreakpoint820/mainLayout:hidden",
               )}
             >
               {tx.category}
@@ -82,7 +82,7 @@ export default function TransactionsTable({
             <td
               className={cn(
                 "py-4 text-app-color w-30 whitespace-nowrap",
-                `${constants.whenLessQueryBreakpoint}:hidden`,
+                "@max-containerQueryBreakpoint820/mainLayout:hidden",
               )}
             >
               {transactionService.getTransactionDate(tx.date)}
@@ -111,7 +111,7 @@ export default function TransactionsTable({
               <span
                 className={cn(
                   "whitespace-nowrap text-app-color text-xs",
-                  `${constants.whenMoreQueryBreakpoint}:hidden`,
+                  "@containerQueryBreakpoint820/mainLayout:hidden",
                 )}
               >
                 {transactionService.getTransactionDate(tx.date)}

@@ -6,6 +6,14 @@ import {
 } from "@/services/constants.service";
 import { Budget, Pot, Transaction } from "@prisma/client";
 
+export interface IBalanceCardProps {
+  title: string;
+  amount: number;
+  bgColor?: string;
+  textTitleColor?: string;
+  textAmountColor?: string;
+}
+
 export interface IPageContentHeaderProps {
   name: string;
   buttonName?: string;
@@ -113,6 +121,7 @@ export interface ITransactionsProps {
 export interface ITransactionsTableLayoutProps extends ITransactionsProps {
   isRecurringOnly?: boolean;
   referenceDate?: Date | null;
+  children: (transactionsItems: Transaction[]) => React.ReactNode;
 }
 
 export interface ICreateTransactionDialogProps {
@@ -177,4 +186,20 @@ export interface IRecurringTileProps {
 export interface IRecurringMenuProps {
   recurringTransaction: Transaction;
   children: React.ReactNode;
+}
+
+export interface IRecurringSummaryItemProps {
+  label: string;
+  count: number | string;
+  amount: string;
+  labelClassName?: string;
+  valueClassName?: string;
+  wrapperClassName?: string;
+}
+
+export interface IEmptyContainerProps {
+  hasItems: boolean;
+  children: React.ReactNode;
+  emptyTitle: React.ReactNode;
+  emptyBody?: React.ReactNode;
 }

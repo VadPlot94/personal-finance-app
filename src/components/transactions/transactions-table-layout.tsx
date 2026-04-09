@@ -1,9 +1,6 @@
 "use client";
 
-import constants, {
-  SortBy,
-  TransactionUICategory,
-} from "@/services/constants.service";
+import { SortBy, TransactionUICategory } from "@/services/constants.service";
 import { useState } from "react";
 import { IPaginationData, ITransactionsTableLayoutProps } from "../types";
 import { Transaction } from "@prisma/client";
@@ -21,16 +18,15 @@ import {
   SelectValue,
 } from "../ui/select";
 import { cn } from "@/lib/utils";
-import TransactionsTable from "./tables/transactions-table";
-import BillsTable from "./tables/bills-table";
 import { Select as SelectPrimitive } from "radix-ui";
+import EmptyContainer from "../empty-container/empty-container";
 
 export default function TransactionsTableLayout({
   transactions = [],
   paginationData,
   category,
   isRecurringOnly,
-  referenceDate,
+  children,
 }: ITransactionsTableLayoutProps) {
   const [searchValue, setSearch] = useState("");
   const [searchDBValue, setDBSearch] = useState("");
@@ -89,10 +85,12 @@ export default function TransactionsTableLayout({
 
   const handleSortByChange = (value: SortBy) => {
     setSortByValue(value);
+    setPageNumber(1);
   };
 
   const handleCategoryChange = (value: TransactionUICategory) => {
     setTransactionCategory(value);
+    setPageNumber(1);
   };
 
   const updateTransactionsTableLayout = async (
@@ -133,6 +131,12 @@ export default function TransactionsTableLayout({
   const totalPages =
     transactionService.getPaginationPagesNumber(paginationDataItems);
 
+  const isNoTransactionsSearchFound =
+    transactionService.isNoTransactionsSearchFound(
+      searchValue,
+      transactionsItems,
+    );
+
   return (
     <>
       <div className="flex flex-col justify-start gap-6 h-full">
@@ -140,7 +144,7 @@ export default function TransactionsTableLayout({
           <div
             className={cn(
               "relative w-full max-w-sm",
-              `${constants.whenLessQueryBreakpoint}:w-auto`,
+              "@max-containerQueryBreakpoint820/mainLayout:w-auto",
             )}
           >
             <Input
@@ -173,9 +177,9 @@ export default function TransactionsTableLayout({
           <div
             className={cn(
               "flex flex-row justify-start items-center gap-5",
-              `${constants.whenLessQueryBreakpoint}:justify-evenly ${constants.whenLessQueryBreakpoint}:grow-2`,
+              "@max-containerQueryBreakpoint820/mainLayout:justify-evenly",
               isRecurringOnly
-                ? `${constants.whenLessQueryBreakpoint}:justify-start`
+                ? "@max-containerQueryBreakpoint820/mainLayout:justify-start"
                 : "",
             )}
           >
@@ -186,25 +190,23 @@ export default function TransactionsTableLayout({
                 onValueChange={(value: SortBy) => handleSortByChange(value)}
               >
                 <SelectTrigger
-                  className={cn(
-                    "border-gray-300 w-full",
-                    `${constants.whenLessQueryBreakpoint}:hidden`,
-                  )}
+                  className={cn("border-gray-300 w-full", "max-md:hidden")}
                 >
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
+
+                {isRecurringOnly && (
+                  <div className="text-app-color whitespace-nowrap text-sm w-fit md:hidden">
+                    Sort By
+                  </div>
+                )}
                 <SelectPrimitive.Trigger
                   className={cn(
                     "border-none w-full size-6 outline-none cursor-pointer",
-                    `${constants.whenMoreQueryBreakpoint}:hidden`,
+                    "md:hidden",
                   )}
                 >
                   <div className="flex flex-row gap-2">
-                    {isRecurringOnly && (
-                      <div className="text-app-color whitespace-nowrap text-sm w-fit">
-                        Sort By
-                      </div>
-                    )}
                     <img
                       className="size-6"
                       src="assets/images/icon-sort-mobile.svg"
@@ -234,15 +236,16 @@ export default function TransactionsTableLayout({
                   <SelectTrigger
                     className={cn(
                       "border-gray-300 w-full min-w-40",
-                      `${constants.whenLessQueryBreakpoint}:hidden`,
+                      "max-md:hidden",
                     )}
                   >
                     <SelectValue placeholder="Transaction category" />
                   </SelectTrigger>
+
                   <SelectPrimitive.Trigger
                     className={cn(
                       "border-none w-full size-6 outline-none cursor-pointer",
-                      `${constants.whenMoreQueryBreakpoint}:hidden`,
+                      "md:hidden",
                     )}
                   >
                     <img
@@ -266,21 +269,16 @@ export default function TransactionsTableLayout({
           </div>
         </div>
         <div className="overflow-x-auto h-full">
-          {transactionService.isNoTransactionsSearchFound(
-            searchValue,
-            transactionsItems,
-          ) ? (
-            <div className="flex justify-center items-center h-full">
-              {isRecurringOnly ? "No Bills Found" : "No Transactions Found"}
-            </div>
-          ) : !isRecurringOnly ? (
-            <TransactionsTable transactions={transactionsItems} />
-          ) : (
-            <BillsTable
-              transactions={transactionsItems}
-              referenceDate={referenceDate}
-            />
-          )}
+          <EmptyContainer
+            hasItems={
+              !(isNoTransactionsSearchFound || !transactionsItems.length)
+            }
+            emptyTitle={
+              isRecurringOnly ? "No Bills Found" : "No Transactions Found"
+            }
+          >
+            {children?.(transactionsItems)}
+          </EmptyContainer>
         </div>
       </div>
       <div className="grid grid-cols-[auto_1fr_auto] items-center w-full gap-10">
