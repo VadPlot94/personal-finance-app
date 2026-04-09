@@ -74,6 +74,8 @@ class ConstantsService {
   //   `@max-[${this.ContainerQueryBreakpoint}px]`;
   // public readonly WhenMoreQueryBreakpoint =
   //   `@[${this.ContainerQueryBreakpoint}px]`;
+  public readonly XSmallMobileBreakpoint = 375;
+  public readonly DefaultDonutChartSize = 250;
   public readonly NumberFractionDigits = 2;
   public readonly SideBarMenuItemsConfig = [
     {

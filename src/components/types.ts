@@ -20,6 +20,12 @@ export interface IPageContentHeaderProps {
   handleButtonClick?: () => void;
 }
 
+export interface ITileContentHeaderProps {
+  title: string;
+  href: string;
+  linkLabel: string;
+}
+
 export interface IDeleteDialogProps {
   data: { id: string; name: string };
   isDialogOpen: boolean;

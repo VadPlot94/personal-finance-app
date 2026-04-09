@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import EmptyContainer from "../empty-container/empty-container";
+import TileContentHeader from "../tile-content-header/tile-content-header";
 import { IRecurringTileProps } from "../types";
+import { RecurringSummaryItem } from "./dialogs/recurring-summary-item";
 import recurringService from "@/services/recurring.service";
 import constants from "@/services/constants.service";
 import { useMemo } from "react";
@@ -100,38 +103,35 @@ export default function RecurringTile({
 
   return (
     <div className="flex flex-col justify-between gap-5 h-full rounded-lg p-5 shadow-sm bg-white">
-      <div className="flex flex-row justify-between items-center">
-        <div className="font-bold text-[20px]">Recurring Bills</div>
-        <Link
-          href="/recurring"
-          className="flex flex-row gap-1 text-app-color text-sm"
-        >
-          <span className="font-weight w-20">See details</span>
-          <img src="assets/images/icon-caret-right.svg" />
-        </Link>
-      </div>
-      {recurringTransactions?.length ? (
+      <TileContentHeader
+        title="Recurring Bills"
+        href="/recurring"
+        linkLabel="See details"
+      />
+      <EmptyContainer
+        hasItems={!!recurringTransactions?.length}
+        emptyTitle="No recurring bills are available."
+      >
         <div className="flex flex-col gap-3 justify-between text-xs text-app-color font-semibold">
-          <div className="flex flex-row gap-6 justify-between px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-green-800">
-            <div className="">Paid Bills</div>
-            <div className="font-bold">${stats.paidAmount}</div>
-          </div>
+          <RecurringSummaryItem
+            label="Paid Bills"
+            amount={stats.paidAmount}
+            wrapperClassName="px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-green-800"
+          />
 
-          <div className="flex flex-row gap-6 justify-between px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-yellow-400">
-            <div className="">Total Upcoming</div>
-            <div className="font-bold">${stats.upcomingAmount}</div>
-          </div>
+          <RecurringSummaryItem
+            label="Total Upcoming"
+            amount={stats.upcomingAmount}
+            wrapperClassName="px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-yellow-400"
+          />
 
-          <div className="flex flex-row gap-6 justify-between px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-blue-400">
-            <div className="">Due Soon</div>
-            <div className="font-bold">${stats.dueSoonAmount}</div>
-          </div>
+          <RecurringSummaryItem
+            label="Due Soon"
+            amount={stats.dueSoonAmount}
+            wrapperClassName="px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-blue-400"
+          />
         </div>
-      ) : (
-        <div className="flex flex-col w-full h-full justify-center items-center text-app-color">
-          <p className="font-semibold">No recurring bills are available.</p>
-        </div>
-      )}
+      </EmptyContainer>
     </div>
   );
 }

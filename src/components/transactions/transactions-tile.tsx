@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import EmptyContainer from "../empty-container/empty-container";
+import TileContentHeader from "../tile-content-header/tile-content-header";
 import { ITransactionsTileProps } from "../types";
 import transactionService from "@/services/transaction.service";
 import { cn } from "@/lib/utils";
@@ -14,23 +16,17 @@ export default function TransactionsTile({
     category === TransactionUICategory.AllTransactions ? null : category;
   return (
     <div
-      className={`flex flex-col justify-between gap-5 h-full rounded-lg p-5 shadow-sm ${isBudgetTile ? "bg-app-background" : "bg-white"}`}
+      className={`flex flex-col justify-between gap-5 rounded-lg p-5 shadow-sm ${isBudgetTile ? "bg-app-background" : "bg-white"}`}
     >
-      <div className="flex flex-row justify-between items-center">
-        <div className="font-bold text-[20px]">
-          {isBudgetTile ? "Latest Spending" : "Transactions"}
-        </div>
-        <Link
-          href={`/transactions${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`}
-          className="flex flex-row gap-1 text-app-color text-sm"
-        >
-          <span className="font-weight w-15">
-            {isBudgetTile ? "See all" : "View All"}
-          </span>
-          <img src="assets/images/icon-caret-right.svg" />
-        </Link>
-      </div>
-      {transactions?.length ? (
+      <TileContentHeader
+        title={isBudgetTile ? "Latest Spending" : "Transactions"}
+        href={`/transactions${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`}
+        linkLabel={isBudgetTile ? "See all" : "View All"}
+      />
+      <EmptyContainer
+        hasItems={!!transactions?.length}
+        emptyTitle="No transactions are available."
+      >
         <div className="flex flex-row justify-between h-full gap-5">
           <div className="h-full flex-1 min-w-0">
             <table className="min-w-full divide-y divide-gray-200 cursor-default">
@@ -40,7 +36,7 @@ export default function TransactionsTile({
                 {transactions.map((tx) => (
                   <tr key={tx.id} className="hover:bg-gray-50 transition">
                     <td className="py-4">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 max-mobileXS:max-w-30">
                         <img
                           src={tx.avatar as string}
                           alt={tx.name}
@@ -68,11 +64,7 @@ export default function TransactionsTile({
             </table>
           </div>
         </div>
-      ) : (
-        <div className="flex flex-col w-full h-full justify-center items-center text-app-color">
-          <p className="font-semibold">No transactions are available.</p>
-        </div>
-      )}
+      </EmptyContainer>
     </div>
   );
 }

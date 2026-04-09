@@ -11,11 +11,7 @@ export default async function AppLayout({
   const opacityTransition = "transition-opacity duration-500";
 
   return (
-    <div
-      className={cn(
-        "grid grid-cols-[auto_1fr] h-full overflow-x-hidden",
-      )}
-    >
+    <div className="grid grid-cols-[auto_1fr] h-full overflow-x-hidden">
       <div
         className={cn(
           opacityTransition,

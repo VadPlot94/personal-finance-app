@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import TileContentHeader from "../tile-content-header/tile-content-header";
 import { IPotsTileProps } from "../types";
 import potService from "@/services/pot.service";
 import { cn } from "@/lib/utils";
@@ -13,16 +13,7 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
 
   return (
     <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm">
-      <div className="flex flex-row justify-between items-center">
-        <div className="font-bold text-[20px]">Pots</div>
-        <Link
-          href="/pots"
-          className="flex flex-row gap-1 text-app-color text-sm"
-        >
-          <span className="font-weight w-20">See details</span>
-          <img src="assets/images/icon-caret-right.svg" />
-        </Link>
-      </div>
+      <TileContentHeader title="Pots" href="/pots" linkLabel="See details" />
       <div
         className={cn(
           "flex flex-row justify-between h-full gap-5",

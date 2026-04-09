@@ -8,8 +8,8 @@ export default function PageContentHeader({
   handleButtonClick,
 }: IPageContentHeaderProps) {
   return (
-    <div className="flex flex-row justify-between">
-      <div className="font-bold text-3xl">{name}</div>
+    <div className="flex flex-row justify-between items-center">
+      <div className="font-bold text-3xl max-mobileM:text-xl">{name}</div>
       {buttonName && (
         <button
           onClick={() => handleButtonClick?.()}

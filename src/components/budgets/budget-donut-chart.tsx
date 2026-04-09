@@ -1,12 +1,15 @@
+import { useEffect, useState } from "react";
 import { IBudgetDonutChartProps } from "../types";
-import constantsService from "@/services/constants.service";
+import constants from "@/services/constants.service";
 
 export default function BudgetDonutChart({
   budgets,
-  size = 280,
+  size = constants.DefaultDonutChartSize,
   holeRatio = 0.58,
   transactionsByCategoryList,
 }: IBudgetDonutChartProps) {
+  const [donutSize, setDonutSize] = useState(size);
+
   const spentByCategory: Record<string, number> = Object.fromEntries(
     budgets.map((budget) => {
       const transactionsByCategory = transactionsByCategoryList?.find(
@@ -48,10 +51,10 @@ export default function BudgetDonutChart({
     const percent = totalSpent > 0 ? (budget.spent / totalSpent) * 100 : 0;
     const roundedPercent = Number(percent.toFixed(2));
     const startDeg = Math.round(
-      Number(cumulativePercent.toFixed(2)) * constantsService.MathDegreePercent,
+      Number(cumulativePercent.toFixed(2)) * constants.MathDegreePercent,
     );
     const endDeg = Math.round(
-      (cumulativePercent + roundedPercent) * constantsService.MathDegreePercent,
+      (cumulativePercent + roundedPercent) * constants.MathDegreePercent,
     );
     cumulativePercent += roundedPercent;
     return `${budget.theme} ${startDeg}deg ${endDeg}deg`;
@@ -61,11 +64,24 @@ export default function BudgetDonutChart({
 
   // 6. Gray sector - если остаток реально заметен
   if (totalSpent > 0 && cumulativePercent < 99.99) {
-    const startDeg = cumulativePercent * constantsService.MathDegreePercent;
+    const startDeg = cumulativePercent * constants.MathDegreePercent;
     gradientStops.push(`#e5e7eb ${startDeg}deg 360deg`);
   }
 
   const gradient = `conic-gradient(${gradientStops.join(", ")})`;
+
+  useEffect(() => {
+    const checkSize = () => {
+      const isSmall = window.matchMedia(
+        `(max-width: ${constants.XSmallMobileBreakpoint}px)`,
+      ).matches;
+      setDonutSize(isSmall ? constants.DefaultDonutChartSize : size);
+    };
+
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
+  }, []);
 
   return (
     <div className="flex flex-col justify-between items-center gap-5">
@@ -73,8 +89,8 @@ export default function BudgetDonutChart({
       <div
         className="grid rounded-full overflow-hidden shadow-lg h-fit"
         style={{
-          width: size,
-          height: size,
+          width: donutSize,
+          height: donutSize,
           placeItems: "center",
         }}
       >

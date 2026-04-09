@@ -63,6 +63,13 @@
   */
   --container-containerQueryBreakpoint820: 820px;
 
+  /*
+    This is the way how to add custom breakpoint
+    Usage className="max-mobileXS:hidden"
+  */
+  --breakpoint-mobileXS: 375px;
+  --breakpoint-mobileM: 425px;
+
   --color-app-background: oklch(96.91% 0.0068 67.74);
   --color-foreground: var(--foreground);
   --color-app-color: var(--color-gray-500);
