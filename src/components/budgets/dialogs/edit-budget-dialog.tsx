@@ -199,7 +199,7 @@ export function EditBudgetDialog({
                     )
                   }
                 >
-                  <SelectTrigger className="border-gray-300 w-full">
+                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
 
@@ -215,6 +215,7 @@ export function EditBudgetDialog({
                           disabled={busyBudgetCategories.includes(
                             categoryValue,
                           )}
+                          className="cursor-pointer"
                         >
                           <span>{categoryName}</span>
                         </SelectItem>
@@ -261,7 +262,7 @@ export function EditBudgetDialog({
                   value={formBudgetData?.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
-                  <SelectTrigger className="border-gray-300 w-full">
+                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
                     <SelectValue placeholder="Select Theme" />
                   </SelectTrigger>
 
@@ -271,6 +272,7 @@ export function EditBudgetDialog({
                         key={themeName}
                         value={themeValue}
                         disabled={busyBudgetThemes.includes(themeValue)}
+                        className="cursor-pointer"
                       >
                         <div className="flex items-center gap-2">
                           <div
@@ -288,7 +290,7 @@ export function EditBudgetDialog({
             <div className="flex flex-col gap-2">
               <Button
                 type="submit"
-                className="w-full h-12"
+                className="w-full h-12 cursor-pointer"
                 disabled={isPending || !isFormValid()}
               >
                 Save Changes

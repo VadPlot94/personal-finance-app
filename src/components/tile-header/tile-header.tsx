@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ITileContentHeaderProps } from "../types";
-import { cn } from "@/lib/utils";
+import { ITileHeaderProps } from "../types";
 
-export default function TileContentHeader({
+export default function TileHeader({
   title,
   href,
   linkLabel,
-}: ITileContentHeaderProps) {
+}: ITileHeaderProps) {
   return (
     <div className="flex flex-row justify-between items-center">
       <div className="font-bold mobileXS:text-[20px] max-mobileXS:text-base">

@@ -253,13 +253,17 @@ export function EditPotDialog({
                   value={formPotData?.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
-                  <SelectTrigger className="border-gray-300 w-full">
+                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
                     <SelectValue placeholder="Select Theme" />
                   </SelectTrigger>
 
                   <SelectContent>
                     {Object.entries(Theme).map(([themeName, themeValue]) => (
-                      <SelectItem key={themeName} value={themeValue}>
+                      <SelectItem
+                        key={themeName}
+                        value={themeValue}
+                        className="cursor-pointer"
+                      >
                         <div className="flex items-center gap-2">
                           <div
                             className="w-2 h-2 rounded-full"
@@ -276,7 +280,7 @@ export function EditPotDialog({
             <div className="flex flex-col gap-2">
               <Button
                 type="submit"
-                className="w-full h-12"
+                className="w-full h-12 cursor-pointer"
                 disabled={isPending || !isFormValid()}
               >
                 Save Changes

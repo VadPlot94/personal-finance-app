@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { ITransactionsProps } from "../types";
-import PageContentHeader from "../page-content-header/page-content-header";
+import PageHeader from "../page-header/page-header";
 import TransactionsTableLayout from "./transactions-table-layout";
 import { CreateTransactionDialog } from "./dialogs/create-transaction-dialog";
-import EmptyContainer from "../empty-container/empty-container";
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 import TransactionsTable from "./tables/transactions-table";
 
 export default function Transactions({
@@ -18,12 +18,12 @@ export default function Transactions({
 
   return (
     <>
-      <PageContentHeader
+      <PageHeader
         name="Transactions"
         buttonName="Create Transaction"
         handleButtonClick={() => setCreateTransactionDialogOpen(true)}
       />
-      <EmptyContainer
+      <EmptyContentWrapper
         hasItems={!!transactions?.length}
         emptyTitle="No transactions are available."
         emptyBody={
@@ -44,7 +44,7 @@ export default function Transactions({
             )}
           </TransactionsTableLayout>
         </div>
-      </EmptyContainer>
+      </EmptyContentWrapper>
       {isCreateTransactionDialogOpen && (
         <CreateTransactionDialog
           isDialogOpen={isCreateTransactionDialogOpen}

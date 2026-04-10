@@ -1,11 +1,11 @@
-import { IEmptyContainerProps } from "../types";
+import { IEmptyContentWrapperProps } from "../types";
 
-export default function EmptyContainer({
+export default function EmptyContentWrapper({
   hasItems,
   children,
   emptyTitle,
   emptyBody,
-}: IEmptyContainerProps) {
+}: IEmptyContentWrapperProps) {
   if (hasItems) {
     return <>{children}</>;
   }

@@ -5,11 +5,11 @@ import { IPotsProps } from "../types";
 import { EditPotDialog } from "./dialogs/edit-pot-dialog";
 import PotItem from "./pots-item";
 import { Pot } from "@prisma/client";
-import PageContentHeader from "../page-content-header/page-content-header";
+import PageHeader from "../page-header/page-header";
 import { cn } from "@/lib/utils";
 import { wrapGrid } from "animate-css-grid";
 import constants from "@/services/constants.service";
-import EmptyContainer from "../empty-container/empty-container";
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 
 export const PotsContext = createContext<Pot[]>([]);
 
@@ -76,12 +76,12 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
 
   return (
     <PotsContext value={pots}>
-      <PageContentHeader
+      <PageHeader
         name="Pots"
         buttonName="+ Add New Pot"
         handleButtonClick={() => setEditPotDialogOpen(true)}
       />
-      <EmptyContainer
+      <EmptyContentWrapper
         hasItems={!!pots?.length}
         emptyTitle="No pots are available."
         emptyBody={
@@ -111,7 +111,7 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
               />
             ))}
         </div>
-      </EmptyContainer>
+      </EmptyContentWrapper>
       {isEditPotDialogOpen && (
         <EditPotDialog
           isDialogOpen={isEditPotDialogOpen}

@@ -35,13 +35,13 @@ export function DeleteDialog({
         </div>
         <div className="flex flex-row gap-2 justify-between">
           <Button
-            className="flex-1 w-full h-12"
+            className="flex-1 w-full h-12 cursor-pointer"
             onClick={() => handleDialogClose()}
           >
             No, Go Back
           </Button>
           <Button
-            className="flex-1 w-full bg-red-500 h-12 hover:bg-red-400"
+            className="flex-1 w-full bg-red-500 h-12 hover:bg-red-400 cursor-pointer"
             onClick={() => handleDeleteClick?.()}
           >
             Delete

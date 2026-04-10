@@ -1,7 +1,7 @@
 "use client";
-import Link from "next/link";
-import EmptyContainer from "../empty-container/empty-container";
-import TileContentHeader from "../tile-content-header/tile-content-header";
+
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import TileHeader from "../tile-header/tile-header";
 import { ITransactionsTileProps } from "../types";
 import transactionService from "@/services/transaction.service";
 import { cn } from "@/lib/utils";
@@ -16,14 +16,14 @@ export default function TransactionsTile({
     category === TransactionUICategory.AllTransactions ? null : category;
   return (
     <div
-      className={`flex flex-col justify-between gap-5 rounded-lg p-5 shadow-sm ${isBudgetTile ? "bg-app-background" : "bg-white"}`}
+      className={`flex flex-col justify-between gap-5 rounded-lg p-5 ${isBudgetTile ? "bg-app-background" : "bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"}`}
     >
-      <TileContentHeader
+      <TileHeader
         title={isBudgetTile ? "Latest Spending" : "Transactions"}
         href={`/transactions${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`}
         linkLabel={isBudgetTile ? "See all" : "View All"}
       />
-      <EmptyContainer
+      <EmptyContentWrapper
         hasItems={!!transactions?.length}
         emptyTitle="No transactions are available."
       >
@@ -64,7 +64,7 @@ export default function TransactionsTile({
             </table>
           </div>
         </div>
-      </EmptyContainer>
+      </EmptyContentWrapper>
     </div>
   );
 }

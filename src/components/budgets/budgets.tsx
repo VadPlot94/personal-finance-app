@@ -6,11 +6,11 @@ import { IBudgetsProps } from "../types";
 import BudgetDonutChart from "./budget-donut-chart";
 import budgetService from "@/services/budget.service";
 import { BudgetMenu } from "./budgets-menu";
-import PageContentHeader from "../page-content-header/page-content-header";
+import PageHeader from "../page-header/page-header";
 import { createContext, useState } from "react";
 import { Budget } from "@prisma/client";
 import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
-import EmptyContainer from "../empty-container/empty-container";
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 import { cn } from "@/lib/utils";
 
 export const BudgetsContext = createContext<Budget[]>([]);
@@ -22,12 +22,12 @@ export default function Budgets({
   const [isAddBudgetDialogOpen, setAddBudgetDialogOpen] = useState(false);
   return (
     <BudgetsContext value={budgets}>
-      <PageContentHeader
+      <PageHeader
         name="Budgets"
         buttonName="Add Budget"
         handleButtonClick={() => setAddBudgetDialogOpen(true)}
       />
-      <EmptyContainer
+      <EmptyContentWrapper
         hasItems={!!budgets?.length}
         emptyTitle="No budgets are available."
         emptyBody={
@@ -49,7 +49,7 @@ export default function Budgets({
               "@max-containerQueryBreakpoint820/mainLayout:static @max-containerQueryBreakpoint820/mainLayout:top-0",
             )}
           >
-            <div className="rounded-lg p-5 bg-white min-w-60 h-fit shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+            <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
               <BudgetDonutChart
                 budgets={budgets}
                 size={300}
@@ -185,7 +185,7 @@ export default function Budgets({
             })}
           </div>
         </div>
-      </EmptyContainer>
+      </EmptyContentWrapper>
       {isAddBudgetDialogOpen && (
         <EditBudgetDialog
           isDialogOpen={isAddBudgetDialogOpen}

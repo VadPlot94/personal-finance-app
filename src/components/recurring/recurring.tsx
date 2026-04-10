@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import PageContentHeader from "../page-content-header/page-content-header";
+import PageHeader from "../page-header/page-header";
 import TransactionsTableLayout from "../transactions/transactions-table-layout";
 import { IRecurringProps } from "../types";
 import recurringService from "@/services/recurring.service";
@@ -115,7 +115,7 @@ export default function Recurring({
 
   return (
     <>
-      <PageContentHeader
+      <PageHeader
         name="Recurring Bills"
         buttonName="Add Recurring Bill"
         handleButtonClick={() => setAddRecurringBillDialogOpen(true)}

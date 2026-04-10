@@ -12,7 +12,7 @@ export async function BalanceCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-center gap-3 h-26 rounded-lg pl-5 shadow-sm",
+        "flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]",
         bgColor,
       )}
     >

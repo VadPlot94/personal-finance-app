@@ -19,7 +19,7 @@ import {
 } from "../ui/select";
 import { cn } from "@/lib/utils";
 import { Select as SelectPrimitive } from "radix-ui";
-import EmptyContainer from "../empty-container/empty-container";
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 
 export default function TransactionsTableLayout({
   transactions = [],
@@ -165,7 +165,7 @@ export default function TransactionsTableLayout({
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
             >
               <img
                 src="/assets/images/icon-search.svg"
@@ -190,7 +190,10 @@ export default function TransactionsTableLayout({
                 onValueChange={(value: SortBy) => handleSortByChange(value)}
               >
                 <SelectTrigger
-                  className={cn("border-gray-300 w-full", "max-md:hidden")}
+                  className={cn(
+                    "border-gray-300 w-full cursor-pointer",
+                    "max-md:hidden",
+                  )}
                 >
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
@@ -217,7 +220,11 @@ export default function TransactionsTableLayout({
                 {/* position="popper" align="end" */}
                 <SelectContent>
                   {Object.entries(SortBy).map(([name, value]) => (
-                    <SelectItem key={name} value={value}>
+                    <SelectItem
+                      key={name}
+                      value={value}
+                      className="cursor-pointer"
+                    >
                       <span>{value}</span>
                     </SelectItem>
                   ))}
@@ -235,7 +242,7 @@ export default function TransactionsTableLayout({
                 >
                   <SelectTrigger
                     className={cn(
-                      "border-gray-300 w-full min-w-40",
+                      "border-gray-300 w-full min-w-40 cursor-pointer",
                       "max-md:hidden",
                     )}
                   >
@@ -257,7 +264,11 @@ export default function TransactionsTableLayout({
                   <SelectContent>
                     {Object.entries(TransactionUICategory).map(
                       ([name, value]) => (
-                        <SelectItem key={name} value={value}>
+                        <SelectItem
+                          key={name}
+                          value={value}
+                          className="cursor-pointer"
+                        >
                           <span>{value}</span>
                         </SelectItem>
                       ),
@@ -269,7 +280,7 @@ export default function TransactionsTableLayout({
           </div>
         </div>
         <div className="overflow-x-auto h-full">
-          <EmptyContainer
+          <EmptyContentWrapper
             hasItems={
               !(isNoTransactionsSearchFound || !transactionsItems.length)
             }
@@ -278,7 +289,7 @@ export default function TransactionsTableLayout({
             }
           >
             {children?.(transactionsItems)}
-          </EmptyContainer>
+          </EmptyContentWrapper>
         </div>
       </div>
       <div className="grid grid-cols-[auto_1fr_auto] items-center w-full gap-10">

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import EmptyContainer from "../empty-container/empty-container";
-import TileContentHeader from "../tile-content-header/tile-content-header";
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import TileHeader from "../tile-header/tile-header";
 import { IRecurringTileProps } from "../types";
 import { RecurringSummaryItem } from "./dialogs/recurring-summary-item";
 import recurringService from "@/services/recurring.service";
@@ -102,13 +102,13 @@ export default function RecurringTile({
   }, [recurringTransactions]);
 
   return (
-    <div className="flex flex-col justify-between gap-5 h-full rounded-lg p-5 shadow-sm bg-white">
-      <TileContentHeader
+    <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+      <TileHeader
         title="Recurring Bills"
         href="/recurring"
         linkLabel="See details"
       />
-      <EmptyContainer
+      <EmptyContentWrapper
         hasItems={!!recurringTransactions?.length}
         emptyTitle="No recurring bills are available."
       >
@@ -131,7 +131,7 @@ export default function RecurringTile({
             wrapperClassName="px-2 items-center h-12 rounded-lg bg-app-background border-l-3 border-l-blue-400"
           />
         </div>
-      </EmptyContainer>
+      </EmptyContentWrapper>
     </div>
   );
 }

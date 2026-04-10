@@ -197,13 +197,17 @@ export function CreateTransactionDialog({
                     handleTransactionTypeChange(value as TransactionType)
                   }
                 >
-                  <SelectTrigger className="border-gray-300 w-full">
+                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
                     <SelectValue placeholder="Select Type" />
                   </SelectTrigger>
 
                   <SelectContent>
                     {Object.entries(TransactionType).map(([name, value]) => (
-                      <SelectItem key={name} value={value}>
+                      <SelectItem
+                        key={name}
+                        value={value}
+                        className="cursor-pointer"
+                      >
                         <span>{name}</span>
                       </SelectItem>
                     ))}
@@ -228,7 +232,7 @@ export function CreateTransactionDialog({
                     )
                   }
                 >
-                  <SelectTrigger className="border-gray-300 w-full">
+                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
 
@@ -238,7 +242,11 @@ export function CreateTransactionDialog({
                         (c) => c[1] !== TransactionUICategory.AllTransactions,
                       )
                       .map(([categoryName, categoryValue]) => (
-                        <SelectItem key={categoryName} value={categoryValue}>
+                        <SelectItem
+                          key={categoryName}
+                          value={categoryValue}
+                          className="cursor-pointer"
+                        >
                           <span>{categoryName}</span>
                         </SelectItem>
                       ))}
@@ -320,7 +328,7 @@ export function CreateTransactionDialog({
             <div className="flex flex-col gap-2">
               <Button
                 type="submit"
-                className="w-full h-12"
+                className="w-full h-12 cursor-pointer"
                 disabled={isPending || !isFormValid()}
               >
                 Save Changes

@@ -14,13 +14,13 @@ export interface IBalanceCardProps {
   textAmountColor?: string;
 }
 
-export interface IPageContentHeaderProps {
+export interface IPageHeaderProps {
   name: string;
   buttonName?: string;
   handleButtonClick?: () => void;
 }
 
-export interface ITileContentHeaderProps {
+export interface ITileHeaderProps {
   title: string;
   href: string;
   linkLabel: string;
@@ -203,7 +203,7 @@ export interface IRecurringSummaryItemProps {
   wrapperClassName?: string;
 }
 
-export interface IEmptyContainerProps {
+export interface IEmptyContentWrapperProps {
   hasItems: boolean;
   children: React.ReactNode;
   emptyTitle: React.ReactNode;

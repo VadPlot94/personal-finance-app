@@ -183,7 +183,7 @@ export function ChangeMoneyDialog({
           <div className="flex flex-col gap-2">
             <Button
               onClick={() => handleConfirmButtonClick()}
-              className="w-full h-12"
+              className="w-full h-12 cursor-pointer"
               disabled={!isFormValid()}
             >
               {isWithdraw ? "Confirm Withdrawal" : "Confirm Addition"}

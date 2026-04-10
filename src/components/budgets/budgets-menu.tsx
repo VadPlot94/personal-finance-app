@@ -26,7 +26,10 @@ export function BudgetMenu({ budget, children }: IBudgetMenuProps) {
           Actions with "{budget.category}"
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setEditBudgetDialogOpen(true)}>
+        <DropdownMenuItem
+          onClick={() => setEditBudgetDialogOpen(true)}
+          className="cursor-pointer"
+        >
           Edit Budget
         </DropdownMenuItem>
         <DropdownMenuSeparator />
