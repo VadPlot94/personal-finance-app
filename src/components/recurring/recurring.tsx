@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import PageHeader from "../page-header/page-header";
 import TransactionsTableLayout from "../transactions/transactions-table-layout";
+import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 import { IRecurringProps } from "../types";
 import recurringService from "@/services/recurring.service";
 import constants from "@/services/constants.service";
@@ -121,7 +122,19 @@ export default function Recurring({
         handleButtonClick={() => setAddRecurringBillDialogOpen(true)}
       />
 
-      {recurringTransactions?.length ? (
+      <EmptyContentWrapper
+        hasItems={!!recurringTransactions?.length}
+        emptyTitle="No recurring bills are available."
+        emptyBody={
+          <>
+            Click{" "}
+            <span className="font-semibold">
+              &nbsp;'Add Recurring Bill'&nbsp;
+            </span>{" "}
+            button at the corner of the page to create it.
+          </>
+        }
+      >
         <div
           className={cn(
             "grid grid-cols-[minmax(288px,1fr)_2fr] justify-between gap-6",
@@ -131,7 +144,8 @@ export default function Recurring({
           <div className="flex flex-col gap-6">
             <div
               className={cn(
-                "flex flex-col gap-6 justify-start rounded-lg p-5 bg-black shadow-sm",
+                "flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]",
+                "bg-black",
                 "max-md:flex-row max-md:items-center",
               )}
             >
@@ -156,7 +170,7 @@ export default function Recurring({
               </div>
             </div>
 
-            <div className="flex flex-col gap-5 justify-start rounded-lg p-5 bg-white shadow-sm">
+            <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
               <div className="font-bold">Summary</div>
               <div className="flex flex-col justify-between text-xs">
                 <RecurringSummaryItem
@@ -186,7 +200,7 @@ export default function Recurring({
             </div>
           </div>
 
-          <div className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm">
+          <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
             <TransactionsTableLayout
               transactions={recurringTransactionsForTable}
               paginationData={paginationData}
@@ -202,18 +216,7 @@ export default function Recurring({
             </TransactionsTableLayout>
           </div>
         </div>
-      ) : (
-        <div className="flex flex-col w-full h-full justify-center items-center text-app-color">
-          <p className="font-semibold">No recurring bills are available.</p>
-          <p>
-            Click{" "}
-            <span className="font-semibold">
-              &nbsp;'Add Recurring Bill'&nbsp;
-            </span>{" "}
-            button at the corner of the page to create it.
-          </p>
-        </div>
-      )}
+      </EmptyContentWrapper>
     </>
   );
 }

@@ -75,7 +75,7 @@ export default function Budgets({
               return (
                 <div
                   key={budget.id}
-                  className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm min-w-60 hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
+                  className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] min-w-60"
                 >
                   <div className="flex flex-col gap-3 justify-between">
                     <div className="flex flex-row justify-between items-center">

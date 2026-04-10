@@ -16,7 +16,10 @@ export default function TransactionsTile({
     category === TransactionUICategory.AllTransactions ? null : category;
   return (
     <div
-      className={`flex flex-col justify-between gap-5 rounded-lg p-5 ${isBudgetTile ? "bg-app-background" : "bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"}`}
+      className={cn(
+        "flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]",
+        isBudgetTile && "bg-app-background shadow-none hover:shadow-none",
+      )}
     >
       <TileHeader
         title={isBudgetTile ? "Latest Spending" : "Transactions"}

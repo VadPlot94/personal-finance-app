@@ -33,7 +33,7 @@ export default function Transactions({
           </>
         }
       >
-        <div className="flex flex-col gap-6 justify-between rounded-lg p-5 bg-white shadow-sm min-h-133.25">
+        <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] min-h-133.25">
           <TransactionsTableLayout
             transactions={transactions}
             paginationData={paginationData}
