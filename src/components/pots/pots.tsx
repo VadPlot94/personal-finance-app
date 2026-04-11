@@ -96,7 +96,6 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
           className={cn(
             "grid grid-cols-2 justify-between gap-5",
             "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
-            "overflow-hidden", // for animation
             "*:overflow-hidden", // for animation
             "*:transition-all *:duration-300", // for animation
           )}

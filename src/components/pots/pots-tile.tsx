@@ -1,4 +1,5 @@
 "use client";
+import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
 import { IPotsTileProps } from "../types";
 import potService from "@/services/pot.service";
@@ -12,7 +13,7 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
   const tilePots = Array.from({ length: 4 }, (_, i) => filteredPots[i] || null);
 
   return (
-    <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+    <ItemCard>
       <TileHeader title="Pots" href="/pots" linkLabel="See details" />
       <div
         className={cn(
@@ -51,6 +52,6 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
           })}
         </div>
       </div>
-    </div>
+    </ItemCard>
   );
 }

@@ -3,6 +3,7 @@
 import { TransactionUICategory } from "@/services/constants.service";
 import TransactionsTile from "../transactions/transactions-tile";
 import { IBudgetsProps } from "../types";
+import ItemCard from "../item-card/item-card";
 import BudgetDonutChart from "./budget-donut-chart";
 import budgetService from "@/services/budget.service";
 import { BudgetMenu } from "./budgets-menu";
@@ -49,14 +50,14 @@ export default function Budgets({
               "@max-containerQueryBreakpoint820/mainLayout:static @max-containerQueryBreakpoint820/mainLayout:top-0",
             )}
           >
-            <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+            <ItemCard>
               <BudgetDonutChart
                 budgets={budgets}
                 size={300}
                 holeRatio={0.6}
                 transactionsByCategoryList={transactionsByCategoryList}
               />
-            </div>
+            </ItemCard>
           </div>
           <div className="flex flex-col justify-between gap-5">
             {budgets?.map((budget) => {
@@ -73,10 +74,7 @@ export default function Budgets({
               const isWarning =
                 percentBarProgress >= 90 && percentBarProgress <= 100;
               return (
-                <div
-                  key={budget.id}
-                  className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] min-w-60"
-                >
+                <ItemCard key={budget.id}>
                   <div className="flex flex-col gap-3 justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <div className="flex flex-row justify-between items-center gap-3">
@@ -180,7 +178,7 @@ export default function Budgets({
                       />
                     </div>
                   </div>
-                </div>
+                </ItemCard>
               );
             })}
           </div>

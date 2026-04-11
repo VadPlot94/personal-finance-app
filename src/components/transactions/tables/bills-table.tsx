@@ -16,9 +16,7 @@ export default function BillsTable({
 }: IBillsTableProps) {
   const getTimeCell = (status: RecurringStatus, tx: Transaction) => (
     <div
-      className={cn(
-        "py-4 w-30 whitespace-nowrap flex flex-row gap-1 text-green-800",
-      )}
+      className={cn("py-4 max-w-35 min-w-0 text-green-800 truncate")}
       title={status}
     >
       {recurringService.getRecurringDueDateString(tx.date)}
@@ -76,20 +74,20 @@ export default function BillsTable({
 
           return (
             <tr key={tx.id} className="hover:bg-gray-50 transition">
-              <td className="py-4 px-3">
-                <div className="flex flex-row items-center gap-4">
+              <td className="max-sm:w-[50%] min-w-0">
+                <div className="py-4 ml-3 flex flex-row items-center gap-4 min-w-0 max-mobileXS:max-w-30">
                   <img
+                    className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
                     src={tx.avatar as string}
                     alt={tx.name}
-                    className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
                   />
-                  <div className="flex flex-col">
+                  <div className="flex flex-col min-w-0">
                     <div className="font-bold @max-containerQueryBreakpoint820/mainLayout:truncate">
                       {tx.name}
                     </div>
                     <span
                       className={cn(
-                        "whitespace-nowrap text-app-color text-xs",
+                        "text-app-color text-xs",
                         "@containerQueryBreakpoint820/mainLayout:hidden",
                       )}
                     >

@@ -2,7 +2,6 @@
 
 import { ITransactionsTableProps } from "@/components/types";
 import { cn } from "@/lib/utils";
-import constants from "@/services/constants.service";
 import transactionService from "@/services/transaction.service";
 
 export default function TransactionsTable({
@@ -48,14 +47,14 @@ export default function TransactionsTable({
       <tbody className="divide-y divide-gray-200 text-sm">
         {transactions.map((tx) => (
           <tr key={tx.id} className="hover:bg-gray-50 transition">
-            <td className="py-4 px-3">
-              <div className="flex flex-row items-center gap-4">
+            <td className="max-sm:w-[60%] min-w-0">
+              <div className="py-4 ml-3 flex flex-row items-center gap-4 min-w-0 max-mobileXS:max-w-30">
                 <img
                   src={tx.avatar as string}
                   alt={tx.name}
                   className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
                 />
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-0">
                   <div className="font-bold truncate">{tx.name}</div>
 
                   <span

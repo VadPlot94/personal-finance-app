@@ -10,6 +10,7 @@ import constants from "@/services/constants.service";
 import { cn } from "@/lib/utils";
 import BillsTable from "../transactions/tables/bills-table";
 import { RecurringSummaryItem } from "./recurring-summary-item";
+import ItemCard from "../item-card/item-card";
 
 export default function Recurring({
   recurringTransactions = [],
@@ -142,13 +143,7 @@ export default function Recurring({
           )}
         >
           <div className="flex flex-col gap-6">
-            <div
-              className={cn(
-                "flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]",
-                "bg-black",
-                "max-md:flex-row max-md:items-center",
-              )}
-            >
+            <ItemCard className="bg-black max-md:flex-row max-md:items-center">
               <div>
                 <img
                   className="w-10"
@@ -168,9 +163,9 @@ export default function Recurring({
                 </div>
                 <div className="font-bold text-3xl">${stats.totalBills}</div>
               </div>
-            </div>
+            </ItemCard>
 
-            <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+            <ItemCard className="justify-start">
               <div className="font-bold">Summary</div>
               <div className="flex flex-col justify-between text-xs">
                 <RecurringSummaryItem
@@ -197,10 +192,10 @@ export default function Recurring({
                   valueClassName="text-red-500 font-bold"
                 />
               </div>
-            </div>
+            </ItemCard>
           </div>
 
-          <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+          <ItemCard>
             <TransactionsTableLayout
               transactions={recurringTransactionsForTable}
               paginationData={paginationData}
@@ -214,7 +209,7 @@ export default function Recurring({
                 />
               )}
             </TransactionsTableLayout>
-          </div>
+          </ItemCard>
         </div>
       </EmptyContentWrapper>
     </>

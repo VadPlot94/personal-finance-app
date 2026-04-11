@@ -8,7 +8,7 @@ export default function PageHeader({
   handleButtonClick,
 }: IPageHeaderProps) {
   return (
-    <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-row justify-between gap-3 items-center">
       <div className="font-bold text-3xl max-mobileM:text-xl">{name}</div>
       {buttonName && (
         <button

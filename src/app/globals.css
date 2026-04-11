@@ -57,6 +57,14 @@
   @theme - create new global variables
 */
 @theme inline {
+  /* Standard Tailwind CSS breakpoints. We can use it like this: className="max-sm:hidden" or className="md:hidden"
+    sm:	640px	small
+    md:	768px	medium
+    lg:	1024px	large
+    xl:	1280px	extra large
+    2xl:	1536px	2 × extra large
+  */
+
   /*
     @container breakpoints define through --container-{some_name}: 820px
     usage: className="@max-{some_name}:hidden" or className="@{some_name}:hidden" 
@@ -73,6 +81,11 @@
   --color-app-background: oklch(96.91% 0.0068 67.74);
   --color-foreground: var(--foreground);
   --color-app-color: var(--color-gray-500);
+
+  --scroll-color: var(--foreground);
+  --scroll-color-background: var(--color-app-background);
+  --scroll-color-hover: red;
+
   /*
     --font-public-sans variable font was created in main layout.tsx
     now we can use it here to override Tailwind CSS default fonts
@@ -168,7 +181,67 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* ====================== SCROLLBAR ====================== */
+
+@layer utilities {
+  .custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-color) var(--scroll-color-background);
+  }
+  /* 
+  .custom-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    background: var(--scroll-color-background);
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-color);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scroll-color-hover);
+  } */
+}
+
+/* ====================== END SCROLLBAR ====================== */
+
 @layer base {
+  /* ====================== MOBILE TAP COLOR ====================== */
+
+  * {
+    -webkit-tap-highlight-color: hsl(0 0% 50% / 30%);
+    letter-spacing: 0.2px;
+  }
+
+  /* ====================== END MOBILE TAP COLOR ====================== */
+
+  /* ====================== USER SELECT ====================== */
+
+  * {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .select-text,
+  .select-all,
+  .select-auto,
+  input,
+  textarea,
+  [contenteditable] {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  /* ====================== END USER SELECT ====================== */
+
   * {
     @apply border-border outline-ring/50;
   }

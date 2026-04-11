@@ -1,6 +1,7 @@
 "use client";
 
 import { IPotItemProps } from "../types";
+import ItemCard from "../item-card/item-card";
 import { PotMenu } from "./pots-menu";
 import { ChangeMoneyDialog } from "./dialogs/change-money-dialog";
 import { useState } from "react";
@@ -16,7 +17,7 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
 
   return (
     <>
-      <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] min-w-60">
+      <ItemCard>
         <div className="flex flex-col gap-8 justify-between">
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row justify-between items-center gap-3">
@@ -76,7 +77,7 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
             </button>
           </div>
         </div>
-      </div>
+      </ItemCard>
       {isAddMoneyDialogOpen && (
         <ChangeMoneyDialog
           pot={pot}

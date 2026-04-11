@@ -8,7 +8,7 @@ export default function BudgetDonutChart({
   holeRatio = 0.58,
   transactionsByCategoryList,
 }: IBudgetDonutChartProps) {
-  const [donutSize, setDonutSize] = useState(size);
+  const [donutSize, setDonutSize] = useState(constants.DefaultDonutChartSize);
 
   const spentByCategory: Record<string, number> = Object.fromEntries(
     budgets.map((budget) => {

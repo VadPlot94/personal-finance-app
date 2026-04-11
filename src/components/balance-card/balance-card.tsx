@@ -1,5 +1,6 @@
 import constants from "@/services/constants.service";
 import { cn } from "@/lib/utils";
+import ItemCard from "../item-card/item-card";
 import { IBalanceCardProps } from "../types";
 
 export async function BalanceCard({
@@ -10,12 +11,7 @@ export async function BalanceCard({
   textAmountColor = "",
 }: IBalanceCardProps) {
   return (
-    <div
-      className={cn(
-        "flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]",
-        bgColor,
-      )}
-    >
+    <ItemCard className={bgColor}>
       <div className={cn("text-sm font-semibold", textTitleColor)}>{title}</div>
 
       <div className={cn("font-bold text-3xl", textAmountColor)}>
@@ -24,6 +20,6 @@ export async function BalanceCard({
           minimumFractionDigits: constants.NumberFractionDigits,
         }) ?? "--"}
       </div>
-    </div>
+    </ItemCard>
   );
 }

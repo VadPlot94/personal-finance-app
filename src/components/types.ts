@@ -20,6 +20,11 @@ export interface IPageHeaderProps {
   handleButtonClick?: () => void;
 }
 
+export interface IItemCardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
 export interface ITileHeaderProps {
   title: string;
   href: string;

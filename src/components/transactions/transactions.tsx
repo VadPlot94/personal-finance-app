@@ -6,6 +6,7 @@ import PageHeader from "../page-header/page-header";
 import TransactionsTableLayout from "./transactions-table-layout";
 import { CreateTransactionDialog } from "./dialogs/create-transaction-dialog";
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "../item-card/item-card";
 import TransactionsTable from "./tables/transactions-table";
 
 export default function Transactions({
@@ -33,7 +34,7 @@ export default function Transactions({
           </>
         }
       >
-        <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] min-h-133.25">
+        <ItemCard className="min-h-133.25">
           <TransactionsTableLayout
             transactions={transactions}
             paginationData={paginationData}
@@ -43,7 +44,7 @@ export default function Transactions({
               <TransactionsTable transactions={transactionsItems} />
             )}
           </TransactionsTableLayout>
-        </div>
+        </ItemCard>
       </EmptyContentWrapper>
       {isCreateTransactionDialogOpen && (
         <CreateTransactionDialog

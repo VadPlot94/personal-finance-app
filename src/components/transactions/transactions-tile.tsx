@@ -1,6 +1,7 @@
 "use client";
 
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
 import { ITransactionsTileProps } from "../types";
 import transactionService from "@/services/transaction.service";
@@ -15,9 +16,8 @@ export default function TransactionsTile({
   const categoryQueryParam =
     category === TransactionUICategory.AllTransactions ? null : category;
   return (
-    <div
+    <ItemCard
       className={cn(
-        "flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]",
         isBudgetTile && "bg-app-background shadow-none hover:shadow-none",
       )}
     >
@@ -39,7 +39,7 @@ export default function TransactionsTile({
                 {transactions.map((tx) => (
                   <tr key={tx.id} className="hover:bg-gray-50 transition">
                     <td className="py-4">
-                      <div className="flex items-center gap-4 max-mobileXS:max-w-30">
+                      <div className="flex flex-row items-center gap-4 max-mobileXS:max-w-30">
                         <img
                           src={tx.avatar as string}
                           alt={tx.name}
@@ -68,6 +68,6 @@ export default function TransactionsTile({
           </div>
         </div>
       </EmptyContentWrapper>
-    </div>
+    </ItemCard>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
 import { IRecurringTileProps } from "../types";
 import { RecurringSummaryItem } from "./dialogs/recurring-summary-item";
@@ -102,7 +102,7 @@ export default function RecurringTile({
   }, [recurringTransactions]);
 
   return (
-    <div className="flex flex-col justify-between gap-5 rounded-lg p-5 bg-white shadow-sm hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]">
+    <ItemCard>
       <TileHeader
         title="Recurring Bills"
         href="/recurring"
@@ -132,6 +132,6 @@ export default function RecurringTile({
           />
         </div>
       </EmptyContentWrapper>
-    </div>
+    </ItemCard>
   );
 }

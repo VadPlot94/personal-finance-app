@@ -279,7 +279,7 @@ export default function TransactionsTableLayout({
             )}
           </div>
         </div>
-        <div className="overflow-x-auto h-full">
+        <div className="h-full flex-1 min-w-0">
           <EmptyContentWrapper
             hasItems={
               !(isNoTransactionsSearchFound || !transactionsItems.length)
