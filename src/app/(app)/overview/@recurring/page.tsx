@@ -1,5 +1,5 @@
-import RecurringTile from "@/components/recurring/recurring-tile";
-import { getTransactionsServerAction } from "@/server-actions/transaction-actions";
+import RecurringTile from "@/front-end/components/recurring/recurring-tile";
+import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
 
 export default async function RecurringTilePage() {
   // TODO: Need to get recurring not by transactionsCount by time - for ex last 2 months

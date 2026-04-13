@@ -1,6 +1,6 @@
 import "@/app/globals.css";
-import HorizontalSideBar from "@/components/sidebar/horizontal-sidebar";
-import VerticalSideBar from "@/components/sidebar/vertical-sidebar";
+import HorizontalSideBar from "@/front-end/components/sidebar/horizontal-sidebar";
+import VerticalSideBar from "@/front-end/components/sidebar/vertical-sidebar";
 import { cn } from "@/lib/utils";
 
 export default async function AppLayout({

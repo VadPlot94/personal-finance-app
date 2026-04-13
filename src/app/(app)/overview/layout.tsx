@@ -1,7 +1,7 @@
 import "@/app/globals.css";
-import { BalanceCard } from "@/components/balance-card/balance-card";
+import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
-import { balanceRepository } from "@/repositories/balance.repository";
+import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import { ReactNode } from "react";
 
 export default async function OverviewLayout({

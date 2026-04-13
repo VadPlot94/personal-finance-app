@@ -38,10 +38,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # TODO
 
  - sourcemap front debug problem
- - debug for nextjs back
+ - split back-end on different layers
  - caching
  - auth
  - animation different breakpoints
  - create main static auth page
  - tests
  - translations
+ - loader
