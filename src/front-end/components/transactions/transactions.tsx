@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ITransactionsProps } from "../types";
+import { ITransactionsProps } from "./types";
 import PageHeader from "../page-header/page-header";
 import TransactionsTableLayout from "./transactions-table-layout";
 import { CreateTransactionDialog } from "./dialogs/create-transaction-dialog";

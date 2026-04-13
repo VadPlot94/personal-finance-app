@@ -1,15 +1,15 @@
 import { z } from "zod";
-import logger from "./logger.service";
+import logger from "../../front-end/services/logger.service";
 import constants, {
   Theme,
   TransactionType,
   TransactionUICategory,
 } from "./constants.service";
 import {
-  IAddBudgetFormData,
-  ICreatePotFormData,
-  ICreateTransactionFormData,
-} from "@/front-end/components/types";
+  IAddBudgetValidationData,
+  ICreatePotValidationData,
+  ICreateTransactionValidationData,
+} from "./types";
 import { Pot } from "@prisma/client";
 
 class ValidationService {
@@ -156,7 +156,7 @@ class ValidationService {
   }
 
   public validateCreatePotSchema(
-    formData: ICreatePotFormData,
+    formData: ICreatePotValidationData,
     potNames: string[],
     potTotal: number | undefined,
   ): z.ZodSafeParseResult<object> {
@@ -197,7 +197,7 @@ class ValidationService {
     return validationObj;
   }
 
-  public validateAddBudgetSchema(formData: IAddBudgetFormData) {
+  public validateAddBudgetSchema(formData: IAddBudgetValidationData) {
     const validationObj = this.addBudgetSchema.safeParse(formData);
 
     if (validationObj.error) {
@@ -208,8 +208,8 @@ class ValidationService {
   }
 
   public validateCreateTransactionSchema(
-    formData: ICreateTransactionFormData,
-  ): z.ZodSafeParseResult<ICreateTransactionFormData> {
+    formData: ICreateTransactionValidationData,
+  ): z.ZodSafeParseResult<ICreateTransactionValidationData> {
     const validationObj =
       this.createTransactionFormDataSchema.safeParse(formData);
 
@@ -217,7 +217,7 @@ class ValidationService {
       this.logZodErrors(validationObj.error, "Create Transaction");
     }
 
-    return validationObj as unknown as z.ZodSafeParseResult<ICreateTransactionFormData>;
+    return validationObj as unknown as z.ZodSafeParseResult<ICreateTransactionValidationData>;
   }
 
   public createErrorsWithPath<T>(

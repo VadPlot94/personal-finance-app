@@ -11,7 +11,7 @@ import constants, {
   sortByPrismaMap,
   TransactionType,
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 import { revalidatePath } from "next/cache";
 import {
   ITransactionDataResponse,

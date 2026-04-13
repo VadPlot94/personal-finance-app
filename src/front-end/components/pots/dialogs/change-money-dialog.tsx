@@ -11,9 +11,9 @@ import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
 import { useEffect, useState } from "react";
-import validationService from "@/front-end/services/validation.service";
+import validationService from "@/shared/services/validation.service";
 import { setPotTotalServerAction } from "@/back-end/server-actions/pot-actions";
-import { IAddMoneyPotDialogProps } from "@/front-end/components/types";
+import { IAddMoneyPotDialogProps } from "@/front-end/components/pots/types";
 import { toast } from "sonner";
 import financeService from "@/front-end/services/finance.service";
 

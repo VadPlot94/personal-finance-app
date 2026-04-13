@@ -1,6 +1,6 @@
 "use client";
 
-import { ITransactionsTableProps } from "@/front-end/components/types";
+import { ITransactionsTableProps } from "../types";
 import { cn } from "@/lib/utils";
 import transactionService from "@/front-end/services/transaction.service";
 

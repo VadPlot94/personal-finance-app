@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/front-end/components/ui/dialog";
 import { Button } from "@/front-end/components/ui/button";
-import { IDeleteDialogProps } from "../types";
+import { IDeleteDialogProps } from "./types";
 
 export function DeleteDialog({
   data,

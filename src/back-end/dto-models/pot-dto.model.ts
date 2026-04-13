@@ -1,9 +1,9 @@
 // From UI to Back-end
 
-export type IAddPotDTOInput = FormData;
+export type ICreatePotDTOInput = FormData;
 
 // From Back-end  to UI
 
-export interface IAddPotDTOOutput {
+export interface ICreatePotDTOOutput {
   id: string;
 }

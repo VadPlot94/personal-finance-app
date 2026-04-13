@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { IBudgetDonutChartProps } from "../types";
-import constants from "@/front-end/services/constants.service";
+import { IBudgetDonutChartProps } from "./types";
+import constants from "@/shared/services/constants.service";
 
 export default function BudgetDonutChart({
   budgets,

@@ -1,17 +1,20 @@
 import { Pot } from "@prisma/client";
-import { IAddPotDTOInput, IAddPotDTOOutput } from "../dto-models/pot-dto.model";
-import { Theme } from "@/front-end/services/constants.service";
+import {
+  ICreatePotDTOInput,
+  ICreatePotDTOOutput,
+} from "../dto-models/pot-dto.model";
+import { Theme } from "@/shared/services/constants.service";
 
 export function mapCreatePotInputToDBPot(
-  input: IAddPotDTOInput,
+  input: ICreatePotDTOInput,
 ): Partial<Pot> | null {
   const potModel = getPotModel(input);
   return potModel;
 }
 
 export function mapCreateDBPotToOutput(
-  dbPOutput: IAddPotDTOOutput,
-): IAddPotDTOOutput {
+  dbPOutput: ICreatePotDTOOutput,
+): ICreatePotDTOOutput {
   return { id: dbPOutput?.id };
 }
 

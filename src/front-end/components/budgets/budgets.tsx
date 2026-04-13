@@ -1,12 +1,12 @@
 "use client";
 
-import { TransactionUICategory } from "@/front-end/services/constants.service";
+import { TransactionUICategory } from "@/shared/services/constants.service";
 import TransactionsTile from "../transactions/transactions-tile";
-import { IBudgetsProps } from "../types";
+import { IBudgetsProps } from "./types";
 import ItemCard from "../item-card/item-card";
 import BudgetDonutChart from "./budget-donut-chart";
 import budgetService from "@/front-end/services/budget.service";
-import { BudgetMenu } from "./budgets-menu";
+import { BudgetsMenu } from "./budgets-menu";
 import PageHeader from "../page-header/page-header";
 import { createContext, useState } from "react";
 import { Budget } from "@prisma/client";
@@ -87,13 +87,13 @@ export default function Budgets({
                         </div>
                       </div>
                       <div className="cursor-pointer">
-                        <BudgetMenu budget={budget}>
+                        <BudgetsMenu budget={budget}>
                           <img
                             className="w-5 h-5"
                             src="assets/images/icon-ellipsis.svg"
                             alt="Actions"
                           />
-                        </BudgetMenu>
+                        </BudgetsMenu>
                       </div>
                     </div>
                     <div className="text-app-color">

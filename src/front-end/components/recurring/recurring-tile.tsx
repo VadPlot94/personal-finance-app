@@ -3,10 +3,10 @@
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
-import { IRecurringTileProps } from "../types";
+import { IRecurringTileProps } from "./types";
 import { RecurringSummaryItem } from "./dialogs/recurring-summary-item";
 import recurringService from "@/front-end/services/recurring.service";
-import constants from "@/front-end/services/constants.service";
+import constants from "@/shared/services/constants.service";
 import { useMemo } from "react";
 
 export default function RecurringTile({

@@ -1,10 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import constants from "@/front-end/services/constants.service";
+import constants from "@/shared/services/constants.service";
 import { usePathname } from "next/navigation";
 
-export default function HorizontalSideBar() {
+export default function HorizontalSidebar() {
   const pathname = usePathname();
   const opacityTransition = "transition-opacity duration-300";
 

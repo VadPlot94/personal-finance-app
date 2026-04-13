@@ -1,5 +1,5 @@
 import { IValidationResult } from "@/back-end/server-actions/types";
-import validationService from "@/front-end/services/validation.service";
+import validationService from "@/shared/services/validation.service";
 import { Pot } from "@prisma/client";
 import { potRepository } from "../repositories/pot.repository";
 import { CustomError } from "@/back-end/server-actions/common";

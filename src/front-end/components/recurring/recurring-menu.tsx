@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/front-end/components/ui/dropdown-menu";
 import { useState } from "react";
-import { IRecurringMenuProps } from "../types";
+import { IRecurringMenuProps } from "./types";
 import { DeleteRecurringDialog } from "./dialogs/delete-recurring-dialog";
 
 export function RecurringMenu({

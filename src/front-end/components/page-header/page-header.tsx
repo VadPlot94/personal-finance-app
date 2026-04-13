@@ -1,6 +1,6 @@
 "use client";
 
-import { IPageHeaderProps } from "../types";
+import { IPageHeaderProps } from "./types";
 
 export default function PageHeader({
   name = "",

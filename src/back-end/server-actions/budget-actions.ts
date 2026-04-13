@@ -8,7 +8,7 @@ import { CustomError, validationObjectWrapper } from "./common";
 import {
   Theme,
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 
 export async function getAllBudgetsServerAction(): Promise<
   ServerActionResult<Budget[]>

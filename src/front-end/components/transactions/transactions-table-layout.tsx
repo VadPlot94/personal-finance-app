@@ -3,9 +3,9 @@
 import {
   SortBy,
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 import { useState } from "react";
-import { IPaginationData, ITransactionsTableLayoutProps } from "../types";
+import { IPaginationData, ITransactionsTableLayoutProps } from "./types";
 import { Transaction } from "@prisma/client";
 import { useUpdateEffect } from "react-use";
 import transactionService from "@/front-end/services/transaction.service";

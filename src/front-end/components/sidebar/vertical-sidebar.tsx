@@ -1,11 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import constants from "@/front-end/services/constants.service";
+import constants from "@/shared/services/constants.service";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-export default function VerticalSideBar() {
+export default function VerticalSidebar() {
   const pathname = usePathname();
   const [isMenuOpened, toggleMenu] = useState(false);
 

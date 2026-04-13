@@ -1,4 +1,4 @@
-import { TransactionUICategory } from "@/front-end/services/constants.service";
+import { TransactionUICategory } from "@/shared/services/constants.service";
 import { Transaction } from "@prisma/client";
 
 export interface ITransactionDataResponse {

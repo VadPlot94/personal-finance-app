@@ -1,11 +1,14 @@
 "use server";
 
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
-import { Theme } from "@/front-end/services/constants.service";
+import { Theme } from "@/shared/services/constants.service";
 import { Pot } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { ServerActionResult } from "./types";
-import { IAddPotDTOInput, IAddPotDTOOutput } from "../dto-models/pot-dto.model";
+import {
+  ICreatePotDTOInput,
+  ICreatePotDTOOutput,
+} from "../dto-models/pot-dto.model";
 import {
   mapCreateDBPotToOutput,
   mapCreatePotInputToDBPot,
@@ -15,26 +18,29 @@ import { validationObjectWrapper } from "./common";
 
 export async function createPotServerAction(
   prevState: { success: boolean } | null,
-  formData: IAddPotDTOInput,
-): Promise<ServerActionResult<IAddPotDTOOutput>> {
-  return await validationObjectWrapper<IAddPotDTOOutput>("create", async () => {
-    // check auth()
-    const potModel = mapCreatePotInputToDBPot(formData) as Pot;
-    await validateCreatePotModel(potModel);
+  formData: ICreatePotDTOInput,
+): Promise<ServerActionResult<ICreatePotDTOOutput>> {
+  return await validationObjectWrapper<ICreatePotDTOOutput>(
+    "create",
+    async () => {
+      // check auth()
+      const potModel = mapCreatePotInputToDBPot(formData) as Pot;
+      await validateCreatePotModel(potModel);
 
-    const response = await potRepository.create({
-      data: {
-        ...potModel,
-      },
-      select: {
-        id: true,
-      },
-    });
+      const response = await potRepository.create({
+        data: {
+          ...potModel,
+        },
+        select: {
+          id: true,
+        },
+      });
 
-    syncChanges();
+      syncChanges();
 
-    return mapCreateDBPotToOutput(response);
-  });
+      return mapCreateDBPotToOutput(response);
+    },
+  );
 }
 
 export async function editPotServerAction(

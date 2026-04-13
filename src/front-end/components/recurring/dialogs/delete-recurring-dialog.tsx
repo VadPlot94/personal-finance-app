@@ -3,7 +3,7 @@
 import { deleteRecurringServerAction } from "@/back-end/server-actions/transaction-actions";
 import { toast } from "sonner";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
-import { IDeleteRecurringDialogProps } from "@/front-end/components/types";
+import { IDeleteRecurringDialogProps } from "@/front-end/components/recurring/types";
 
 export function DeleteRecurringDialog({
   recurringTransaction,

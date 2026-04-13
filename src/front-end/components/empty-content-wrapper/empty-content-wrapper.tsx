@@ -1,4 +1,4 @@
-import { IEmptyContentWrapperProps } from "../types";
+import { IEmptyContentWrapperProps } from "./types";
 
 export default function EmptyContentWrapper({
   hasItems,

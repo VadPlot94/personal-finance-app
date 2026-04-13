@@ -1,4 +1,4 @@
-import { IPaginationData } from "@/front-end/components/types";
+import { IPaginationData } from "@/front-end/components/transactions/types";
 import { Transaction } from "@prisma/client";
 
 class TransactionService {

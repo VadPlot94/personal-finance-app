@@ -9,11 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "@/front-end/components/ui/dropdown-menu";
 import { useState } from "react";
-import { IBudgetMenuProps } from "../types";
+import { IBudgetsMenuProps } from "./types";
 import { DeleteBudgetDialog } from "./dialogs/delete-budget-dialog";
 import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
 
-export function BudgetMenu({ budget, children }: IBudgetMenuProps) {
+export function BudgetsMenu({ budget, children }: IBudgetsMenuProps) {
   const [isEditBudgetDialogOpen, setEditBudgetDialogOpen] = useState(false);
   const [isDeleteBudgetDialogOpen, setDeleteBudgetDialogOpen] = useState(false);
 

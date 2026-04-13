@@ -17,7 +17,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import validationService from "@/front-end/services/validation.service";
+import validationService from "@/shared/services/validation.service";
 import {
   Select,
   SelectContent,
@@ -28,12 +28,12 @@ import {
 import {
   Theme,
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 import { Budget } from "@prisma/client";
 import {
   IAddBudgetFormData,
   IEditBudgetDialogProps,
-} from "@/front-end/components/types";
+} from "@/front-end/components/budgets/types";
 import { toast } from "sonner";
 import {
   addBudgetServerAction,

@@ -1,14 +1,14 @@
 "use client";
 
-import { IPotItemProps } from "../types";
+import { IPotsItemProps } from "./types";
 import ItemCard from "../item-card/item-card";
-import { PotMenu } from "./pots-menu";
+import { PotsMenu } from "./pots-menu";
 import { ChangeMoneyDialog } from "./dialogs/change-money-dialog";
 import { useState } from "react";
 import financeService from "@/front-end/services/finance.service";
-import constants from "@/front-end/services/constants.service";
+import constants from "@/shared/services/constants.service";
 
-export default function PotItem({ pot, availableBalance }: IPotItemProps) {
+export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
   const [isAddMoneyDialogOpen, setAddMoneyDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
   const targetPotProgress = financeService.getStrPercentage(
@@ -28,13 +28,13 @@ export default function PotItem({ pot, availableBalance }: IPotItemProps) {
               <div className="font-bold text-xl">{pot.name}</div>
             </div>
             <div className="cursor-pointer">
-              <PotMenu pot={pot}>
+              <PotsMenu pot={pot}>
                 <img
                   className="w-5 h-5"
                   src="assets/images/icon-ellipsis.svg"
                   alt="Actions"
                 />
-              </PotMenu>
+              </PotsMenu>
             </div>
           </div>
           <div className="flex flex-col justify-between items-center gap-3">

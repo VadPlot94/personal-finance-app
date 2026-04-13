@@ -1,7 +1,7 @@
 import {
   SortBy,
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 
 export type ServerActionResult<T = unknown> = {
   success: boolean;

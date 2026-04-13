@@ -1,7 +1,7 @@
-import constants from "@/front-end/services/constants.service";
+import constants from "@/shared/services/constants.service";
 import { cn } from "@/lib/utils";
 import ItemCard from "../item-card/item-card";
-import { IBalanceCardProps } from "../types";
+import { IBalanceCardProps } from "./types";
 
 export async function BalanceCard({
   title,

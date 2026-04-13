@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
-import { IDeleteBudgetDialogProps } from "@/front-end/components/types";
+import { IDeleteBudgetDialogProps } from "@/front-end/components/budgets/types";
 import { deleteBudgetServerAction } from "@/back-end/server-actions/budget-actions";
 
 export function DeleteBudgetDialog({

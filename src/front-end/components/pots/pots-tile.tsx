@@ -1,7 +1,7 @@
 "use client";
 import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
-import { IPotsTileProps } from "../types";
+import { IPotsTileProps } from "./types";
 import potService from "@/front-end/services/pot.service";
 import { cn } from "@/lib/utils";
 

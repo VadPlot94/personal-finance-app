@@ -17,7 +17,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import validationService from "@/front-end/services/validation.service";
+import validationService from "@/shared/services/validation.service";
 import {
   Select,
   SelectContent,
@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import constants, { Theme } from "@/front-end/services/constants.service";
+import constants, { Theme } from "@/shared/services/constants.service";
 import {
   createPotServerAction,
   editPotServerAction,
@@ -34,7 +34,7 @@ import { Pot } from "@prisma/client";
 import {
   IEditPotDialogProps,
   ICreatePotFormData,
-} from "@/front-end/components/types";
+} from "@/front-end/components/pots/types";
 import { toast } from "sonner";
 import { PotsContext } from "../pots";
 import financeService from "@/front-end/services/finance.service";

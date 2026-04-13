@@ -2,7 +2,7 @@
 
 import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
-import { IBudgetsTileProps } from "../types";
+import { IBudgetsTileProps } from "./types";
 import BudgetDonutChart from "./budget-donut-chart";
 
 export default function BudgetsTile({

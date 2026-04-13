@@ -11,9 +11,9 @@ import {
 import { EditPotDialog } from "./dialogs/edit-pot-dialog";
 import { useState } from "react";
 import { DeletePotDialog } from "./dialogs/delete-pot-dialog";
-import { IPotMenuProps } from "../types";
+import { IPotsMenuProps } from "./types";
 
-export function PotMenu({ pot, children }: IPotMenuProps) {
+export function PotsMenu({ pot, children }: IPotsMenuProps) {
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
   const [isDeletePotDialogOpen, setDeletePotDialogOpen] = useState(false);
 

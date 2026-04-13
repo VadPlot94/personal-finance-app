@@ -2,7 +2,7 @@ import Transactions from "@/front-end/components/transactions/transactions";
 import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
 import constants, {
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 import { notFound } from "next/navigation";
 
 interface ITransactionsPageProps {

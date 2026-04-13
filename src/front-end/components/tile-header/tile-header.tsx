@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ITileHeaderProps } from "../types";
+import { ITileHeaderProps } from "./types";
 
 export default function TileHeader({
   title,

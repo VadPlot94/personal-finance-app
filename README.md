@@ -46,3 +46,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
  - tests
  - translations
  - loader
+ - calculate balance in right way

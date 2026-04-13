@@ -3,10 +3,10 @@
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "../item-card/item-card";
 import TileHeader from "../tile-header/tile-header";
-import { ITransactionsTileProps } from "../types";
+import { ITransactionsTileProps } from "./types";
 import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
-import { TransactionUICategory } from "@/front-end/services/constants.service";
+import { TransactionUICategory } from "@/shared/services/constants.service";
 
 export default function TransactionsTile({
   transactions = [],

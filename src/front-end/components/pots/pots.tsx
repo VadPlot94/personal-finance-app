@@ -1,14 +1,14 @@
 "use client";
 
 import { createContext, useEffect, useRef, useState } from "react";
-import { IPotsProps } from "../types";
+import { IPotsProps } from "./types";
 import { EditPotDialog } from "./dialogs/edit-pot-dialog";
-import PotItem from "./pots-item";
+import PotsItem from "./pots-item";
 import { Pot } from "@prisma/client";
 import PageHeader from "../page-header/page-header";
 import { cn } from "@/lib/utils";
 import { wrapGrid } from "animate-css-grid";
-import constants from "@/front-end/services/constants.service";
+import constants from "@/shared/services/constants.service";
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 
 export const PotsContext = createContext<Pot[]>([]);
@@ -103,7 +103,7 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
           {pots
             ?.filter((pot) => !!pot)
             ?.map((pot) => (
-              <PotItem
+              <PotsItem
                 key={pot.id}
                 pot={pot}
                 availableBalance={availableBalance}

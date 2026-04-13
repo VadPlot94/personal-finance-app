@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { IItemCardProps } from "../types";
+import { IItemCardProps } from "./types";
 
 export default function ItemCard({ children, className = "" }: IItemCardProps) {
   return (

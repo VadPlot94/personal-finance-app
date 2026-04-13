@@ -10,7 +10,10 @@ import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
 import { useActionState, useEffect, useState } from "react";
-import validationService from "@/front-end/services/validation.service";
+import validationService from "@/shared/services/validation.service";
+import {
+  ICreateTransactionValidationData,
+} from "@/shared/services/types";
 import {
   Select,
   SelectContent,
@@ -21,12 +24,12 @@ import {
 import constants, {
   TransactionType,
   TransactionUICategory,
-} from "@/front-end/services/constants.service";
+} from "@/shared/services/constants.service";
 import {
   ICreateTransactionFormData,
   ICreateTransactionDialogProps,
   TransactionCategory,
-} from "@/front-end/components/types";
+} from "../types";
 import { toast } from "sonner";
 import financeService from "@/front-end/services/finance.service";
 import { createTransactionServerAction } from "@/back-end/server-actions/transaction-actions";
@@ -48,8 +51,7 @@ export function CreateTransactionDialog({
           transactionType: transactionFormData?.transactionType,
           recipientOrSender: transactionFormData?.recipientOrSender,
           category: transactionFormData?.category,
-          amount: (transactionFormData?.amount?.toString() ||
-            "") as unknown as number,
+          amount: transactionFormData?.amount || "",
           date: transactionFormData?.date,
         } as ICreateTransactionFormData)
       : null;
@@ -59,7 +61,7 @@ export function CreateTransactionDialog({
     useState<ICreateTransactionFormData | null>(null);
 
   const [formErrors, setFormErrors] = useState<Partial<
-    Record<keyof ICreateTransactionFormData, string>
+    Record<keyof ICreateTransactionValidationData, string>
   > | null>(null);
 
   useEffect(() => {
@@ -89,16 +91,24 @@ export function CreateTransactionDialog({
   }, [formResultState]);
 
   const validateForm = (formTransactionData: ICreateTransactionFormData) => {
+    const validationData: ICreateTransactionValidationData = {
+      transactionType: formTransactionData.transactionType,
+      category: formTransactionData.category,
+      recipientOrSender: formTransactionData.recipientOrSender,
+      amount: formTransactionData.amount?.toString() || "",
+      date: formTransactionData.date,
+    };
+
     const result =
-      validationService.validateCreateTransactionSchema(formTransactionData);
+      validationService.validateCreateTransactionSchema(validationData);
     if (result.success) {
       setFormErrors(null);
       return;
     }
     const errors =
-      validationService.createErrorsWithPath<ICreateTransactionFormData>(
-        result,
-      );
+      validationService.createErrorsWithPath<
+        ICreateTransactionValidationData
+      >(result);
     setFormErrors(errors);
   };
 
