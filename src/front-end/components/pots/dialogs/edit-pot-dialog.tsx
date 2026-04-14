@@ -102,9 +102,13 @@ export function EditPotDialog({
         description: formResultState.message || "OK",
       });
     } else {
-      toast.error("Error", {
-        description: formResultState.error || "ERROR",
-      });
+      if (formResultState.zodErrors) {
+        setFormErrors(formResultState.zodErrors);
+      } else {
+        toast.error("Error", {
+          description: formResultState.error || "ERROR",
+        });
+      }
     }
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
@@ -115,6 +119,8 @@ export function EditPotDialog({
       potNames,
       pot?.total,
     );
+    result.success = true;
+
     if (result.success) {
       setFormErrors(null);
       return;

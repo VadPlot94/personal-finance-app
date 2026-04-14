@@ -1,5 +1,8 @@
 import { Transaction } from "@prisma/client";
-import { TransactionType, TransactionUICategory } from "@/shared/services/constants.service";
+import {
+  TransactionType,
+  TransactionUICategory,
+} from "@/shared/services/constants.service";
 
 export interface IPaginationData {
   page: number;

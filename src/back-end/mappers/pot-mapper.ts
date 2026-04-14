@@ -2,6 +2,8 @@ import { Pot } from "@prisma/client";
 import {
   ICreatePotDTOInput,
   ICreatePotDTOOutput,
+  IEditPotDTOInput,
+  IEditPotDTOOutput,
 } from "../dto-models/pot-dto.model";
 import { Theme } from "@/shared/services/constants.service";
 
@@ -16,6 +18,18 @@ export function mapCreateDBPotToOutput(
   dbPOutput: ICreatePotDTOOutput,
 ): ICreatePotDTOOutput {
   return { id: dbPOutput?.id };
+}
+
+export function mapEditPotInputToDBPot(
+  input: IEditPotDTOInput,
+): Partial<Pot> | null {
+  return mapCreatePotInputToDBPot(input as ICreatePotDTOInput);
+}
+
+export function mapEditDBPotToOutput(
+  dbPOutput: IEditPotDTOOutput,
+): IEditPotDTOOutput {
+  return mapCreateDBPotToOutput(dbPOutput as ICreatePotDTOOutput);
 }
 
 function getPotModel(formData: FormData): Partial<Pot> | null {

@@ -84,7 +84,7 @@ class ValidationService {
         message: `Value cannot exceed 'Available Balance' (${currentBalance} $)`,
       })
       .refine((val) => Number(val) + oldTotal <= target, {
-        message: `Value cannot exceed 'Target' (${target} $)`,
+        message: `Value cannot exceed 'Target'/'Total' (${target} $)`,
       });
   }
 
@@ -175,7 +175,7 @@ class ValidationService {
   }
 
   public validateTotal(
-    additionalAmount: number | string,
+    additionalAmount: string,
     target: number,
     total: number,
     availableBalance: number,
@@ -231,6 +231,23 @@ class ValidationService {
       }
     });
     return errors;
+  }
+
+  public createCustomZodIssueResult<T = string>(
+    propName: string,
+    message: string,
+    mockValue?: T,
+  ): z.ZodSafeParseError<T> {
+    const schema = z.any().superRefine((_, ctx) => {
+      ctx.addIssue({
+        code: "custom",
+        message,
+        path: [propName],
+      });
+    });
+
+    const result = schema.safeParse(mockValue ?? "");
+    return result as z.ZodSafeParseError<T>;
   }
 
   private logZodErrors(error: z.ZodError, context: string) {

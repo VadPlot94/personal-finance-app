@@ -1,4 +1,8 @@
-import { Theme, TransactionType, TransactionUICategory } from "./constants.service";
+import {
+  Theme,
+  TransactionType,
+  TransactionUICategory,
+} from "./constants.service";
 
 export interface ICreatePotValidationData {
   id: string;

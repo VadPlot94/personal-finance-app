@@ -11,9 +11,7 @@ import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
 import { useActionState, useEffect, useState } from "react";
 import validationService from "@/shared/services/validation.service";
-import {
-  ICreateTransactionValidationData,
-} from "@/shared/services/types";
+import { ICreateTransactionValidationData } from "@/shared/services/types";
 import {
   Select,
   SelectContent,
@@ -106,9 +104,9 @@ export function CreateTransactionDialog({
       return;
     }
     const errors =
-      validationService.createErrorsWithPath<
-        ICreateTransactionValidationData
-      >(result);
+      validationService.createErrorsWithPath<ICreateTransactionValidationData>(
+        result,
+      );
     setFormErrors(errors);
   };
 
