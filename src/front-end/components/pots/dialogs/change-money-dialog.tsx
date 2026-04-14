@@ -49,7 +49,7 @@ export function ChangeMoneyDialog({
         oldTotal,
         availableBalance,
       );
-      result.success = true;
+
       if (!result.success) {
         setValidationError(result.error.issues[0].message);
         setAmountProgress(0);
