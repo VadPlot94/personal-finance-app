@@ -119,7 +119,6 @@ export function EditPotDialog({
       potNames,
       pot?.total,
     );
-    result.success = true;
 
     if (result.success) {
       setFormErrors(null);
