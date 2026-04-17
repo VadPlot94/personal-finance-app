@@ -4,9 +4,7 @@ import { Prisma, Transaction } from "@prisma/client";
 import { IGetTransactionsParams } from "@/back-end/server-actions/types";
 import { ITransactionDataResponse } from "./types";
 
-export class TransactionRepository extends BaseRepository<
-  typeof prisma.transaction
-> {
+export class TransactionRepository extends BaseRepository<"transaction"> {
   constructor() {
     super(prisma.transaction);
   }
@@ -22,6 +20,7 @@ export class TransactionRepository extends BaseRepository<
       sortBy,
       search,
       isRecurring,
+      userId,
     } = params;
 
     const skip = (page - 1) * transactionsCount;
@@ -33,6 +32,7 @@ export class TransactionRepository extends BaseRepository<
         name: { contains: searchVal, mode: Prisma.QueryMode.insensitive },
       }),
       ...(isRecurring && { recurring: true }),
+      ...(userId && { userId }),
     };
 
     const transactions = await prisma.transaction.findMany({
@@ -102,12 +102,14 @@ export class TransactionRepository extends BaseRepository<
     return expenses as Transaction[];
   }
 
-  async getRecent(limit = 10): Promise<Transaction[]> {
+  async getRecent(limit = 10, userId?: string): Promise<Transaction[]> {
     return this.findMany({
+      where: userId ? { userId } : undefined,
       orderBy: { date: "desc" },
       take: limit,
       select: {
         id: true,
+        userId: true,
         name: true,
         amount: true,
         category: true,
@@ -118,15 +120,18 @@ export class TransactionRepository extends BaseRepository<
     });
   }
 
-  async getByCategory(category: string): Promise<Transaction[]> {
+  async getByCategory(
+    category: string,
+    userId?: string,
+  ): Promise<Transaction[]> {
     return this.findMany({
-      where: { category },
+      where: userId ? { category, userId } : { category },
       orderBy: { date: "desc" },
     });
   }
 
   public async createTransaction(
-    data: Omit<Transaction, "id" | "userId">,
+    data: Omit<Transaction, "id" | "userId"> & { userId: string },
   ): Promise<Transaction> {
     return this.create({
       data: {
@@ -136,6 +141,7 @@ export class TransactionRepository extends BaseRepository<
         category: data.category,
         date: data.date ?? new Date(),
         recurring: data.recurring ?? false,
+        userId: data.userId,
       },
     });
   }

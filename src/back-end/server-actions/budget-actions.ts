@@ -9,12 +9,16 @@ import {
   Theme,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
+import { Session } from "next-auth";
 
 export async function getAllBudgetsServerAction(): Promise<
   ServerActionResult<Budget[]>
 > {
-  return await validationObjectWrapper<Budget[]>("get", async () =>
-    budgetRepository.getAll(),
+  return await validationObjectWrapper<Budget[]>(
+    "get",
+    async (session?: Session) => {
+      return budgetRepository.getAll(session?.user?.id);
+    },
   );
 }
 
@@ -22,15 +26,18 @@ export async function addBudgetServerAction(
   prevState: { success: boolean } | null,
   formData: FormData,
 ): Promise<ServerActionResult> {
-  const action = async () => {
+  const action = async (session?: Session) => {
     const budgetModel = getBudgetModel(formData);
     if (!budgetModel || !budgetModel.category || !budgetModel.maximum) {
       throw new CustomError("Invalid data: category and maximum are required");
     }
 
+    const userId = session?.user?.id;
+
     const isCategoryUnique = await budgetRepository.isCategoryUnique(
       budgetModel.category,
       budgetModel.id,
+      userId,
     );
 
     if (!isCategoryUnique) {
@@ -42,7 +49,7 @@ export async function addBudgetServerAction(
         category: budgetModel.category,
         maximum: budgetModel.maximum,
         theme: budgetModel.theme as Theme,
-        userId: budgetModel.userId || null,
+        userId,
       },
     });
 
@@ -50,14 +57,17 @@ export async function addBudgetServerAction(
     return true;
   };
 
-  return await validationObjectWrapper<boolean>("get", async () => action());
+  return await validationObjectWrapper<boolean>(
+    "get",
+    async (session?: Session) => action(session),
+  );
 }
 
 export async function editBudgetServerAction(
   prevState: { success: boolean } | null,
   formData: FormData,
 ): Promise<ServerActionResult> {
-  const action = async () => {
+  const action = async (session?: Session) => {
     const budgetModel = getBudgetModel(formData);
     if (!budgetModel || !budgetModel.id) {
       throw new CustomError("ID is required for update");
@@ -67,9 +77,12 @@ export async function editBudgetServerAction(
       throw new CustomError("No changes to apply");
     }
 
+    const userId = session?.user?.id;
+
     const isCategoryUnique = await budgetRepository.isCategoryUnique(
       budgetModel.category,
       budgetModel.id,
+      userId,
     );
 
     if (!isCategoryUnique) {
@@ -88,7 +101,10 @@ export async function editBudgetServerAction(
     return true;
   };
 
-  return await validationObjectWrapper<boolean>("update", async () => action());
+  return await validationObjectWrapper<boolean>(
+    "update",
+    async (session?: Session) => action(session),
+  );
 }
 
 export async function deleteBudgetServerAction(

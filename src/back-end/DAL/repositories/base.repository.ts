@@ -88,4 +88,31 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   ): Promise<number> {
     return this.model.count(args) as Promise<number>;
   }
+
+  /**
+   * Ensure that an object belongs to a specific user.
+   * Uses the model's id and userId fields by default.
+   */
+  async ensureDataOwnership(
+    id: string,
+    userId: string,
+    options?: {
+      idField?: string;
+      userIdField?: string;
+      select?: Record<string, boolean>;
+    },
+  ): Promise<boolean> {
+    const idField = options?.idField ?? "id";
+    const userIdField = options?.userIdField ?? "userId";
+
+    const item = await this.findFirst({
+      where: {
+        [idField]: id,
+        [userIdField]: userId,
+      },
+      select: options?.select ?? { id: true },
+    } as any);
+
+    return !!item;
+  }
 }

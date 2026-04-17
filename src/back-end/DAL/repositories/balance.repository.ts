@@ -2,7 +2,7 @@ import prisma from "@/back-end/prisma/prisma-client";
 import { BaseRepository } from "./base.repository";
 import { Balance } from "@prisma/client";
 
-export class BalanceRepository extends BaseRepository<typeof prisma.balance> {
+export class BalanceRepository extends BaseRepository<"balance"> {
   constructor() {
     super(prisma.balance);
   }
@@ -10,8 +10,9 @@ export class BalanceRepository extends BaseRepository<typeof prisma.balance> {
   /**
    * Получить текущий баланс (самый свежий по updatedAt)
    */
-  public async getCurrent(): Promise<Balance> {
+  public async getCurrent(userId?: string): Promise<Balance | null> {
     return this.findFirst({
+      where: userId ? { userId } : undefined,
       orderBy: {
         updatedAt: "desc",
       },

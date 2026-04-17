@@ -13,8 +13,9 @@ import {
   deletePot,
   editPot,
   setPotTotal,
-} from "../DAL/business-logic/pot-db.service";
+} from "../DAL/db-services/pot-db.service";
 import { validationObjectWrapper } from "./common";
+import { Session } from "next-auth";
 
 export async function createPotServerAction(
   prevState: { success: boolean } | null,
@@ -22,9 +23,8 @@ export async function createPotServerAction(
 ): Promise<ServerActionResult<ICreatePotDTOOutput>> {
   const validatedResponse = await validationObjectWrapper<ICreatePotDTOOutput>(
     "create",
-    async () => {
-      // check auth()
-      return createPot(formData);
+    async (session?: Session) => {
+      return createPot(formData, session?.user?.id);
     },
   );
 
@@ -38,9 +38,8 @@ export async function editPotServerAction(
 ): Promise<ServerActionResult<IEditPotDTOOutput>> {
   const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
-    async () => {
-      // check auth()
-      return editPot(formData);
+    async (session?: Session) => {
+      return editPot(formData, session?.user?.id);
     },
   );
 
@@ -53,9 +52,8 @@ export async function deletePotServerAction(
 ): Promise<ServerActionResult> {
   const validatedResponse = await validationObjectWrapper<boolean>(
     "delete",
-    async () => {
-      // check auth()
-      return deletePot(id);
+    async (session?: Session) => {
+      return deletePot(id, session?.user?.id);
     },
   );
 
@@ -69,9 +67,8 @@ export async function setPotTotalServerAction(
 ): Promise<ServerActionResult<IEditPotDTOOutput>> {
   const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
-    async () => {
-      // check auth()
-      return setPotTotal(id, newTotal);
+    async (session?: Session) => {
+      return setPotTotal(id, newTotal, session?.user?.id);
     },
   );
 

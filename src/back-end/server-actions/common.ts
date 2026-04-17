@@ -1,4 +1,6 @@
+import type { Session } from "next-auth";
 import { ServerActionResult } from "./types";
+import authService from "../DAL/db-services/auth.service";
 
 export class CustomError extends Error {
   public isCustomError = true as const;
@@ -16,10 +18,15 @@ export class CustomError extends Error {
 
 export async function validationObjectWrapper<T = unknown>(
   action: "get" | "update" | "delete" | "create",
-  callback: () => Promise<T>,
+  callback: (session?: Session) => Promise<T>,
+  options: { requireAuth?: boolean } = { requireAuth: true },
 ): Promise<ServerActionResult<T>> {
   try {
-    const response = await callback();
+    let session: Session = null as unknown as Session;
+    if (options?.requireAuth) {
+      session = await authService.getAuthenticatedSession();
+    }
+    const response = await callback(session);
     return {
       success: true,
       data: response,

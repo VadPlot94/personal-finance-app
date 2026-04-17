@@ -10,8 +10,9 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   /**
    * Получить все бюджеты (с сортировкой по категории)
    */
-  async getAll(): Promise<Budget[]> {
+  async getAll(userId?: string): Promise<Budget[]> {
     return this.findMany({
+      where: userId ? { userId } : undefined,
       orderBy: { category: "asc" },
     });
   }
@@ -33,10 +34,12 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   public async isCategoryUnique(
     category: string | undefined,
     excludeId?: string,
+    userId?: string,
   ): Promise<boolean> {
     const budget = await this.findFirst({
       where: {
         category,
+        userId: userId ?? undefined,
         // If id is provided — exclude the current pot from the check
         id: excludeId ? { not: excludeId } : undefined,
       },

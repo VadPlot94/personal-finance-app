@@ -3,6 +3,7 @@ import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import { ReactNode } from "react";
+import authService from "@/back-end/DAL/db-services/auth.service";
 
 export default async function OverviewLayout({
   transactions,
@@ -12,7 +13,9 @@ export default async function OverviewLayout({
 }: {
   [key: string]: ReactNode | undefined;
 }) {
-  const balance = await balanceRepository.getCurrent();
+  const session = await authService.getSessionOrRedirectToLoginPage();
+
+  const balance = await balanceRepository.getCurrent(session.user.id);
 
   return (
     <>

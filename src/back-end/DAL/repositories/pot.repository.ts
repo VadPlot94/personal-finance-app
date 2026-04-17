@@ -18,18 +18,28 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Получить все копилки (с сортировкой по имени)
    */
-  async getAll(): Promise<Pot[]> {
+  async getAll(userId?: string): Promise<Pot[]> {
     return this.findMany({
+      where: userId ? { userId } : undefined,
       orderBy: { name: "asc" },
+    });
+  }
+
+  /**
+   * Get pot by id
+   */
+  public async getById(id: string, userId?: string): Promise<Pot | null> {
+    return this.findFirst({
+      where: userId ? { id, userId } : { id },
     });
   }
 
   /**
    * Получить копилку по имени
    */
-  async getByName(name: string): Promise<Pot | null> {
+  async getByName(name: string, userId?: string): Promise<Pot | null> {
     return this.findFirst({
-      where: { name },
+      where: userId ? { name, userId } : { name },
     });
   }
 
@@ -57,19 +67,25 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Создать новую копилку
    */
-  async createPot(data: {
-    name: string;
-    target: number;
-    total?: number;
-    theme: string;
-  }): Promise<Pot> {
+  async createPot(
+    data: {
+      name: string;
+      target: number;
+      total?: number;
+      theme: string;
+      userId: string;
+    },
+    select?: Prisma.PotSelect,
+  ): Promise<Pot> {
     return this.create({
       data: {
         name: data.name,
         target: data.target,
         total: data.total ?? 0,
         theme: data.theme,
+        userId: data.userId,
       },
+      select,
     });
   }
 

@@ -19,18 +19,25 @@ import {
 } from "@/back-end/DAL/repositories/types";
 import { Transaction } from "@prisma/client";
 import { validationObjectWrapper } from "./common";
+import { Session } from "next-auth";
+import authService from "../DAL/db-services/auth.service";
 
 export async function createTransactionServerAction(
   prevState: { success: boolean } | null,
   formData: FormData,
 ): Promise<ServerActionResult<Transaction>> {
   const newTransactionModel = getNewTransactionModel(formData);
-  return await validationObjectWrapper<Transaction>("create", async () => {
-    const data =
-      await transactionRepository.createTransaction(newTransactionModel);
-    syncChanges();
-    return data;
-  });
+  return await validationObjectWrapper<Transaction>(
+    "create",
+    async (session?: Session) => {
+      const data = await transactionRepository.createTransaction({
+        ...newTransactionModel,
+        userId: session?.user?.id,
+      });
+      syncChanges();
+      return data;
+    },
+  );
 }
 
 export async function getTransactionsServerAction(
@@ -38,9 +45,12 @@ export async function getTransactionsServerAction(
 ): Promise<ServerActionResult<ITransactionDataResponse>> {
   return await validationObjectWrapper<ITransactionDataResponse>(
     "get",
-    async () => {
+    async (session?: Session) => {
       const transactionModel = getTransactionsModel(data);
-      return await transactionRepository.getTransactions(transactionModel);
+      return await transactionRepository.getTransactions({
+        ...transactionModel,
+        userId: session?.user?.id,
+      });
     },
   );
 }
@@ -50,9 +60,9 @@ export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Pr
 > {
   return await validationObjectWrapper<ITransactionsForCategoryData[]>(
     "get",
-    async () => {
+    async (session?: Session) => {
       const expenses = await transactionRepository.getMonthlyExpensesByCategory(
-        null as any,
+        session?.user?.id,
       );
       const result: { [s: string]: Transaction[] } = {};
 
@@ -75,11 +85,13 @@ export async function getTransactionsForCategoryServerAction(
   data?: Partial<IGetTransactionForCategoryParams>,
 ): Promise<ServerActionResult<ITransactionsForCategoryData[]>> {
   try {
+    const session = await authService.getAuthenticatedSession();
     const categoryPromises = (data?.categories ?? []).map(async (category) => {
       const response = await transactionRepository.getTransactions(
         getTransactionsModel({
           category,
           transactionsCount: data?.transactionsCount || 3,
+          userId: session.user.id,
         }),
       );
       return { category, transactions: response.transactions } as const;
@@ -121,7 +133,7 @@ function getNewTransactionModel(
 
 function getTransactionsModel(
   data: Partial<IGetTransactionsParams> | undefined,
-): Required<IGetTransactionsParams> {
+): IGetTransactionsParams {
   const [sortByField, orderField] = Object.entries(
     sortByPrismaMap[data?.sortBy || SortBy.Latest],
   )[0];

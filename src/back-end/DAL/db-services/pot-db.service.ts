@@ -21,27 +21,28 @@ import potService from "@/front-end/services/pot.service";
 
 export async function createPot(
   potFormData: ICreatePotDTOInput,
+  userId: string,
 ): Promise<ICreatePotDTOOutput> {
   const potModel = mapCreatePotInputToDBPot(potFormData) as Pot;
-  await validateCreatePotModel(potModel);
+  await validateCreatePotModel(potModel, userId);
 
-  const response = await potRepository.create({
-    data: {
+  const response = await potRepository.createPot(
+    {
       ...potModel,
+      userId,
     },
-    select: {
-      id: true,
-    },
-  });
+    { id: true },
+  );
 
   return mapCreateDBPotToOutput(response);
 }
 
 export async function editPot(
   potFormData: IEditPotDTOInput,
+  userId: string,
 ): Promise<IEditPotDTOOutput> {
   const potModel = mapEditPotInputToDBPot(potFormData) as Pot;
-  await validateEditPotModel(potModel);
+  await validateEditPotModel(potModel, userId);
 
   const response = await potRepository.update({
     where: { id: potModel.id },
@@ -55,8 +56,13 @@ export async function editPot(
   return mapEditDBPotToOutput(response);
 }
 
-export async function deletePot(id: string): Promise<boolean> {
+export async function deletePot(id: string, userId: string): Promise<boolean> {
   validateDeletePotModel(id);
+
+  const hasOwnership = await potRepository.ensureDataOwnership(id, userId);
+  if (!hasOwnership) {
+    throw new CustomError("Unauthorized");
+  }
 
   const response = await potRepository.delete({
     where: { id },
@@ -68,8 +74,9 @@ export async function deletePot(id: string): Promise<boolean> {
 export async function setPotTotal(
   id: string,
   newTotal: number,
+  userId: string,
 ): Promise<IEditPotDTOOutput> {
-  await validatePotTotal(id, newTotal);
+  await validatePotTotal(id, newTotal, userId);
 
   const response = await potRepository.update({
     where: { id },
@@ -82,6 +89,7 @@ export async function setPotTotal(
 async function validatePotTotal(
   id: string,
   newTotal: number,
+  userId: string,
 ): Promise<boolean> {
   if (!id) {
     throw new CustomError("ID is required for update");
@@ -95,7 +103,7 @@ async function validatePotTotal(
     throwValidationError(zodErrorResult);
   }
 
-  const pots = await potRepository.getAll();
+  const pots = await potRepository.getAll(userId);
   const currentPot = pots?.find((pot) => pot?.id === id);
 
   if (!currentPot) {
@@ -107,9 +115,9 @@ async function validatePotTotal(
   const isWithdraw = newTotal < total;
   const targetValidationAmount = isWithdraw ? total : target;
   const oldTotal = isWithdraw ? 0 : total;
-  const balance = await balanceRepository.getCurrent();
+  const balance = await balanceRepository.getCurrent(userId);
   const totalSum = potService.getAllSavedPotsMoney(pots);
-  const availableBalance = balance?.current - totalSum || 0;
+  const availableBalance = (balance?.current ?? 0) - totalSum;
   const deltaAmount = Math.abs(newTotal - total);
 
   const zodValidationResult = validationService.validateTotal(
@@ -132,15 +140,26 @@ function validateDeletePotModel(id: string) {
 
 async function validateEditPotModel(
   potModel: Partial<Pot> | null,
+  userId: string,
 ): Promise<never | boolean> {
   if (!potModel?.id) {
     throw new CustomError("ID is required for update");
   }
-  return validateCreatePotModel(potModel);
+
+  const hasOwnership = await potRepository.ensureDataOwnership(
+    potModel.id,
+    userId,
+  );
+  if (!hasOwnership) {
+    throw new CustomError("Unauthorized");
+  }
+
+  return validateCreatePotModel(potModel, userId);
 }
 
 async function validateCreatePotModel(
   potModel: Partial<Pot> | null,
+  userId: string,
 ): Promise<never | boolean> {
   if (!potModel?.name) {
     const zodErrorResult = validationService.createCustomZodIssueResult<object>(

@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Public_Sans } from "next/font/google";
 import "./globals.css";
 import NotificationBanner from "@/front-end/components/notification-banner/notification-banner";
+import Providers from "./providers";
 
 // ! Need to replace with Public_Sans font - Tailwind CSS default fonts. It is done in global.css
 
@@ -41,7 +42,7 @@ export default function RootLayout({
         className={`${publicSans.variable} ${geistMono.variable} antialiased`}
       >
         <NotificationBanner />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
