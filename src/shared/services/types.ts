@@ -25,3 +25,9 @@ export interface ICreateTransactionValidationData {
   amount: string;
   date?: string;
 }
+
+export interface IRegisterValidationData {
+  email: string;
+  password: string;
+  name: string;
+}

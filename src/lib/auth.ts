@@ -1,30 +1,13 @@
-import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/back-end/prisma/prisma-client";
-import { userRepository } from "@/back-end/DAL/repositories/user.repository";
+import authService from "@/back-end/DAL/db-services/auth.service";
+import { User } from "@prisma/client";
+import { setTestAppData } from "@/back-end/prisma/seed";
 
-const DEFAULT_EMAIL = "admin@example.com";
-const DEFAULT_PASSWORD = "password";
-
-function hashPassword(password: string) {
-  const salt = randomBytes(16).toString("hex");
-  const derivedKey = scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${derivedKey}`;
-}
-
-function verifyPassword(password: string, storedHash: string) {
-  const [salt, key] = storedHash.split(":");
-  if (!salt || !key) {
-    return false;
-  }
-
-  const derivedKey = scryptSync(password, salt, 64);
-  return timingSafeEqual(Buffer.from(key, "hex"), derivedKey);
-}
-
-export const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
@@ -36,85 +19,74 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        const email = credentials?.email?.trim();
-        const password = credentials?.password;
-
-        if (!email || !password) {
-          return null;
+      // Redirect to appropriate page after successful login
+      //   async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      //   // If no url or it login page - redirect to main page
+      //   if (url === '/login' || url === baseUrl + '/login') {
+      //     return baseUrl;
+      //   }
+      //   // If URL start with с baseUrl - leave as it is
+      //   if (url.startsWith(baseUrl)) {
+      //     return url;
+      //   }
+      //   // If URL relative - return it
+      //   if (url.startsWith('/')) {
+      //     return `${baseUrl}${url}`;
+      //   }
+      //   // By default - to the main page
+      //   return baseUrl;
+      // },
+      // run when the user try to login, check credentials and return user data if credentials are valid, otherwise return null
+      // returned data will be set to JWT token and session (see callbacks below)
+      async authorize(
+        credentials:
+          | Partial<Record<"email" | "password", string | unknown>>
+          | undefined,
+      ) {
+        // authorize method only for login (not register)
+        const validationResponse = await authService.autorizeUser(credentials);
+        if (
+          validationResponse.success &&
+          authService.isAdminUser(
+            credentials?.email as string,
+            credentials?.password as string,
+          )
+        ) {
+          // Fill database with test data on first admin login if database is empty, so we can test app features without manual adding data after each reset
+          await setTestAppData();
         }
-
-        const validEmail = process.env.AUTH_EMAIL || DEFAULT_EMAIL;
-        const validPassword = process.env.AUTH_PASSWORD || DEFAULT_PASSWORD;
-
-        let user = (await userRepository.findByEmail(email, {
-          id: true,
-          email: true,
-          name: true,
-          hashedPassword: true,
-        })) as {
-          id: string;
-          email: string | null;
-          name: string | null;
-          hashedPassword: string | null;
-        } | null;
-
-        if (!user) {
-          if (email !== validEmail || password !== validPassword) {
-            return null;
-          }
-
-          user = await userRepository.createUser(
-            {
-              email,
-              name: email.split("@")[0],
-              hashedPassword: hashPassword(password),
-            },
-            {
-              id: true,
-              email: true,
-              name: true,
-              hashedPassword: true,
-            },
-          );
-        }
-
-        if (!user?.hashedPassword) {
-          return null;
-        }
-
-        const isValid = verifyPassword(password, user.hashedPassword);
-        if (!isValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name ?? user.email,
-        };
+        return validationResponse?.data as User | null;
       },
     }),
   ],
   pages: {
+    // page where not authenticated user will be redirect if it try to access some other "protected" pages
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    // By default NextAuth will set only user id, email, name to JWT token and session, but we want to have more user data there
+    // so we set whole user object to token and session after successful login in authorize method of provider
+    async jwt({ token, user }: { token: any; user?: any }) {
+      // After successful login set user data to JWT token with first login
       if (user) {
         token.user = user as typeof token.user;
       }
       return token;
     },
-    async session({ session, token }) {
+    // By default NextAuth will set to session only base fields (user id, email, name) from token, but we want to have more user data in session
+    // so we set whole user object to session from token
+    async session({ session, token }: { session: any; token: any }) {
+      // After successful login set user to session and send to client
+      // After that we can use session user data on the client side and in server actions
       if (token.user) {
         session.user = token.user as typeof session.user;
       }
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET || "MyCustomRandomSecret319_ttsdt31231657948" || "change-me-to-a-secret",
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
+export const { handlers, auth } = NextAuth(authOptions);
 export const getAuthOptions = () => authOptions;
 export default authOptions;

@@ -9,6 +9,7 @@ import {
   IAddBudgetValidationData,
   ICreatePotValidationData,
   ICreateTransactionValidationData,
+  IRegisterValidationData,
 } from "./types";
 import { Pot } from "@prisma/client";
 
@@ -87,6 +88,12 @@ class ValidationService {
         message: `Value cannot exceed 'Target'/'Total' (${target} $)`,
       });
   }
+
+  private registerFormSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    name: z.string().min(1, "Name is required"),
+  });
 
   private createTransactionFormDataSchema = z.object({
     transactionType: z
@@ -205,6 +212,18 @@ class ValidationService {
     }
 
     return validationObj;
+  }
+
+  public validateRegisterSchema(
+    formData: IRegisterValidationData,
+  ): z.ZodSafeParseResult<IRegisterValidationData> {
+    const validationObj = this.registerFormSchema.safeParse(formData);
+
+    if (validationObj.error) {
+      this.logZodErrors(validationObj.error, "Register");
+    }
+
+    return validationObj as z.ZodSafeParseResult<IRegisterValidationData>;
   }
 
   public validateCreateTransactionSchema(

@@ -19,6 +19,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
     "animate-css-grid": "^1.5.1",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",
@@ -36,6 +37,7 @@
     "@biomejs/biome": "2.2.0",
     "@prisma/client": "^6.15.0",
     "@tailwindcss/postcss": "^4.1.18",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

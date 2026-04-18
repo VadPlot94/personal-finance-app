@@ -1,56 +1,82 @@
-import { randomBytes, scryptSync } from "crypto";
 import prisma from "@/back-end/prisma/prisma-client";
-import { userRepository } from "@/back-end/DAL/repositories/user.repository";
+import userService from "@/back-end/DAL/db-services/user.service";
+import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
+import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
+import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
+import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
+import constants from "@/shared/services/constants.service";
+
 const data = require("@/../initial-data/data.json");
 
-const DEFAULT_EMAIL = process.env.AUTH_EMAIL || "admin@example.com";
-const DEFAULT_PASSWORD = process.env.AUTH_PASSWORD || "password";
+export async function setTestAppData() {
+  try {
+    if (!constants.AuthEmail || !constants.AuthPassword) {
+      console.error(
+        "AUTH_EMAIL and AUTH_PASSWORD environment variables are not set",
+      );
+      process.exit(1);
+    }
+    const user = await userService.createAdminUser(
+      constants.AuthEmail,
+      constants.AuthPassword,
+    );
 
-function hashPassword(password: string) {
-  const salt = randomBytes(16).toString("hex");
-  const derivedKey = scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${derivedKey}`;
-}
+    const userId = user.id;
 
-async function main() {
-  const hashedPassword = hashPassword(DEFAULT_PASSWORD);
-  const user = await userRepository.upsertByEmail({
-    email: DEFAULT_EMAIL,
-    name: "Finance Admin",
-    hashedPassword,
-  });
-
-  const userId = user.id;
-
-  await prisma.balance.upsert({
-    where: { id: "initial-balance" },
-    update: {
+    await balanceRepository.upsertBalance({
       userId,
-    },
-    create: {
-      id: "initial-balance",
       current: data.balance.current,
       income: data.balance.income,
       expenses: data.balance.expenses,
-      userId,
-    },
-  });
+    });
 
-  await prisma.transaction.createMany({
-    data: data.transactions.map((t: any) => ({ ...t, userId })),
-  });
+    await Promise.all(
+      data.transactions.map((transaction: any) =>
+        transactionRepository.createTransaction({
+          userId,
+          name: transaction.name,
+          avatar: transaction.avatar,
+          amount: transaction.amount,
+          category: transaction.category,
+          date: new Date(transaction.date),
+          recurring: transaction.recurring,
+        }),
+      ),
+    );
 
-  await prisma.budget.createMany({
-    data: data.budgets.map((b: any) => ({ ...b, userId })),
-  });
+    await Promise.all(
+      data.budgets.map((budget: any) =>
+        budgetRepository.upsertBudget({
+          userId,
+          category: budget.category,
+          maximum: budget.maximum,
+          theme: budget.theme,
+        }),
+      ),
+    );
 
-  await prisma.pot.createMany({
-    data: data.pots.map((p: any) => ({ ...p, userId })),
-  });
+    await Promise.all(
+      data.pots.map((pot: any) =>
+        potRepository.createPot({
+          userId,
+          name: pot.name,
+          target: pot.target,
+          total: pot.total,
+          theme: pot.theme,
+        }),
+      ),
+    );
 
-  console.log("Seed completed");
+    console.log("Seed completed");
+  } catch (error) {
+    console.error("Error seeding database:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
-main()
-  .catch((e) => console.error(e))
-  .finally(async () => await prisma.$disconnect());
+// Not run more from package.json script, because we want to run it only on first admin login if database is empty
+// so we can test app features without manual adding data after each reset
+// main()
+//   .catch((e) => console.error(e))
+//   .finally(async () => await prisma.$disconnect());

@@ -16,7 +16,9 @@ export default function BillsTable({
 }: IBillsTableProps) {
   const getTimeCell = (status: RecurringStatus, tx: Transaction) => (
     <div
-      className={cn("py-4 max-w-35 min-w-0 text-green-800 truncate")}
+      className={cn(
+        "py-4 max-w-35 min-w-0 text-green-800 truncate flex flex-row items-center gap-1",
+      )}
       title={status}
     >
       {recurringService.getRecurringDueDateString(tx.date)}

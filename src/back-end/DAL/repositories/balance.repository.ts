@@ -49,20 +49,27 @@ export class BalanceRepository extends BaseRepository<"balance"> {
    * Создать или обновить баланс (upsert)
    */
   async upsertBalance(data: {
-    id: string;
+    userId?: string;
+    id?: string;
     current: number;
     income: number;
     expenses: number;
   }): Promise<Balance> {
+    const where = data.userId
+      ? { userId: data.userId }
+      : { id: data.id as string };
+
     return this.upsert({
-      where: { id: data.id },
+      where,
       update: {
         current: data.current,
         income: data.income,
         expenses: data.expenses,
+        ...(data.userId ? { userId: data.userId } : {}),
       },
       create: {
         id: data.id,
+        userId: data.userId,
         current: data.current,
         income: data.income,
         expenses: data.expenses,
