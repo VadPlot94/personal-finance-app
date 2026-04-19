@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/back-end/prisma/prisma-client";
 import authService from "@/back-end/DAL/db-services/auth.service";
 import { User } from "@prisma/client";
-import { setTestAppData } from "@/back-end/prisma/seed";
 
 export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -19,23 +18,6 @@ export const authOptions: NextAuthConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      // Redirect to appropriate page after successful login
-      //   async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      //   // If no url or it login page - redirect to main page
-      //   if (url === '/login' || url === baseUrl + '/login') {
-      //     return baseUrl;
-      //   }
-      //   // If URL start with с baseUrl - leave as it is
-      //   if (url.startsWith(baseUrl)) {
-      //     return url;
-      //   }
-      //   // If URL relative - return it
-      //   if (url.startsWith('/')) {
-      //     return `${baseUrl}${url}`;
-      //   }
-      //   // By default - to the main page
-      //   return baseUrl;
-      // },
       // run when the user try to login, check credentials and return user data if credentials are valid, otherwise return null
       // returned data will be set to JWT token and session (see callbacks below)
       async authorize(
@@ -45,16 +27,6 @@ export const authOptions: NextAuthConfig = {
       ) {
         // authorize method only for login (not register)
         const validationResponse = await authService.autorizeUser(credentials);
-        if (
-          validationResponse.success &&
-          authService.isAdminUser(
-            credentials?.email as string,
-            credentials?.password as string,
-          )
-        ) {
-          // Fill database with test data on first admin login if database is empty, so we can test app features without manual adding data after each reset
-          await setTestAppData();
-        }
         return validationResponse?.data as User | null;
       },
     }),

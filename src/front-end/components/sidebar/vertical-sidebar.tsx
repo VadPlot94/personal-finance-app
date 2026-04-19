@@ -2,7 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function VerticalSidebar() {
@@ -13,6 +14,11 @@ export default function VerticalSidebar() {
   const transition = "transition-all duration-500 ease-in-out";
   const menuTransition = "transition-all duration-400 ease-in-out delay-500";
   const opacityTransition = "transition-opacity duration-300";
+
+  const handleSignOutClick = () => {
+    signOut();
+    redirect("/");
+  }
 
   return (
     <div
@@ -127,6 +133,40 @@ export default function VerticalSidebar() {
                 )}
               >
                 Minimize Menu
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
+          onClick={() => handleSignOutClick()}
+        >
+          <div
+            className={cn(
+              "flex flex-col items-center justify-center h-10 cursor-pointer",
+              menuItemWidth,
+            )}
+          >
+            <div
+              className={cn(
+                "flex flex-row items-center justify-start w-full",
+                isMenuOpened ? "gap-3" : "gap-0",
+              )}
+            >
+              <img
+                className="h-5 w-5"
+                src="assets/images/icon-logout.svg"
+              />
+              <div
+                className={cn(
+                  transition,
+                  "origin-left whitespace-nowrap",
+                  isMenuOpened
+                    ? "opacity-100 translate-x-0 w-30"
+                    : "opacity-0 -translate-x-20 max-w-0",
+                )}
+              >
+                Sign Out
               </div>
             </div>
           </div>

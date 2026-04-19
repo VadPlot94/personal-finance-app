@@ -8,6 +8,7 @@ import {
 import constants from "@/shared/services/constants.service";
 import userService from "./user.service";
 import { User } from "@prisma/client";
+import { setTestAppData } from "@/back-end/prisma/seed";
 
 class AuthService {
   public async getSessionOrRedirectToLoginPage() {
@@ -51,6 +52,9 @@ class AuthService {
         // Create admin user on first login if credentials match and no user exists
         if (!user && this.isAdminUser(email, password)) {
           user = await userService.createAdminUser(email, password);
+          // Fill database with test data on first admin login if database is empty
+          // so we can test app features without manual adding data after each reset
+          await setTestAppData();
         }
 
         return user

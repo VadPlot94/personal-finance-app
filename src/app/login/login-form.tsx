@@ -18,6 +18,24 @@ export default function LoginForm() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
 
+  // Redirect to appropriate page after successful login
+  //   async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+  //   // If no url or it login page - redirect to main page
+  //   if (url === '/login' || url === baseUrl + '/login') {
+  //     return baseUrl;
+  //   }
+  //   // If URL start with с baseUrl - leave as it is
+  //   if (url.startsWith(baseUrl)) {
+  //     return url;
+  //   }
+  //   // If URL relative - return it
+  //   if (url.startsWith('/')) {
+  //     return `${baseUrl}${url}`;
+  //   }
+  //   // By default - to the main page
+  //   return baseUrl;
+  // },
+
   const [formErrors, setFormErrors] = useState<Partial<
     Record<keyof IRegisterValidationData, string>
   > | null>(null);
