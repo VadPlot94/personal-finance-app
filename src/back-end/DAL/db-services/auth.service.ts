@@ -9,6 +9,8 @@ import constants from "@/shared/services/constants.service";
 import userService from "./user.service";
 import { User } from "@prisma/client";
 import { setTestAppData } from "@/back-end/prisma/seed";
+import validationService from "@/shared/services/validation.service";
+import { ISignInValidationData } from "@/shared/services/types";
 
 class AuthService {
   public async getSessionOrRedirectToLoginPage() {
@@ -81,7 +83,20 @@ class AuthService {
         ? credentials.password
         : undefined;
 
-    return email && password ? { email, password } : null;
+    if (!email || !password) {
+      return null;
+    }
+
+    // Validate credentials using validation service
+    const validationData: ISignInValidationData = { email, password };
+    const validationResult =
+      validationService.validateSignInSchema(validationData);
+
+    if (!validationResult.success) {
+      return null;
+    }
+
+    return { email, password };
   }
 
   public isAdminUser(

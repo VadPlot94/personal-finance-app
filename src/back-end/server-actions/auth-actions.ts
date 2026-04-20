@@ -8,7 +8,7 @@ import { IRegisterValidationData } from "@/shared/services/types";
 import { ServerActionResult } from "./types";
 import { Session } from "next-auth";
 
-export async function registerUser(
+export async function registerUserServerAction(
   credentials: unknown,
 ): Promise<ServerActionResult<Partial<User> | null>> {
   return await validationObjectWrapper<Partial<User> | null>(

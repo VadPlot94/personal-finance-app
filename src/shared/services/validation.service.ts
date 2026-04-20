@@ -10,6 +10,7 @@ import {
   ICreatePotValidationData,
   ICreateTransactionValidationData,
   IRegisterValidationData,
+  ISignInValidationData,
 } from "./types";
 import { Pot } from "@prisma/client";
 
@@ -93,6 +94,11 @@ class ValidationService {
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     name: z.string().min(1, "Name is required"),
+  });
+
+  private signInFormSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(1, "Password is required"),
   });
 
   private createTransactionFormDataSchema = z.object({
@@ -224,6 +230,18 @@ class ValidationService {
     }
 
     return validationObj as z.ZodSafeParseResult<IRegisterValidationData>;
+  }
+
+  public validateSignInSchema(
+    formData: ISignInValidationData,
+  ): z.ZodSafeParseResult<ISignInValidationData> {
+    const validationObj = this.signInFormSchema.safeParse(formData);
+
+    if (validationObj.error) {
+      this.logZodErrors(validationObj.error, "Sign In");
+    }
+
+    return validationObj as z.ZodSafeParseResult<ISignInValidationData>;
   }
 
   public validateCreateTransactionSchema(

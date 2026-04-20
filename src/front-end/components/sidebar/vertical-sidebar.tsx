@@ -18,7 +18,7 @@ export default function VerticalSidebar() {
   const handleSignOutClick = () => {
     signOut();
     redirect("/");
-  }
+  };
 
   return (
     <div
@@ -153,10 +153,7 @@ export default function VerticalSidebar() {
                 isMenuOpened ? "gap-3" : "gap-0",
               )}
             >
-              <img
-                className="h-5 w-5"
-                src="assets/images/icon-logout.svg"
-              />
+              <img className="h-5 w-5" src="assets/images/icon-logout.svg" />
               <div
                 className={cn(
                   transition,
