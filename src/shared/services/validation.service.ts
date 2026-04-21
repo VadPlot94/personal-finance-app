@@ -260,7 +260,10 @@ class ValidationService {
     }
 
     if (validationObj.error) {
-      this.logZodErrors(validationObj.error, schema === "signin" ? "Sign In" : "Register");
+      this.logZodErrors(
+        validationObj.error,
+        schema === "signin" ? "Sign In" : "Register",
+      );
     }
 
     return validationObj as z.ZodSafeParseResult<{

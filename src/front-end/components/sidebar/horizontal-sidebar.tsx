@@ -8,7 +8,10 @@ export default function HorizontalSidebar() {
   const pathname = usePathname();
   const opacityTransition = "transition-opacity duration-300";
 
-  const sideBarItems = [...constants.SideBarMenuItemsConfig, constants.SignOutMenuItemConfig];
+  const sideBarItems = [
+    ...constants.SideBarMenuItemsConfig,
+    constants.SignOutMenuItemConfig,
+  ];
 
   return (
     <div className="flex flex-col justify-end bg-black rounded-tl-lg rounded-tr-lg shadow-sm min-w-full">

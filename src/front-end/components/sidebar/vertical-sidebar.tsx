@@ -77,11 +77,7 @@ export default function VerticalSidebar() {
                       menuItemWidth,
                     )}
                   >
-                    <img
-                      src={item.icon}
-                      alt={item.title}
-                      className="h-5 w-5"
-                    />
+                    <img src={item.icon} alt={item.title} className="h-5 w-5" />
                     <span
                       className={cn(
                         transition,
@@ -102,7 +98,7 @@ export default function VerticalSidebar() {
         <div
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => toggleMenu(!isMenuOpened)}
-                          title={isMenuOpened ? "Minimize Menu" : "Maximize Menu"}
+          title={isMenuOpened ? "Minimize Menu" : "Maximize Menu"}
         >
           <div
             className={cn(
@@ -155,7 +151,11 @@ export default function VerticalSidebar() {
                 isMenuOpened ? "gap-3" : "gap-0",
               )}
             >
-              <img className="h-5 w-5" src={constants.SignOutMenuItemConfig.icon} alt={constants.SignOutMenuItemConfig.title} />
+              <img
+                className="h-5 w-5"
+                src={constants.SignOutMenuItemConfig.icon}
+                alt={constants.SignOutMenuItemConfig.title}
+              />
               <div
                 className={cn(
                   transition,
