@@ -24,7 +24,7 @@ export async function createPotServerAction(
   const validatedResponse = await validationObjectWrapper<ICreatePotDTOOutput>(
     "create",
     async (session?: Session) => {
-      return createPot(formData, session?.user?.id);
+      return createPot(formData, session?.user?.id!);
     },
   );
 
@@ -39,7 +39,7 @@ export async function editPotServerAction(
   const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
     async (session?: Session) => {
-      return editPot(formData, session?.user?.id);
+      return editPot(formData, session?.user?.id!);
     },
   );
 
@@ -53,7 +53,7 @@ export async function deletePotServerAction(
   const validatedResponse = await validationObjectWrapper<boolean>(
     "delete",
     async (session?: Session) => {
-      return deletePot(id, session?.user?.id);
+      return deletePot(id, session?.user?.id!);
     },
   );
 
@@ -68,7 +68,7 @@ export async function setPotTotalServerAction(
   const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
     async (session?: Session) => {
-      return setPotTotal(id, newTotal, session?.user?.id);
+      return setPotTotal(id, newTotal, session?.user?.id!);
     },
   );
 

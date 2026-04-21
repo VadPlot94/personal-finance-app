@@ -9,7 +9,10 @@ export default function CreateAccountLink() {
 
   if (status === "loading") {
     return (
-      <Link href={`/login?authMode=${AuthMode.Register}`} className="hover:text-slate-900">
+      <Link
+        href={`/login?authMode=${AuthMode.Register}`}
+        className="hover:text-slate-900"
+      >
         Create Account
       </Link>
     );
@@ -27,7 +30,10 @@ export default function CreateAccountLink() {
   }
 
   return (
-    <Link href={`/login?authMode=${AuthMode.Register}`} className="hover:text-slate-900">
+    <Link
+      href={`/login?authMode=${AuthMode.Register}`}
+      className="hover:text-slate-900"
+    >
       Create Account
     </Link>
   );

@@ -101,6 +101,12 @@ class ConstantsService {
       title: "Recurring Bills",
     },
   ];
+
+  public SignOutMenuItemConfig = {
+    href: "/",
+    icon: "assets/images/icon-logout.svg",
+    title: "Sign Out",
+  };
 }
 
 const constants = new ConstantsService();

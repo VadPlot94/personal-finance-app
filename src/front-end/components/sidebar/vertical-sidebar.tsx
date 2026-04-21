@@ -60,6 +60,7 @@ export default function VerticalSidebar() {
                 <a
                   key={item.href}
                   href={item.href}
+                  title={item.title}
                   className={`flex flex-col justify-center items-center
                   p-3 rounded-tr-md rounded-br-md cursor-pointer w-full
                   ${
@@ -79,7 +80,6 @@ export default function VerticalSidebar() {
                     <img
                       src={item.icon}
                       alt={item.title}
-                      title={item.title}
                       className="h-5 w-5"
                     />
                     <span
@@ -102,6 +102,7 @@ export default function VerticalSidebar() {
         <div
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => toggleMenu(!isMenuOpened)}
+                          title={isMenuOpened ? "Minimize Menu" : "Maximize Menu"}
         >
           <div
             className={cn(
@@ -140,6 +141,7 @@ export default function VerticalSidebar() {
         <div
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => handleSignOutClick()}
+          title={constants.SignOutMenuItemConfig.title}
         >
           <div
             className={cn(
@@ -153,7 +155,7 @@ export default function VerticalSidebar() {
                 isMenuOpened ? "gap-3" : "gap-0",
               )}
             >
-              <img className="h-5 w-5" src="assets/images/icon-logout.svg" />
+              <img className="h-5 w-5" src={constants.SignOutMenuItemConfig.icon} alt={constants.SignOutMenuItemConfig.title} />
               <div
                 className={cn(
                   transition,
@@ -163,7 +165,7 @@ export default function VerticalSidebar() {
                     : "opacity-0 -translate-x-20 max-w-0",
                 )}
               >
-                Sign Out
+                {constants.SignOutMenuItemConfig.title}
               </div>
             </div>
           </div>

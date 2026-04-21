@@ -244,6 +244,32 @@ class ValidationService {
     return validationObj as z.ZodSafeParseResult<ISignInValidationData>;
   }
 
+  public validateAuthSchema(
+    formData: { email: string; password: string; name?: string },
+    schema: "signin" | "register",
+  ): z.ZodSafeParseResult<{ email: string; password: string; name?: string }> {
+    let validationObj;
+
+    if (schema === "signin") {
+      validationObj = this.signInFormSchema.safeParse({
+        email: formData.email,
+        password: formData.password,
+      });
+    } else {
+      validationObj = this.registerFormSchema.safeParse(formData);
+    }
+
+    if (validationObj.error) {
+      this.logZodErrors(validationObj.error, schema === "signin" ? "Sign In" : "Register");
+    }
+
+    return validationObj as z.ZodSafeParseResult<{
+      email: string;
+      password: string;
+      name?: string;
+    }>;
+  }
+
   public validateCreateTransactionSchema(
     formData: ICreateTransactionValidationData,
   ): z.ZodSafeParseResult<ICreateTransactionValidationData> {

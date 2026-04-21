@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import constants from "@/shared/services/constants.service";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 
@@ -20,7 +21,7 @@ export default function SignInButton({ className }: { className?: string }) {
           className,
         )}
       >
-        Sign Out
+        {constants.SignOutMenuItemConfig.title}
       </button>
     );
   }

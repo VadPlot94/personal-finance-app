@@ -26,13 +26,22 @@ export default function LoginForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [authFormMode, setAuthFormMode] = useState<AuthMode>(null);
+  const [authFormMode, setAuthFormMode] = useState<AuthMode>(AuthMode.SignIn);
+  const [isFormReady, setIsFormReady] = useState(false);
+
+  // Redirect to overview if already logged in
+  useEffect(() => {
+    if (session?.user?.id) {
+      router.push("/overview");
+    }
+  }, [session?.user?.id, router]);
 
   useEffect(() => {
     const mode = searchParams.get("authMode") as AuthMode;
     if (!mode || Object.values(AuthMode).includes(mode)) {
       setAuthFormMode(mode || AuthMode.SignIn);
     }
+    setIsFormReady(true);
   }, [searchParams]);
 
   // Transform and set sign in form data
@@ -87,7 +96,7 @@ export default function LoginForm() {
   }, [formRegisterData]);
 
   const validateSignInForm = (formData: ISignInFormData) => {
-    const result = validationService.validateSignInSchema(formData);
+    const result = validationService.validateAuthSchema(formData, "signin");
 
     if (result.success) {
       setSignInErrors(null);
@@ -101,7 +110,7 @@ export default function LoginForm() {
   };
 
   const validateRegisterForm = (formData: IRegisterFormData) => {
-    const result = validationService.validateRegisterSchema(formData);
+    const result = validationService.validateAuthSchema(formData, "register");
 
     if (result.success) {
       setRegisterErrors(null);
@@ -193,24 +202,6 @@ export default function LoginForm() {
     }
   };
 
-  if (session) {
-    redirect("/overview");
-    return;
-    // return (
-    //   <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-    //     <div className="rounded-2xl bg-white p-8 shadow-lg">
-    //       <h1 className="mb-4 text-2xl font-bold">You are signed in</h1>
-    //       <div className="mb-4 text-sm text-slate-600">
-    //         Signed in as {session.user?.name || session.user?.email}
-    //       </div>
-    //       <Button onClick={() => signOut()} variant="outline">
-    //         Sign out
-    //       </Button>
-    //     </div>
-    //   </div>
-    // );
-  }
-
   const handleAuthFormToggleClick = (newAuthMode: AuthMode) => {
     if (authFormMode === newAuthMode) {
       return;
@@ -225,7 +216,7 @@ export default function LoginForm() {
     }
   };
 
-  if (!authFormMode) {
+  if (!isFormReady || session?.user?.id) {
     return null;
   }
 
