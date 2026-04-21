@@ -1,5 +1,3 @@
-import { Transaction } from "@prisma/client";
-
 export enum Theme {
   Green = "#277C78",
   Yellow = "#FACC15",

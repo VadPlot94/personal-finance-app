@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { registerUserServerAction } from "@/back-end/server-actions/auth-actions";
 import {
   ISignInFormData,
@@ -25,7 +25,15 @@ export enum AuthMode {
 export default function LoginForm() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [authFormMode, setAuthFormMode] = useState<AuthMode>(AuthMode.SignIn);
+  const searchParams = useSearchParams();
+  const [authFormMode, setAuthFormMode] = useState<AuthMode>(null);
+
+  useEffect(() => {
+    const mode = searchParams.get("authMode") as AuthMode;
+    if (!mode || Object.values(AuthMode).includes(mode)) {
+      setAuthFormMode(mode || AuthMode.SignIn);
+    }
+  }, [searchParams]);
 
   // Transform and set sign in form data
   const getSignInFormData = (
@@ -217,6 +225,10 @@ export default function LoginForm() {
     }
   };
 
+  if (!authFormMode) {
+    return null;
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
       <ItemCard className="w-full max-w-md">
@@ -311,6 +323,34 @@ export default function LoginForm() {
                 >
                   {isSigningIn ? "Signing in..." : "Sign in"}
                 </Button>
+                <Button
+                  type="button"
+                  disabled={true || isSigningIn}
+                  onClick={() =>
+                    signIn("google", {
+                      redirect: true,
+                      redirectTo: "/overview",
+                    })
+                  }
+                  variant="outline"
+                  className="w-full h-12 cursor-pointer"
+                >
+                  Sign in with Gmail
+                </Button>
+                <Button
+                  type="button"
+                  disabled={true || isSigningIn}
+                  onClick={() =>
+                    signIn("github", {
+                      redirect: true,
+                      redirectTo: "/overview",
+                    })
+                  }
+                  variant="outline"
+                  className="w-full h-12 cursor-pointer"
+                >
+                  Sign in with GitHub
+                </Button>
               </div>
             </div>
           </form>
@@ -404,6 +444,32 @@ export default function LoginForm() {
                   className="w-full h-12 cursor-pointer"
                 >
                   Create Account
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    signIn("google", {
+                      redirect: true,
+                      redirectTo: "/overview",
+                    })
+                  }
+                  variant="outline"
+                  className="w-full h-12 cursor-pointer"
+                >
+                  Register with Gmail
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    signIn("github", {
+                      redirect: true,
+                      redirectTo: "/overview",
+                    })
+                  }
+                  variant="outline"
+                  className="w-full h-12 cursor-pointer"
+                >
+                  Register with GitHub
                 </Button>
               </div>
             </div>

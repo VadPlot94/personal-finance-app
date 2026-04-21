@@ -1,4 +1,6 @@
 import Link from "next/link";
+import SignInButton from "@/front-end/components/sign-in-button";
+import CreateAccountLink from "@/front-end/components/create-account-link";
 
 export default function HomePage() {
   return (
@@ -9,14 +11,9 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-black">FinanceApp</div>
             <div className="flex gap-4">
+              <SignInButton className="px-4" />
               <Link
-                href="/login"
-                className="rounded-lg px-4 py-2 text-slate-700 hover:bg-slate-100"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/login"
+                href="/overview"
                 className="rounded-lg bg-black px-4 py-2 text-white hover:bg-slate-800"
               >
                 Get Started
@@ -206,14 +203,10 @@ export default function HomePage() {
               <h4 className="font-semibold text-slate-900">Account</h4>
               <ul className="mt-2 space-y-1 text-slate-600">
                 <li>
-                  <Link href="/login" className="hover:text-slate-900">
-                    Sign In
-                  </Link>
+                  <SignInButton className="hover:b-none" />
                 </li>
                 <li>
-                  <Link href="/login" className="hover:text-slate-900">
-                    Create Account
-                  </Link>
+                  <CreateAccountLink />
                 </li>
               </ul>
             </div>
