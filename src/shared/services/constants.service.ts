@@ -77,34 +77,40 @@ class ConstantsService {
   public readonly NumberFractionDigits = 2;
   public readonly AuthEmail: string | undefined = process.env.AUTH_EMAIL;
   public readonly AuthPassword: string | undefined = process.env.AUTH_PASSWORD;
+  public readonly DefaultUserAvatarIconUrl =
+    "assets/images/avatars/dummy-avatar.jpg";
 
   public readonly SideBarMenuItemsConfig = [
     {
       href: "/overview",
-      icon: "assets/images/icon-nav-overview.svg",
+      iconUrl: "assets/images/icon-nav-overview.svg",
       title: "Overview",
     },
     {
       href: "/transactions",
-      icon: "assets/images/icon-nav-transactions.svg",
+      iconUrl: "assets/images/icon-nav-transactions.svg",
       title: "Transactions",
     },
     {
       href: "/budgets",
-      icon: "assets/images/icon-nav-budgets.svg",
+      iconUrl: "assets/images/icon-nav-budgets.svg",
       title: "Budgets",
     },
-    { href: "/pots", icon: "assets/images/icon-nav-pots.svg", title: "Pots" },
+    {
+      href: "/pots",
+      iconUrl: "assets/images/icon-nav-pots.svg",
+      title: "Pots",
+    },
     {
       href: "/recurring",
-      icon: "assets/images/icon-nav-recurring-bills.svg",
+      iconUrl: "assets/images/icon-nav-recurring-bills.svg",
       title: "Recurring Bills",
     },
   ];
 
   public SignOutMenuItemConfig = {
     href: "/",
-    icon: "assets/images/icon-logout.svg",
+    iconUrl: "assets/images/icon-logout.svg",
     title: "Sign Out",
   };
 }

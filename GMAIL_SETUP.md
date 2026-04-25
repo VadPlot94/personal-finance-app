@@ -28,7 +28,7 @@ This guide explains how to set up automatic Gmail and GitHub registration/login 
    - Choose **Web application**
    - Add Authorized redirect URIs:
      - `http://localhost:3000/api/auth/callback/google` (for local development)
-     - `https://yourdomain.com/api/auth/callback/google` (for production)
+     - `https://vadplot94.github.io/personal-finance-app/api/auth/callback/google` (for production)
    - Click **Create**
 
 5. Copy the **Client ID** and **Client Secret**

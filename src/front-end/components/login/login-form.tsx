@@ -316,7 +316,7 @@ export default function LoginForm() {
                 </Button>
                 <Button
                   type="button"
-                  disabled={true || isSigningIn}
+                  disabled={isSigningIn}
                   onClick={() =>
                     signIn("google", {
                       redirect: true,
@@ -326,11 +326,11 @@ export default function LoginForm() {
                   variant="outline"
                   className="w-full h-12 cursor-pointer"
                 >
-                  Sign in with Gmail
+                  Continue with Gmail
                 </Button>
                 <Button
                   type="button"
-                  disabled={true || isSigningIn}
+                  disabled={isSigningIn}
                   onClick={() =>
                     signIn("github", {
                       redirect: true,
@@ -340,7 +340,7 @@ export default function LoginForm() {
                   variant="outline"
                   className="w-full h-12 cursor-pointer"
                 >
-                  Sign in with GitHub
+                  Continue with GitHub
                 </Button>
               </div>
             </div>
@@ -435,32 +435,6 @@ export default function LoginForm() {
                   className="w-full h-12 cursor-pointer"
                 >
                   Create Account
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    signIn("google", {
-                      redirect: true,
-                      redirectTo: "/overview",
-                    })
-                  }
-                  variant="outline"
-                  className="w-full h-12 cursor-pointer"
-                >
-                  Register with Gmail
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    signIn("github", {
-                      redirect: true,
-                      redirectTo: "/overview",
-                    })
-                  }
-                  variant="outline"
-                  className="w-full h-12 cursor-pointer"
-                >
-                  Register with GitHub
                 </Button>
               </div>
             </div>

@@ -48,3 +48,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
  - loader
  - calculate balance in right way
  - register github and gmail login
+ - move useSession to common top layout that it not reload every time 

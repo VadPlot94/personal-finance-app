@@ -123,7 +123,7 @@ function getNewTransactionModel(
     amount: mark * +(data.get("amount")?.toString()?.replaceAll(" ", "") || 0),
     avatar:
       (data.get("avatar") as string) ??
-      "./assets/images/avatars/dummy-avatar.jpg",
+      `./${constants.DefaultUserAvatarIconUrl}`,
     category: data.get("category") as string,
     date: date ? new Date(date) : new Date(),
     name: data.get("recipientOrSender") as string,

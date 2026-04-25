@@ -2,18 +2,26 @@
 
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { redirect, usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { User } from "@prisma/client";
 
 export default function VerticalSidebar() {
   const pathname = usePathname();
+  const session = useSession();
+
   const [isMenuOpened, toggleMenu] = useState(false);
+  const [sessionUserData, setSessionUserData] = useState<User | null>(null);
 
   const menuItemWidth = isMenuOpened ? "w-40" : "w-fit";
   const transition = "transition-all duration-500 ease-in-out";
   const menuTransition = "transition-all duration-400 ease-in-out delay-500";
   const opacityTransition = "transition-opacity duration-300";
+
+  useEffect(() => {
+    setSessionUserData(session?.data?.user as User);
+  }, [session?.status, session?.data?.user]);
 
   const handleSignOutClick = () => {
     signOut();
@@ -32,8 +40,13 @@ export default function VerticalSidebar() {
     >
       <div className="flex flex-col gap-6 items-center justify-evenly text-app-color h-full mr-2 [@media(max-height:500px)]:max-h-105">
         <div className="w-full">
-          <div className="flex flex-col items-center h-25 justify-center w-full">
-            <div className={menuItemWidth}>
+          <div className="flex flex-col items-center h-45 justify-center w-full">
+            <div
+              className={cn(
+                "flex flex-col gap-7 justify-center items-center",
+                menuItemWidth,
+              )}
+            >
               <img
                 className={cn(
                   opacityTransition,
@@ -46,12 +59,43 @@ export default function VerticalSidebar() {
               <img
                 className={cn(
                   opacityTransition,
+                  "h-8",
                   isMenuOpened ? "opacity-0 h-0" : "opacity-100",
                 )}
                 src="assets/images/logo-small.svg"
                 alt="Finance"
                 title="Finance"
               />
+              <div
+                className={cn(
+                  "flex flex-row items-center justify-center w-full",
+                  menuTransition,
+                  isMenuOpened ? "gap-3" : "gap-0",
+                )}
+              >
+                <img
+                  className={cn(
+                    opacityTransition,
+                    "h-10 w-10 rounded-full object-cover ring-1 ring-gray-200",
+                  )}
+                  src={
+                    sessionUserData?.image || constants.DefaultUserAvatarIconUrl
+                  }
+                  alt={sessionUserData?.name}
+                  title={sessionUserData?.name}
+                />
+                <div
+                  className={cn(
+                    opacityTransition,
+                    "whitespace-nowrap",
+                    isMenuOpened
+                      ? "opacity-100 translate-x-0 w-30"
+                      : "opacity-0 -translate-x-20 max-w-0",
+                  )}
+                >
+                  {sessionUserData?.name || "User"}
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex flex-col">
@@ -77,7 +121,11 @@ export default function VerticalSidebar() {
                       menuItemWidth,
                     )}
                   >
-                    <img src={item.icon} alt={item.title} className="h-5 w-5" />
+                    <img
+                      src={item.iconUrl}
+                      alt={item.title}
+                      className="h-5 w-5"
+                    />
                     <span
                       className={cn(
                         transition,
@@ -153,7 +201,7 @@ export default function VerticalSidebar() {
             >
               <img
                 className="h-5 w-5"
-                src={constants.SignOutMenuItemConfig.icon}
+                src={constants.SignOutMenuItemConfig.iconUrl}
                 alt={constants.SignOutMenuItemConfig.title}
               />
               <div
