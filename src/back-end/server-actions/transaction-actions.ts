@@ -32,7 +32,7 @@ export async function createTransactionServerAction(
     async (session?: Session) => {
       const data = await transactionRepository.createTransaction({
         ...newTransactionModel,
-        userId: session?.user?.id,
+        userId: session?.user?.id!,
       });
       syncChanges();
       return data;
@@ -49,7 +49,7 @@ export async function getTransactionsServerAction(
       const transactionModel = getTransactionsModel(data);
       return await transactionRepository.getTransactions({
         ...transactionModel,
-        userId: session?.user?.id,
+        userId: session?.user?.id!,
       });
     },
   );
@@ -62,7 +62,7 @@ export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Pr
     "get",
     async (session?: Session) => {
       const expenses = await transactionRepository.getMonthlyExpensesByCategory(
-        session?.user?.id,
+        session?.user?.id!,
       );
       const result: { [s: string]: Transaction[] } = {};
 

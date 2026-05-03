@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
+import { ISideBarMenuItem } from "@/shared/services/types";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -11,7 +12,7 @@ export default function HorizontalSidebar() {
   const pathname = usePathname();
   const session = useSession();
 
-  const getAccountMenuItem = (sessionUserData?: User) => {
+  const getAccountMenuItem = (sessionUserData?: User): ISideBarMenuItem => {
     const { image, name } = sessionUserData || {};
     return {
       href: "*",
@@ -21,7 +22,7 @@ export default function HorizontalSidebar() {
     };
   };
 
-  const [sideBarItems, setSideBarItems] = useState([
+  const [sideBarItems, setSideBarItems] = useState<ISideBarMenuItem[]>([
     getAccountMenuItem(session?.data?.user),
     ...constants.SideBarMenuItemsConfig,
     constants.SignOutMenuItemConfig,

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import authService from "@/back-end/DAL/db-services/auth.service";
 import LoginForm from "@/front-end/components/login/login-form";
 
@@ -12,5 +13,9 @@ export default async function LoginPage() {
     // Not authenticated, continue to login page
   }
 
-  return <LoginForm />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
 }

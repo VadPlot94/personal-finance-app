@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 export default function OverviewPage() {
   // @slots not go the Overview page
   // they pass like params to the Layout.tsx

@@ -4,6 +4,13 @@ import {
   TransactionUICategory,
 } from "./constants.service";
 
+export interface ISideBarMenuItem {
+  href: string;
+  iconUrl: string;
+  title: string;
+  isAccount?: boolean;
+}
+
 export interface ICreatePotValidationData {
   id: string;
   potName: string;

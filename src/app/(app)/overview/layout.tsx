@@ -2,17 +2,15 @@ import "@/app/globals.css";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
-import { ReactNode } from "react";
 import authService from "@/back-end/DAL/db-services/auth.service";
+import { IOverviewLayoutProps } from "./types";
 
 export default async function OverviewLayout({
   transactions,
   pots,
   recurring,
   budgets,
-}: {
-  [key: string]: ReactNode | undefined;
-}) {
+}: IOverviewLayoutProps) {
   const session = await authService.getSessionOrRedirectToLoginPage();
 
   const balance = await balanceRepository.getCurrent(session.user.id);
