@@ -109,9 +109,13 @@ export function EditBudgetDialog({
         description: formResultState.message || "OK",
       });
     } else {
-      toast.error("Error", {
-        description: formResultState.error || "ERROR",
-      });
+      if (formResultState.zodErrors) {
+        setFormErrors(formResultState.zodErrors);
+      } else {
+        toast.error("Error", {
+          description: formResultState.error || "ERROR",
+        });
+      }
     }
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
@@ -186,7 +190,10 @@ export function EditBudgetDialog({
             </div>
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
-                <input type="hidden" name="id" value={formBudgetData.id} />
+                <>
+                  <input type="hidden" name="id" value={formBudgetData.id} />
+                  <p className="text-xs text-red-500">{formErrors?.["id"]}</p>
+                </>
               )}
               <div className="flex flex-col gap-2">
                 <Label
@@ -228,6 +235,9 @@ export function EditBudgetDialog({
                       ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-red-500">
+                  {formErrors?.["budgetCategory"]}
+                </p>
               </div>
               <div className="flex flex-col gap-2">
                 <Label
@@ -291,6 +301,7 @@ export function EditBudgetDialog({
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-red-500">{formErrors?.["theme"]}</p>
               </div>
             </div>
             <div className="flex flex-col gap-2">

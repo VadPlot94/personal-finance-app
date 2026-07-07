@@ -6,6 +6,7 @@ import {
   IEditPotDTOOutput,
 } from "../dto-models/pot-dto.model";
 import { Theme } from "@/shared/services/constants.service";
+import { removeUndefinedFields } from "@/lib/utils";
 
 export function mapCreatePotInputToDBPot(
   input: ICreatePotDTOInput,
@@ -49,15 +50,4 @@ function getPotModel(formData: FormData): Partial<Pot> | null {
   };
 
   return removeUndefinedFields(potModel);
-}
-
-function removeUndefinedFields<T>(obj: T): Partial<T> {
-  const cleanedObj: Partial<T> = { ...obj };
-  Object.keys(cleanedObj).forEach((key) => {
-    const value = cleanedObj[key as keyof Partial<T>];
-    if (value === undefined || value === null) {
-      delete cleanedObj[key as keyof Partial<T>];
-    }
-  });
-  return cleanedObj;
 }

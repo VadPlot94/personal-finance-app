@@ -1,7 +1,10 @@
 import validationService from "@/shared/services/validation.service";
 import { Pot } from "@prisma/client";
 import { potRepository } from "../repositories/pot.repository";
-import { CustomError } from "@/back-end/server-actions/common";
+import {
+  CustomError,
+  throwValidationError,
+} from "@/back-end/server-actions/common";
 import {
   mapCreateDBPotToOutput,
   mapCreatePotInputToDBPot,
@@ -196,15 +199,4 @@ async function validateCreatePotModel(
 
   throwValidationError(zodValidationResult);
   return true;
-}
-
-function throwValidationError<T>(
-  zodValidationResult: ZodSafeParseResult<T>,
-): void {
-  if (!zodValidationResult?.success) {
-    const errors = validationService.createErrorsWithPath<T>(
-      zodValidationResult,
-    ) as Record<keyof T, string>;
-    throw new CustomError("Validation error", errors);
-  }
 }

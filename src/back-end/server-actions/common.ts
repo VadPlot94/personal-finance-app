@@ -1,6 +1,8 @@
 import type { Session } from "next-auth";
 import { ServerActionResult } from "./types";
 import authService from "../DAL/db-services/auth.service";
+import validationService from "@/shared/services/validation.service";
+import { ZodSafeParseResult } from "zod";
 
 export class CustomError extends Error {
   public isCustomError = true as const;
@@ -51,5 +53,16 @@ export async function validationObjectWrapper<T = unknown>(
       success: false,
       error: `Failed to ${action} data. Please try again.`,
     };
+  }
+}
+
+export function throwValidationError<T>(
+  zodValidationResult: ZodSafeParseResult<T>,
+): void {
+  if (!zodValidationResult?.success) {
+    const errors = validationService.createErrorsWithPath<T>(
+      zodValidationResult,
+    ) as Record<keyof T, string>;
+    throw new CustomError("Validation error", errors);
   }
 }
