@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
-import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
+import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
 import authService from "@/back-end/DAL/db-services/auth.service";
 import { IOverviewLayoutProps } from "./types";
 
@@ -13,7 +13,8 @@ export default async function OverviewLayout({
 }: IOverviewLayoutProps) {
   const session = await authService.getSessionOrRedirectToLoginPage();
 
-  const balance = await balanceRepository.getCurrent(session.user.id);
+  const balanceResult = await getBalanceServerAction();
+  const balance = balanceResult.data;
 
   return (
     <>

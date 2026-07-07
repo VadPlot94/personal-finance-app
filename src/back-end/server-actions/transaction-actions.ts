@@ -6,6 +6,7 @@ import {
   IGetTransactionsParams,
   ServerActionResult,
 } from "./types";
+import { updateBalanceFromTransactionServerAction } from "@/back-end/server-actions/balance-actions";
 import constants, {
   SortBy,
   sortByPrismaMap,
@@ -34,6 +35,7 @@ export async function createTransactionServerAction(
         ...newTransactionModel,
         userId: session?.user?.id!,
       });
+      await updateBalanceFromTransactionServerAction(data.amount);
       syncChanges();
       return data;
     },

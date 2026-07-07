@@ -18,7 +18,7 @@ export async function BalanceCard({
         $
         {amount?.toLocaleString("en-US", {
           minimumFractionDigits: constants.NumberFractionDigits,
-        }) ?? "--"}
+        }) ?? "00.00"}
       </div>
     </ItemCard>
   );
