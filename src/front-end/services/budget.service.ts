@@ -1,5 +1,4 @@
 import { Transaction } from "@prisma/client";
-import potService from "./pot.service";
 import financeService from "./finance.service";
 
 class BudgetService {
