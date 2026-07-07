@@ -18,7 +18,6 @@ import {
   IEditPotDTOOutput,
 } from "@/back-end/dto-models/pot-dto.model";
 import { ICreatePotFormData } from "@/front-end/components/pots/types";
-import { ZodSafeParseResult } from "zod";
 import { balanceRepository } from "../repositories/balance.repository";
 import potService from "@/front-end/services/pot.service";
 
@@ -182,6 +181,7 @@ async function validateCreatePotModel(
   const isNameUnique = await potRepository.isUnique(
     "name",
     potModel?.name,
+    userId,
     potModel?.id,
   );
 

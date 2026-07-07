@@ -112,10 +112,11 @@ async function validateCreateBudgetModel(
     throwValidationError(zodErrorResult);
   }
 
-  const isCategoryUnique = await budgetRepository.isCategoryUnique(
+  const isCategoryUnique = await budgetRepository.isUnique(
+    "category",
     budgetModel?.category,
-    budgetModel?.id,
     userId,
+    budgetModel?.id,
   );
 
   if (!isCategoryUnique) {

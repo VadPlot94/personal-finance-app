@@ -10,9 +10,9 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   /**
    * Получить все бюджеты (с сортировкой по категории)
    */
-  async getAll(userId?: string): Promise<Budget[]> {
+  async getAll(userId: string): Promise<Budget[]> {
     return this.findMany({
-      where: userId ? { userId } : undefined,
+      where: { userId },
       orderBy: { category: "asc" },
     });
   }
@@ -20,33 +20,13 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   /**
    * Получить бюджет по категории
    */
-  async getByCategory(category: string): Promise<Budget | null> {
+  async getByCategory(
+    category: string,
+    userId: string,
+  ): Promise<Budget | null> {
     return this.findFirst({
-      where: { category },
+      where: { category, userId },
     });
-  }
-
-  /**
-   * Checks if a category can be used for a budget.
-   * - When creating (no id provided): the category must not exist at all.
-   * - When editing (id provided): the category must not be used by any other budget (excluding the current one).
-   */
-  public async isCategoryUnique(
-    category: string | undefined,
-    excludeId?: string,
-    userId?: string,
-  ): Promise<boolean> {
-    const budget = await this.findFirst({
-      where: {
-        category,
-        userId: userId ?? undefined,
-        // If id is provided — exclude the current pot from the check
-        id: excludeId ? { not: excludeId } : undefined,
-      },
-      select: { id: true }, // minimal data
-    });
-
-    return !budget; // true = category is available, false = category is taken
   }
 
   /**

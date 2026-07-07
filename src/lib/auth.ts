@@ -36,11 +36,11 @@ export const authOptions: NextAuthConfig = {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true,
-        authorization: {
-          params: {
-            prompt: "consent select_account",
-          },
+      authorization: {
+        params: {
+          prompt: "consent select_account",
         },
+      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID || "",

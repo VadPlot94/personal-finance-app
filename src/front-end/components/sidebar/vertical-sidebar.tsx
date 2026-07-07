@@ -24,8 +24,8 @@ export default function VerticalSidebar() {
   }, [session?.status, session?.data?.user]);
 
   const handleSignOutClick = async () => {
-    await signOut({ 
-      callbackUrl: "/", 
+    await signOut({
+      callbackUrl: "/",
       redirect: true,
     });
   };

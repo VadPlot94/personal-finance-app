@@ -10,9 +10,9 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Получить текущий баланс (самый свежий по updatedAt)
    */
-  public async getCurrent(userId?: string): Promise<Balance | null> {
+  public async getCurrent(userId: string): Promise<Balance | null> {
     return this.findFirst({
-      where: userId ? { userId } : undefined,
+      where: { userId },
       orderBy: {
         updatedAt: "desc",
       },
@@ -22,9 +22,9 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Получить баланс по ID (если используешь фиксированный ID, например 'initial-balance')
    */
-  async getById(id: string): Promise<Balance | null> {
-    return this.findUnique({
-      where: { id },
+  async getById(id: string, userId: string): Promise<Balance | null> {
+    return this.findFirst({
+      where: { id, userId },
     });
   }
 
@@ -38,9 +38,10 @@ export class BalanceRepository extends BaseRepository<"balance"> {
       income?: number;
       expenses?: number;
     },
+    userId: string,
   ): Promise<Balance> {
     return this.update({
-      where: { id },
+      where: { id, userId },
       data,
     });
   }
@@ -49,23 +50,18 @@ export class BalanceRepository extends BaseRepository<"balance"> {
    * Создать или обновить баланс (upsert)
    */
   async upsertBalance(data: {
-    userId?: string;
+    userId: string;
     id?: string;
     current: number;
     income: number;
     expenses: number;
   }): Promise<Balance> {
-    const where = data.userId
-      ? { userId: data.userId }
-      : { id: data.id as string };
-
     return this.upsert({
-      where,
+      where: { userId: data.userId },
       update: {
         current: data.current,
         income: data.income,
         expenses: data.expenses,
-        ...(data.userId ? { userId: data.userId } : {}),
       },
       create: {
         id: data.id,
@@ -80,12 +76,13 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Получить общий доход / расход / баланс (агрегация)
    */
-  async getSummary(): Promise<{
+  async getSummary(userId: string): Promise<{
     current: number | null;
     totalIncome: number | null;
     totalExpenses: number | null;
   }> {
     const result = await prisma.balance.aggregate({
+      where: { userId },
       _sum: {
         current: true,
         income: true,

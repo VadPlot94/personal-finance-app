@@ -18,9 +18,9 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Получить все копилки (с сортировкой по имени)
    */
-  async getAll(userId?: string): Promise<Pot[]> {
+  async getAll(userId: string): Promise<Pot[]> {
     return this.findMany({
-      where: userId ? { userId } : undefined,
+      where: { userId },
       orderBy: { name: "asc" },
     });
   }
@@ -28,18 +28,18 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Get pot by id
    */
-  public async getById(id: string, userId?: string): Promise<Pot | null> {
+  public async getById(id: string, userId: string): Promise<Pot | null> {
     return this.findFirst({
-      where: userId ? { id, userId } : { id },
+      where: { id, userId },
     });
   }
 
   /**
    * Получить копилку по имени
    */
-  async getByName(name: string, userId?: string): Promise<Pot | null> {
+  async getByName(name: string, userId: string): Promise<Pot | null> {
     return this.findFirst({
-      where: userId ? { name, userId } : { name },
+      where: { name, userId },
     });
   }
 
@@ -92,7 +92,9 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Обновить текущую сумму в копилке (добавление/снятие)
    */
-  async addToPot(id: string, amount: number): Promise<Pot> {
+  async addToPot(id: string, amount: number, userId: string): Promise<Pot> {
+    await this.ensureDataOwnership(id, userId);
+
     return this.update({
       where: { id },
       data: {
@@ -106,7 +108,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Получить прогресс всех копилок (сколько осталось до цели)
    */
-  async getProgress(): Promise<
+  async getProgress(userId: string): Promise<
     Array<{
       name: string;
       target: number;
@@ -114,7 +116,7 @@ export class PotRepository extends BaseRepository<"pot"> {
       progress: number;
     }>
   > {
-    const pots = await this.findMany();
+    const pots = await this.findMany({ where: { userId } });
     return pots.map((pot) => ({
       name: pot.name,
       target: pot.target,

@@ -32,7 +32,7 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
         name: { contains: searchVal, mode: Prisma.QueryMode.insensitive },
       }),
       ...(isRecurring && { recurring: true }),
-      ...(userId && { userId }),
+      userId,
     };
 
     const transactions = await prisma.transaction.findMany({
@@ -102,9 +102,9 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
     return expenses as Transaction[];
   }
 
-  async getRecent(limit = 10, userId?: string): Promise<Transaction[]> {
+  async getRecent(limit = 10, userId: string): Promise<Transaction[]> {
     return this.findMany({
-      where: userId ? { userId } : undefined,
+      where: { userId },
       orderBy: { date: "desc" },
       take: limit,
       select: {
@@ -122,16 +122,16 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
 
   async getByCategory(
     category: string,
-    userId?: string,
+    userId: string,
   ): Promise<Transaction[]> {
     return this.findMany({
-      where: userId ? { category, userId } : { category },
+      where: { category, userId },
       orderBy: { date: "desc" },
     });
   }
 
   public async createTransaction(
-    data: Omit<Transaction, "id" | "userId"> & { userId: string },
+    data: Omit<Transaction, "id">,
   ): Promise<Transaction> {
     return this.create({
       data: {

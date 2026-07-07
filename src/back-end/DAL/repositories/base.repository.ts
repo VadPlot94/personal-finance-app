@@ -25,12 +25,14 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   public async isUnique<K extends string>(
     field: K,
     value: any,
+    userId: string,
     excludeId?: string | null,
   ): Promise<boolean> {
     const existing = await this.findFirst({
       where: {
         [field]: value,
-        // If id is provided — exclude the current pot from the check
+        userId,
+        // If id is provided — exclude the current record from the check
         id: excludeId ? { not: excludeId } : undefined,
       },
       select: { id: true }, // minimal data
