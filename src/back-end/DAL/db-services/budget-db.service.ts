@@ -74,7 +74,7 @@ export async function deleteBudget(
   }
 
   const response = await budgetRepository.delete({
-    where: { id },
+    where: { id: id! },
   });
 
   return id === response?.id;
@@ -103,7 +103,7 @@ async function validateCreateBudgetModel(
     throwValidationError(zodErrorResult);
   }
 
-  if (!budgetModel.maximum) {
+  if (!budgetModel?.maximum) {
     const zodErrorResult =
       validationService.createCustomZodIssueResult<IAddBudgetFormData>(
         "maximum",
@@ -113,8 +113,8 @@ async function validateCreateBudgetModel(
   }
 
   const isCategoryUnique = await budgetRepository.isCategoryUnique(
-    budgetModel.category,
-    budgetModel.id,
+    budgetModel?.category,
+    budgetModel?.id,
     userId,
   );
 
@@ -128,10 +128,10 @@ async function validateCreateBudgetModel(
   }
 
   const zodValidationResult = validationService.validateAddBudgetSchema({
-    id: budgetModel.id ?? "",
-    budgetCategory: budgetModel.category,
-    maximum: budgetModel.maximum.toString(),
-    theme: (budgetModel.theme as Theme) || Theme.NavyGrey,
+    id: budgetModel?.id ?? "",
+    budgetCategory: budgetModel?.category || "",
+    maximum: budgetModel?.maximum?.toString() || "",
+    theme: (budgetModel?.theme as Theme) || Theme.NavyGrey,
   });
   throwValidationError(zodValidationResult);
 
