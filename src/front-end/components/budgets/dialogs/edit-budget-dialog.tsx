@@ -193,7 +193,7 @@ export function EditBudgetDialog({
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
                 <>
-                {/* TODO: formErrors?.["id"] имеет место в диалоге когда пустой - надо как то спрятать */}
+                  {/* TODO: formErrors?.["id"] имеет место в диалоге когда пустой - надо как то спрятать */}
                   <input type="hidden" name="id" value={formBudgetData.id} />
                   <p className="text-xs text-red-500">{formErrors?.["id"]}</p>
                 </>

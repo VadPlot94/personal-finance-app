@@ -81,8 +81,8 @@ export default function VerticalSidebar() {
                   src={
                     sessionUserData?.image || constants.DefaultUserAvatarIconUrl
                   }
-                  alt={sessionUserData?.name}
-                  title={sessionUserData?.name}
+                  alt={sessionUserData?.name || ""}
+                  title={sessionUserData?.name || ""}
                 />
                 <div
                   className={cn(
