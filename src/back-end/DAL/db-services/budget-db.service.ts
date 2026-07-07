@@ -63,7 +63,7 @@ export async function editBudget(
 }
 
 export async function deleteBudget(
-  id: string,
+  id: string | null | undefined,
   userId: string,
 ): Promise<boolean> {
   validateDeleteBudgetModel(id);
@@ -152,25 +152,9 @@ async function validateEditBudgetModel(
   }
 
   return validateCreateBudgetModel(budgetModel, userId);
-
-  // if (!budgetModel.category || !budgetModel.maximum) {
-  //   throw new CustomError("Invalid data: category and maximum are required");
-  // }
-
-  // const isCategoryUnique = await budgetRepository.isCategoryUnique(
-  //   budgetModel.category,
-  //   budgetModel.id,
-  //   userId,
-  // );
-
-  // if (!isCategoryUnique) {
-  //   throw new CustomError("Budget with such category already exists");
-  // }
-
-  // return true;
 }
 
-function validateDeleteBudgetModel(id: string): boolean {
+function validateDeleteBudgetModel(id: string | null | undefined): boolean {
   if (!id) {
     const zodErrorResult =
       validationService.createCustomZodIssueResult<IAddBudgetFormData>(
@@ -179,9 +163,6 @@ function validateDeleteBudgetModel(id: string): boolean {
       );
     throwValidationError(zodErrorResult);
   }
-  // if (!id) {
-  //   throw new CustomError("ID is required for delete");
-  // }
 
   return true;
 }

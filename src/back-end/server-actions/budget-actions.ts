@@ -68,7 +68,7 @@ export async function editBudgetServerAction(
 }
 
 export async function deleteBudgetServerAction(
-  id: string,
+  id: string | null | undefined,
 ): Promise<ServerActionResult<boolean>> {
   const validatedResponse = await validationObjectWrapper<boolean>(
     "delete",

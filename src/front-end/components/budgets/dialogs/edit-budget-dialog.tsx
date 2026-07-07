@@ -41,6 +41,7 @@ import {
 } from "@/back-end/server-actions/budget-actions";
 import { BudgetsContext } from "../budgets";
 import financeService from "@/front-end/services/finance.service";
+import { useUpdateEffect } from "react-use";
 
 export function EditBudgetDialog({
   children,
@@ -65,7 +66,7 @@ export function EditBudgetDialog({
   const busyBudgetThemes = busyBudgets.map((p) => p.theme);
 
   const setFormBudgetData = (
-    budget?: Partial<IAddBudgetFormData> | Partial<Budget> | undefined,
+    budget?: Partial<IAddBudgetFormData> | Partial<Budget> | null | undefined,
   ) =>
     budget
       ? {
@@ -96,9 +97,10 @@ export function EditBudgetDialog({
     }
   }, [formBudgetData]);
 
-  useEffect(() => {
-    // This trigger even with first component mount when formResultState = null
+  useUpdateEffect(() => {
+    // useEffect run on component mount too - not only on update - first mount formResultState = null - we do not need this case
     // Need to call handleOpenChange only when formResultState != null
+    // Then we use useUpdateEffect to run only on update - not on first mount
     if (!formResultState) {
       return;
     }
@@ -191,6 +193,7 @@ export function EditBudgetDialog({
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
                 <>
+                {/* TODO: formErrors?.["id"] имеет место в диалоге когда пустой - надо как то спрятать */}
                   <input type="hidden" name="id" value={formBudgetData.id} />
                   <p className="text-xs text-red-500">{formErrors?.["id"]}</p>
                 </>
@@ -235,6 +238,7 @@ export function EditBudgetDialog({
                       ))}
                   </SelectContent>
                 </Select>
+                {/* TODO: formErrors имеет место в диалоге когда пустой - надо как то спрятать */}
                 <p className="text-xs text-red-500">
                   {formErrors?.["budgetCategory"]}
                 </p>
@@ -301,6 +305,7 @@ export function EditBudgetDialog({
                     ))}
                   </SelectContent>
                 </Select>
+                {/* TODO: formErrors имеет место в диалоге когда пустой - надо как то спрятать */}
                 <p className="text-xs text-red-500">{formErrors?.["theme"]}</p>
               </div>
             </div>

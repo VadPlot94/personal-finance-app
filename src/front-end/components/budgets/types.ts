@@ -15,6 +15,8 @@ export interface IBudgetsTileProps {
 export interface IBudgetsMenuProps {
   budget: Budget;
   children: React.ReactNode;
+  onEditBudget?: (budget: Budget) => void;
+  onDeleteBudget?: (budget: Budget) => void;
 }
 
 export interface IBudgetDonutChartProps {
@@ -26,14 +28,14 @@ export interface IBudgetDonutChartProps {
 }
 
 export interface IDeleteBudgetDialogProps {
-  budget: Budget;
+  budget?: Budget | null;
   isDialogOpen: boolean;
   setDialogOpen: (isDialogOpen: boolean) => void;
 }
 
 export interface IEditBudgetDialogProps {
   children?: React.ReactNode;
-  budget?: Budget;
+  budget?: Budget | null;
   isDialogOpen: boolean;
   setDialogOpen: (isDialogOpen: boolean) => void;
 }

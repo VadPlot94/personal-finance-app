@@ -94,7 +94,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
    * Uses the model's id and userId fields by default.
    */
   async ensureDataOwnership(
-    id: string,
+    id: string | null | undefined,
     userId: string,
     options?: {
       idField?: string;

@@ -8,15 +8,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/front-end/components/ui/dropdown-menu";
-import { useState } from "react";
 import { IBudgetsMenuProps } from "./types";
-import { DeleteBudgetDialog } from "./dialogs/delete-budget-dialog";
-import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
 
-export function BudgetsMenu({ budget, children }: IBudgetsMenuProps) {
-  const [isEditBudgetDialogOpen, setEditBudgetDialogOpen] = useState(false);
-  const [isDeleteBudgetDialogOpen, setDeleteBudgetDialogOpen] = useState(false);
-
+export function BudgetsMenu({
+  budget,
+  children,
+  onEditBudget,
+  onDeleteBudget,
+}: IBudgetsMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -27,7 +26,7 @@ export function BudgetsMenu({ budget, children }: IBudgetsMenuProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => setEditBudgetDialogOpen(true)}
+          onClick={() => onEditBudget?.(budget)}
           className="cursor-pointer"
         >
           Edit Budget
@@ -35,25 +34,11 @@ export function BudgetsMenu({ budget, children }: IBudgetsMenuProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-          onClick={() => setDeleteBudgetDialogOpen(true)}
+          onClick={() => onDeleteBudget?.(budget)}
         >
           Delete Budget
         </DropdownMenuItem>
       </DropdownMenuContent>
-      {isEditBudgetDialogOpen && (
-        <EditBudgetDialog
-          budget={budget}
-          isDialogOpen={isEditBudgetDialogOpen}
-          setDialogOpen={setEditBudgetDialogOpen}
-        />
-      )}
-      {isDeleteBudgetDialogOpen && (
-        <DeleteBudgetDialog
-          budget={budget}
-          isDialogOpen={isDeleteBudgetDialogOpen}
-          setDialogOpen={setDeleteBudgetDialogOpen}
-        />
-      )}
     </DropdownMenu>
   );
 }

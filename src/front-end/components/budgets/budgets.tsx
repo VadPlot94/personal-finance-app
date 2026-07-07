@@ -11,6 +11,7 @@ import PageHeader from "../page-header/page-header";
 import { createContext, useState } from "react";
 import { Budget } from "@prisma/client";
 import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
+import { DeleteBudgetDialog } from "./dialogs/delete-budget-dialog";
 import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,8 @@ export default function Budgets({
   transactionsByCategoryList = [],
 }: IBudgetsProps) {
   const [isAddBudgetDialogOpen, setAddBudgetDialogOpen] = useState(false);
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+  const [deletingBudget, setDeletingBudget] = useState<Budget | null>(null);
   return (
     <BudgetsContext value={budgets}>
       <PageHeader
@@ -87,7 +90,11 @@ export default function Budgets({
                         </div>
                       </div>
                       <div className="cursor-pointer">
-                        <BudgetsMenu budget={budget}>
+                        <BudgetsMenu
+                          budget={budget}
+                          onEditBudget={(b) => setEditingBudget(b)}
+                          onDeleteBudget={(b) => setDeletingBudget(b)}
+                        >
                           <img
                             className="w-5 h-5"
                             src="assets/images/icon-ellipsis.svg"
@@ -190,6 +197,24 @@ export default function Budgets({
           setDialogOpen={setAddBudgetDialogOpen}
         />
       )}
+      <EditBudgetDialog
+        budget={editingBudget}
+        isDialogOpen={!!editingBudget}
+        setDialogOpen={(open: boolean) => {
+          if (!open) {
+            setEditingBudget(null);
+          }
+        }}
+      />
+      <DeleteBudgetDialog
+        budget={deletingBudget}
+        isDialogOpen={!!deletingBudget}
+        setDialogOpen={(open: boolean) => {
+          if (!open) {
+            setDeletingBudget(null);
+          }
+        }}
+      />
     </BudgetsContext>
   );
 }

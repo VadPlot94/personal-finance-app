@@ -16,6 +16,7 @@ export function DeleteBudgetDialog({
       toast.success("Success", {
         description: response.message || "OK",
       });
+      setDialogOpen(false);
     } else {
       toast.error("Error", {
         description: response.error || "ERROR",
@@ -25,7 +26,7 @@ export function DeleteBudgetDialog({
 
   return (
     <DeleteDialog
-      data={{ id: budget.id, name: budget.category }}
+      data={{ id: budget?.id, name: budget?.category }}
       isDialogOpen={isDialogOpen}
       setDialogOpen={setDialogOpen}
       handleDeleteClick={handleBudgetDelete}
