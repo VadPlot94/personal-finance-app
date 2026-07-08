@@ -2,7 +2,6 @@ import "@/app/globals.css";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
 import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
-import authService from "@/back-end/DAL/db-services/auth.service";
 import { IOverviewLayoutProps } from "./types";
 
 export default async function OverviewLayout({
@@ -11,8 +10,6 @@ export default async function OverviewLayout({
   recurring,
   budgets,
 }: IOverviewLayoutProps) {
-  const session = await authService.getSessionOrRedirectToLoginPage();
-
   const balanceResult = await getBalanceServerAction();
   const balance = balanceResult.data;
 
