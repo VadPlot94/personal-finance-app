@@ -4,11 +4,18 @@ import TileHeader from "@/front-end/components/tile-header/tile-header";
 export default function TransactionsTileSkeleton() {
   return (
     <ItemCard className="animate-pulse">
-      <TileHeader title="Transactions" href="/transactions" linkLabel="View All" />
+      <TileHeader
+        title="Transactions"
+        href="/transactions"
+        linkLabel="View All"
+      />
 
       <div className="flex flex-col gap-3">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="flex items-center justify-between gap-4 py-2">
+          <div
+            key={index}
+            className="flex items-center justify-between gap-4 py-2"
+          >
             <div className="flex items-center gap-3 flex-1">
               <div className="h-10 w-10 rounded-full bg-gray-200" />
               <div className="flex-1 space-y-2">

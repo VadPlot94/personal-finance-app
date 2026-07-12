@@ -10,7 +10,9 @@ import {
 import { validationObjectWrapper } from "./common";
 import { Session } from "next-auth";
 
-export async function getBalanceServerAction(): Promise<ServerActionResult<IBalanceDTOOutput>> {
+export async function getBalanceServerAction(): Promise<
+  ServerActionResult<IBalanceDTOOutput>
+> {
   const validatedResponse = await validationObjectWrapper<IBalanceDTOOutput>(
     "get",
     async (session?: Session) => {
