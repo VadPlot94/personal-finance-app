@@ -13,7 +13,10 @@ import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper"
 
 export const PotsContext = createContext<Pot[]>([]);
 
-export default function Pots({ pots = [], availableBalance }: IPotsProps) {
+export default function Pots({
+  pots,
+  availableBalance,
+}: IPotsProps) {
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -72,17 +75,18 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [pots.length]);
+  }, [pots?.length]);
 
   return (
-    <PotsContext value={pots}>
+    <PotsContext value={pots ?? []}>
       <PageHeader
         name="Pots"
         buttonName="+ Add New Pot"
         handleButtonClick={() => setEditPotDialogOpen(true)}
       />
       <EmptyContentWrapper
-        hasItems={!!pots?.length}
+        hasItems={!!(pots ?? []).length}
+        isLoading={pots === null}
         emptyTitle="No pots are available."
         emptyBody={
           <>
@@ -100,7 +104,7 @@ export default function Pots({ pots = [], availableBalance }: IPotsProps) {
             "*:transition-all *:duration-300", // for animation
           )}
         >
-          {pots
+          {(pots ?? [])
             ?.filter((pot) => !!pot)
             ?.map((pot) => (
               <PotsItem

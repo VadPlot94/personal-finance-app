@@ -2,7 +2,7 @@ import { Pot } from "@prisma/client";
 import { Theme } from "@/shared/services/constants.service";
 
 export interface IPotsProps {
-  pots: Pot[];
+  pots?: Pot[] | null;
   availableBalance: number;
 }
 

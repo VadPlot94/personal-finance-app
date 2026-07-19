@@ -1,10 +1,19 @@
+import { Suspense } from "react";
 import Pots from "@/front-end/components/pots/pots";
 import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
 import potService from "@/front-end/services/pot.service";
 import authService from "@/back-end/DAL/db-services/auth.service";
 
-export default async function PotsPage() {
+export default function PotsPage() {
+  return (
+    <Suspense fallback={<Pots pots={null} availableBalance={0} />}>
+      <PotsPageContent />
+    </Suspense>
+  );
+}
+
+async function PotsPageContent() {
   const session = await authService.getSessionOrRedirectToLoginPage();
 
   const pots = await potRepository.getAll(session.user.id);
