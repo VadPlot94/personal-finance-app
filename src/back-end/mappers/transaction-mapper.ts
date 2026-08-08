@@ -1,6 +1,9 @@
 import { Transaction } from "@prisma/client";
 import { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
-import { IGetTransactionsParams } from "@/back-end/server-actions/types";
+import {
+  IGetTransactionsParams,
+  IGetTransactionForCategoryParams,
+} from "@/back-end/server-actions/types";
 import constants, {
   SortBy,
   TransactionType,
@@ -19,6 +22,17 @@ export function mapGetTransactionsInputToDBTransactionsParams(
   data: Partial<IGetTransactionsParams> | undefined,
 ): IGetTransactionsParams {
   return getTransactionsParams(data);
+}
+
+export function mapGetTransactionsForCategoryInputToParams(
+  data: Partial<IGetTransactionForCategoryParams> | undefined,
+): { categories: string[]; transactionsCount: number } {
+  const categories = (data?.categories ?? []).filter(
+    (c) => c !== TransactionUICategory.AllTransactions,
+  );
+  const transactionsCount = data?.transactionsCount || 3;
+
+  return { categories, transactionsCount };
 }
 
 export function mapCreateDBTransactionToOutput(

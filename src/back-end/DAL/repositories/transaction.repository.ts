@@ -130,6 +130,21 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
     });
   }
 
+  /**
+   * Delete a recurring transaction only if it belongs to the user.
+   * Uses a single DB call to avoid extra ownership queries.
+   */
+  public async deleteIfOwnedRecurring(
+    id: string,
+    userId: string,
+  ): Promise<boolean> {
+    const result = await this.model.deleteMany({
+      where: { id, userId, recurring: true },
+    });
+
+    return (result?.count ?? 0) > 0;
+  }
+
   public async createTransaction(
     data: Omit<Transaction, "id">,
   ): Promise<Transaction> {

@@ -3,6 +3,9 @@
 import {
   createTransaction,
   getTransactions,
+  getMonthlyExpensesByCategory,
+  getTransactionsForCategory,
+  deleteRecurring,
 } from "@/back-end/DAL/db-services/transaction-db.service";
 import {
   IGetTransactionForCategoryParams,
@@ -24,7 +27,6 @@ import { ICreateTransactionDTOOutput } from "@/back-end/dto-models/transaction-d
 import { validationObjectWrapper } from "./common";
 import { Session } from "next-auth";
 import authService from "../DAL/db-services/auth.service";
-import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
 
 export async function createTransactionServerAction(
   prevState: { success: boolean } | null,
@@ -58,23 +60,7 @@ export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Pr
   return await validationObjectWrapper<ITransactionsForCategoryData[]>(
     "get",
     async (session?: Session) => {
-      const expenses = await transactionRepository.getMonthlyExpensesByCategory(
-        session?.user?.id!,
-      );
-      const result: Record<string, Transaction[]> = {};
-
-      expenses.forEach((transaction) => {
-        const category = transaction.category;
-        if (!result[category]) {
-          result[category] = [];
-        }
-        result[category].push(transaction);
-      });
-
-      return Object.entries(result).map(([category, transactions]) => ({
-        category: category as TransactionUICategory,
-        transactions,
-      }));
+      return await getMonthlyExpensesByCategory(session?.user?.id!);
     },
   );
 }
@@ -82,60 +68,26 @@ export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Pr
 export async function getTransactionsForCategoryServerAction(
   data?: Partial<IGetTransactionForCategoryParams>,
 ): Promise<ServerActionResult<ITransactionsForCategoryData[]>> {
-  try {
-    const session = await authService.getAuthenticatedSession();
-    const categoryPromises = (data?.categories ?? []).map(async (category) => {
-      const response = await getTransactions(
-        {
-          category,
-          transactionsCount: data?.transactionsCount || 3,
-        },
-        session.user.id,
-      );
-      return { category, transactions: response.transactions } as const;
-    });
-
-    const resultsArray =
-      await Promise.all<ITransactionsForCategoryData>(categoryPromises);
-
-    return {
-      success: true,
-      data: resultsArray,
-      message: "Transactions by category get successfully",
-    };
-  } catch (error) {
-    console.error("Error getting transactions by category:", error);
-    return {
-      success: false,
-      error: "Failed to get transactions by category. Please try again.",
-    };
-  }
+  return await validationObjectWrapper<ITransactionsForCategoryData[]>(
+    "get",
+    async (session?: Session) => {
+      return await getTransactionsForCategory(data as any, session?.user?.id!);
+    },
+  );
 }
 
 
 export async function deleteRecurringServerAction(
   id: string,
 ): Promise<ServerActionResult> {
-  try {
-    if (!id) {
-      return { success: false, error: "ID is required" };
-    }
-
-    // TODO: not sure that delete bill means delete transaction
-    // await transactionRepository.delete({
-    //   where: { id },
-    // });
-
-    syncChanges();
-
-    return { success: true, message: "Recurring bill deleted successfully" };
-  } catch (error) {
-    console.error("Error deleting recurring bill:", error);
-    return {
-      success: false,
-      error: "Failed to delete recurring bill. Please try again.",
-    };
-  }
+  return await validationObjectWrapper<boolean>(
+    "delete",
+    async (session?: Session) => {
+      const result = await deleteRecurring(id, session?.user?.id!);
+      syncChanges();
+      return result;
+    },
+  );
 }
 
 function syncChanges() {

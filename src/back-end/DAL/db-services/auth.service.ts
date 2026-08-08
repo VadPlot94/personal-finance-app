@@ -114,6 +114,14 @@ class AuthService {
     return session;
   }
 
+  /**
+   * Returns the current authenticated session.
+   * Throws `CustomError("Unauthorized")` if the user is not authenticated.
+   * Use `session.user.id` to obtain the current user's id for user-scoped
+   * operations (get/update/delete) to restrict access to the user's data.
+   * @returns {Session} session object containing user information
+   * @throws {CustomError} when the user is not authenticated
+   */
   public async getAuthenticatedSession(): Promise<Session> {
     const session = await this.getAppSession();
 
@@ -128,6 +136,11 @@ class AuthService {
     return auth();
   }
 
+  /**
+   * Authorization method that call when user login to the site (not register)
+   * @param credentials 
+   * @returns user information if credentials are valid, otherwise null
+   */
   public async autorizeUser(
     credentials: Partial<Record<"email" | "password", unknown>> | undefined,
   ) {
