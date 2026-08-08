@@ -1,43 +1,42 @@
 "use server";
 
-import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
+import {
+  createTransaction,
+  getTransactions,
+} from "@/back-end/DAL/db-services/transaction-db.service";
 import {
   IGetTransactionForCategoryParams,
   IGetTransactionsParams,
   ServerActionResult,
 } from "./types";
+import { Transaction } from "@prisma/client";
 import { updateBalanceFromTransactionServerAction } from "@/back-end/server-actions/balance-actions";
 import constants, {
-  SortBy,
-  sortByPrismaMap,
-  TransactionType,
   TransactionUICategory,
+  TransactionType,
 } from "@/shared/services/constants.service";
 import { revalidatePath } from "next/cache";
 import {
   ITransactionDataResponse,
   ITransactionsForCategoryData,
 } from "@/back-end/DAL/repositories/types";
-import { Transaction } from "@prisma/client";
+import { ICreateTransactionDTOOutput } from "@/back-end/dto-models/transaction-dto.model";
 import { validationObjectWrapper } from "./common";
 import { Session } from "next-auth";
 import authService from "../DAL/db-services/auth.service";
+import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
 
 export async function createTransactionServerAction(
   prevState: { success: boolean } | null,
   formData: FormData,
-): Promise<ServerActionResult<Transaction>> {
-  const newTransactionModel = getNewTransactionModel(formData);
-  return await validationObjectWrapper<Transaction>(
+): Promise<ServerActionResult<ICreateTransactionDTOOutput>> {
+  return await validationObjectWrapper<ICreateTransactionDTOOutput>(
     "create",
     async (session?: Session) => {
-      const data = await transactionRepository.createTransaction({
-        ...newTransactionModel,
-        userId: session?.user?.id!,
-      });
-      await updateBalanceFromTransactionServerAction(data.amount);
+      const transaction = await createTransaction(formData, session?.user?.id!);
+      await updateBalanceFromTransactionServerAction(transaction.amount);
       syncChanges();
-      return data;
+      return { id: transaction.id };
     },
   );
 }
@@ -48,11 +47,7 @@ export async function getTransactionsServerAction(
   return await validationObjectWrapper<ITransactionDataResponse>(
     "get",
     async (session?: Session) => {
-      const transactionModel = getTransactionsModel(data);
-      return await transactionRepository.getTransactions({
-        ...transactionModel,
-        userId: session?.user?.id!,
-      });
+      return await getTransactions(data, session?.user?.id!);
     },
   );
 }
@@ -66,7 +61,7 @@ export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Pr
       const expenses = await transactionRepository.getMonthlyExpensesByCategory(
         session?.user?.id!,
       );
-      const result: { [s: string]: Transaction[] } = {};
+      const result: Record<string, Transaction[]> = {};
 
       expenses.forEach((transaction) => {
         const category = transaction.category;
@@ -75,6 +70,7 @@ export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Pr
         }
         result[category].push(transaction);
       });
+
       return Object.entries(result).map(([category, transactions]) => ({
         category: category as TransactionUICategory,
         transactions,
@@ -89,12 +85,12 @@ export async function getTransactionsForCategoryServerAction(
   try {
     const session = await authService.getAuthenticatedSession();
     const categoryPromises = (data?.categories ?? []).map(async (category) => {
-      const response = await transactionRepository.getTransactions(
-        getTransactionsModel({
+      const response = await getTransactions(
+        {
           category,
           transactionsCount: data?.transactionsCount || 3,
-          userId: session.user.id,
-        }),
+        },
+        session.user.id,
       );
       return { category, transactions: response.transactions } as const;
     });
@@ -116,44 +112,6 @@ export async function getTransactionsForCategoryServerAction(
   }
 }
 
-function getNewTransactionModel(
-  data: FormData,
-): Required<Omit<Transaction, "id" | "userId">> {
-  const mark = data.get("transactionType") === TransactionType.Income ? 1 : -1;
-  const date = data.get("date")?.toString();
-  return {
-    amount: mark * +(data.get("amount")?.toString()?.replaceAll(" ", "") || 0),
-    avatar:
-      (data.get("avatar") as string) ??
-      `./${constants.DefaultUserAvatarIconUrl}`,
-    category: data.get("category") as string,
-    date: date ? new Date(date) : new Date(),
-    name: data.get("recipientOrSender") as string,
-    recurring: false,
-  };
-}
-
-function getTransactionsModel(
-  data: Partial<IGetTransactionsParams> | undefined,
-): IGetTransactionsParams {
-  const [sortByField, orderField] = Object.entries(
-    sortByPrismaMap[data?.sortBy || SortBy.Latest],
-  )[0];
-
-  return {
-    page: data?.page || 1,
-    transactionsCount:
-      data?.transactionsCount || constants.TransactionRecordsPerPage,
-    sortBy: sortByField as SortBy,
-    order: orderField,
-    category: (data?.category &&
-    data?.category !== TransactionUICategory.AllTransactions
-      ? data?.category
-      : null) as TransactionUICategory,
-    search: data?.search as string,
-    isRecurring: data?.isRecurring || false,
-  };
-}
 
 export async function deleteRecurringServerAction(
   id: string,
