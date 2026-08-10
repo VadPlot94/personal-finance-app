@@ -13,10 +13,7 @@ import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper"
 
 export const PotsContext = createContext<Pot[]>([]);
 
-export default function Pots({
-  pots,
-  availableBalance,
-}: IPotsProps) {
+export default function Pots({ pots, availableBalance }: IPotsProps) {
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
 
   const gridRef = useRef<HTMLDivElement>(null);

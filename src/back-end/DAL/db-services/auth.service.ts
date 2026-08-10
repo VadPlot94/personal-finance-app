@@ -138,7 +138,7 @@ class AuthService {
 
   /**
    * Authorization method that call when user login to the site (not register)
-   * @param credentials 
+   * @param credentials
    * @returns user information if credentials are valid, otherwise null
    */
   public async autorizeUser(

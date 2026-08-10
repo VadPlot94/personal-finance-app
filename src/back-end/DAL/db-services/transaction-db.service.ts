@@ -1,20 +1,19 @@
 import validationService from "@/shared/services/validation.service";
 import { Transaction } from "@prisma/client";
 import { transactionRepository } from "../repositories/transaction.repository";
+import { throwValidationError } from "@/back-end/server-actions/common";
 import {
-  CustomError,
-  throwValidationError,
-} from "@/back-end/server-actions/common";
-import {
-  mapCreateDBTransactionToOutput,
   mapCreateTransactionInputToDBTransaction,
   mapGetTransactionsInputToDBTransactionsParams,
   mapGetTransactionsForCategoryInputToParams,
 } from "@/back-end/mappers/transaction-mapper";
 import { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
 import { IGetTransactionsParams } from "@/back-end/server-actions/types";
-import { ITransactionDataResponse, ITransactionsForCategoryData } from "../repositories/types";
-import constants, {
+import {
+  ITransactionDataResponse,
+  ITransactionsForCategoryData,
+} from "../repositories/types";
+import {
   TransactionType,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
@@ -32,9 +31,8 @@ export async function getTransactions(
 export async function getMonthlyExpensesByCategory(
   userId: string,
 ): Promise<ITransactionsForCategoryData[]> {
-  const expenses = await transactionRepository.getMonthlyExpensesByCategory(
-    userId,
-  );
+  const expenses =
+    await transactionRepository.getMonthlyExpensesByCategory(userId);
 
   const result: Record<string, Transaction[]> = {};
 
@@ -58,11 +56,9 @@ export async function createTransaction(
 ): Promise<Transaction> {
   validateCreateTransactionFormData(formData);
 
-  const transactionModel =
-    mapCreateTransactionInputToDBTransaction(formData) as Omit<
-      Transaction,
-      "id"
-    >;
+  const transactionModel = mapCreateTransactionInputToDBTransaction(
+    formData,
+  ) as Omit<Transaction, "id">;
 
   const response = await transactionRepository.createTransaction({
     ...transactionModel,
@@ -126,7 +122,10 @@ export async function getTransactionsForCategory(
       { category, transactionsCount } as Partial<IGetTransactionsParams>,
       userId,
     );
-    return { category, transactions: response.transactions } as ITransactionsForCategoryData;
+    return {
+      category,
+      transactions: response.transactions,
+    } as ITransactionsForCategoryData;
   });
 
   return await Promise.all(categoryPromises);
@@ -145,10 +144,8 @@ function validateCreateTransactionFormData(
     date: formData.get("date")?.toString() || "",
   };
 
-  const validationResult = validationService.validateCreateTransactionSchema(
-    validationData,
-  );
+  const validationResult =
+    validationService.validateCreateTransactionSchema(validationData);
 
   throwValidationError(validationResult);
 }
-

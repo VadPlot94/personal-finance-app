@@ -35,12 +35,11 @@ export function mapGetTransactionsForCategoryInputToParams(
   return { categories, transactionsCount };
 }
 
-export function mapCreateDBTransactionToOutput(
-  transaction: Transaction,
-): { id: string } {
+export function mapCreateDBTransactionToOutput(transaction: Transaction): {
+  id: string;
+} {
   return { id: transaction.id };
 }
-
 
 function getCreateTransactionModel(
   formData: ICreateTransactionDTOInput,
@@ -49,7 +48,8 @@ function getCreateTransactionModel(
     return null;
   }
 
-  const rawAmount = formData.get("amount")?.toString()?.replaceAll(" ", "") || "0";
+  const rawAmount =
+    formData.get("amount")?.toString()?.replaceAll(" ", "") || "0";
   const transactionType = formData.get("transactionType")?.toString() as
     | TransactionType
     | undefined;
@@ -86,8 +86,7 @@ export function getTransactionsParams(
     sortBy: sortByField as any,
     order: orderField,
     category:
-      data?.category &&
-      data?.category !== TransactionUICategory.AllTransactions
+      data?.category && data?.category !== TransactionUICategory.AllTransactions
         ? data?.category
         : undefined,
     search: data?.search as string,
