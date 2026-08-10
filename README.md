@@ -175,7 +175,7 @@ Open <http://localhost:3000> in your browser.
 ## 📌 Todo / Roadmap
 
 - sourcemap front debug problem
-- split back-end on different layers
+
 - caching
 - auth
 - animation different breakpoints
@@ -187,7 +187,7 @@ Open <http://localhost:3000> in your browser.
 - register github and gmail login
 - move useSession to common top layout that it not reload every time
 - add error page
-- add server only
+- split back-end on different layers (add server only)
 - add route handlers
 - replace revalidatePath with updateTag/revalidateTag
 - add not found page (just some page that not have data every time - for testing this behavior)

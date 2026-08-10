@@ -56,7 +56,7 @@ export async function editPot(
   });
 
   if (!response) {
-    throw new CustomError(`Failed to update pot with id: ${potModel.id}`);
+    throw new CustomError('Failed to update pot');
   }
 
   return mapEditDBPotToOutput(response);
@@ -70,7 +70,7 @@ export async function deletePot(id: string, userId: string): Promise<boolean> {
   });
 
   if (!deletedCount) {
-    throw new CustomError(`Failed to delete pot with id: ${id}`);
+    throw new CustomError('Failed to delete pot');
   }
 
   return true;
