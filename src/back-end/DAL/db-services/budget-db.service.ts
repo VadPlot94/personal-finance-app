@@ -49,8 +49,8 @@ export async function editBudget(
   const budgetModel = mapEditBudgetInputToDBBudget(budgetFormData) as Budget;
   await validateEditBudgetModel(budgetModel, userId);
 
-  const response = await budgetRepository.update({
-    where: { id: budgetModel.id },
+  const response = await budgetRepository.updateOwned({
+    where: { id: budgetModel.id, userId },
     data: {
       category: budgetModel.category,
       maximum: budgetModel.maximum,
@@ -58,6 +58,10 @@ export async function editBudget(
     },
     select: { id: true },
   });
+
+  if (!response) {
+    throw new CustomError(`Failed to update budget with id: ${budgetModel.id}`);
+  }
 
   return mapEditDBBudgetToOutput(response);
 }
@@ -68,16 +72,15 @@ export async function deleteBudget(
 ): Promise<boolean> {
   validateDeleteBudgetModel(id);
 
-  const hasOwnership = await budgetRepository.ensureDataOwnership(id, userId);
-  if (!hasOwnership) {
-    throw new CustomError("Unauthorized");
-  }
-
-  const response = await budgetRepository.delete({
-    where: { id: id! },
+  const deletedCount = await budgetRepository.deleteOwned({
+    where: { id: id!, userId },
   });
 
-  return id === response?.id;
+  if (!deletedCount) {
+    throw new CustomError(`Failed to delete budget with id: ${id}`);
+  }
+
+  return true;
 }
 
 export async function getAllBudgets(

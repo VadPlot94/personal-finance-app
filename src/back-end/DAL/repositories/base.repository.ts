@@ -77,6 +77,29 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
     return this.model.delete(args) as any;
   }
 
+  // ====================== UPDATE OWNED ======================
+  async updateOwned(args: {
+    where: Record<string, unknown>;
+    data: unknown;
+    select?: Record<string, boolean>;
+  }): Promise<any> {
+    const result = await this.model.updateMany({
+      where: args.where,
+      data: args.data,
+    });
+
+    if ((result?.count ?? 0) === 0) return null;
+    const findArgs: any = { where: args.where };
+    if (args.select) findArgs.select = args.select;
+    return this.findFirst(findArgs as any);
+  }
+
+  // ====================== DELETE OWNED ======================
+  async deleteOwned(args: { where: Record<string, unknown> }): Promise<number> {
+    const result = await this.model.deleteMany({ where: args.where });
+    return result?.count ?? 0;
+  }
+
   // ====================== UPSERT ======================
   async upsert<T extends Prisma.Args<PrismaClient[ModelName], "upsert">>(
     args: T,

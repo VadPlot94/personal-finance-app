@@ -29,6 +29,7 @@ export async function validationObjectWrapper<T = unknown>(
       session = await authService.getAuthenticatedSession();
     }
     const response = await callback(session);
+
     return {
       success: true,
       data: response,

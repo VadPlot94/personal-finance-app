@@ -46,8 +46,8 @@ export async function editPot(
   const potModel = mapEditPotInputToDBPot(potFormData) as Pot;
   await validateEditPotModel(potModel, userId);
 
-  const response = await potRepository.update({
-    where: { id: potModel.id },
+  const response = await potRepository.updateOwned({
+    where: { id: potModel.id, userId },
     data: {
       name: potModel.name,
       target: potModel.target,
@@ -55,22 +55,25 @@ export async function editPot(
     },
   });
 
+  if (!response) {
+    throw new CustomError(`Failed to update pot with id: ${potModel.id}`);
+  }
+
   return mapEditDBPotToOutput(response);
 }
 
 export async function deletePot(id: string, userId: string): Promise<boolean> {
   validateDeletePotModel(id);
 
-  const hasOwnership = await potRepository.ensureDataOwnership(id, userId);
-  if (!hasOwnership) {
-    throw new CustomError("Unauthorized");
-  }
-
-  const response = await potRepository.delete({
-    where: { id },
+  const deletedCount = await potRepository.deleteOwned({
+    where: { id, userId },
   });
 
-  return id === response?.id;
+  if (!deletedCount) {
+    throw new CustomError(`Failed to delete pot with id: ${id}`);
+  }
+
+  return true;
 }
 
 export async function setPotTotal(
@@ -80,10 +83,14 @@ export async function setPotTotal(
 ): Promise<IEditPotDTOOutput> {
   await validatePotTotal(id, newTotal, userId);
 
-  const response = await potRepository.update({
-    where: { id },
+  const response = await potRepository.updateOwned({
+    where: { id, userId },
     data: { total: newTotal },
   });
+
+  if (!response) {
+    throw new CustomError("Unauthorized or pot not found");
+  }
 
   return mapEditDBPotToOutput(response);
 }
@@ -146,14 +153,6 @@ async function validateEditPotModel(
 ): Promise<never | boolean> {
   if (!potModel?.id) {
     throw new CustomError("ID is required for update");
-  }
-
-  const hasOwnership = await potRepository.ensureDataOwnership(
-    potModel.id,
-    userId,
-  );
-  if (!hasOwnership) {
-    throw new CustomError("Unauthorized");
   }
 
   return validateCreatePotModel(potModel, userId);

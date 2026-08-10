@@ -93,10 +93,8 @@ export class PotRepository extends BaseRepository<"pot"> {
    * Обновить текущую сумму в копилке (добавление/снятие)
    */
   async addToPot(id: string, amount: number, userId: string): Promise<Pot> {
-    await this.ensureDataOwnership(id, userId);
-
-    return this.update({
-      where: { id },
+    return this.updateOwned({
+      where: { id, userId },
       data: {
         total: {
           increment: amount,
