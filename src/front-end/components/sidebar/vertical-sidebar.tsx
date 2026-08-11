@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 import { signOut, useSession } from "next-auth/react";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 

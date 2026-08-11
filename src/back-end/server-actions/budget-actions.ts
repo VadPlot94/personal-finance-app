@@ -1,4 +1,5 @@
 "use server";
+import "server-only";
 
 import { Budget } from "@prisma/client";
 import { ServerActionResult } from "./types";

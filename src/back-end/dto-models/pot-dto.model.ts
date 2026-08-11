@@ -1,3 +1,4 @@
+import "server-only";
 // From UI to Back-end
 
 export type ICreatePotDTOInput = FormData;

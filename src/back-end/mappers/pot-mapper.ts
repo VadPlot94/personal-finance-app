@@ -1,3 +1,4 @@
+import "server-only";
 import { Pot } from "@prisma/client";
 import {
   ICreatePotDTOInput,

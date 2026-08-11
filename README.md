@@ -173,6 +173,7 @@ Open <http://localhost:3000> in your browser.
 - auth - NextAuth was implemented
 - animation different breakpoints
 - add local not-found.tsx for appropriate route for test (do not add global not-found - used default Next.js not found page)
+- add import "server-only"; to back-end files
 
 ---
 
@@ -183,10 +184,8 @@ Open <http://localhost:3000> in your browser.
 - caching (Old caching model usage - need to full migration to cache-components:true, also impossible replace revalidatePath with updateTag/revalidateTag as it for new aching model)
 - tests
 - translations
-- loader
 - calculate balance in right way
 - register github login
-- move useSession to common top layout that it not reload every time
 - add error page
 - split back-end on different layers (add server only)
 - add route handlers

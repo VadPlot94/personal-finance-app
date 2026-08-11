@@ -1,3 +1,4 @@
+import "server-only";
 import { auth } from "@/lib/auth";
 import { Session } from "next-auth";
 import { CustomError } from "@/back-end/server-actions/common";

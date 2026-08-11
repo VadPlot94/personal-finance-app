@@ -1,3 +1,4 @@
+import "server-only";
 import { TransactionUICategory } from "@/shared/services/constants.service";
 import { Transaction } from "@prisma/client";
 

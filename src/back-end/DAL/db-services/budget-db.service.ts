@@ -1,3 +1,4 @@
+import "server-only";
 import validationService from "@/shared/services/validation.service";
 import { Budget } from "@prisma/client";
 import { budgetRepository } from "../repositories/budget.repository";

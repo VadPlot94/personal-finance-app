@@ -1,3 +1,4 @@
+import "server-only";
 import { Budget } from "@prisma/client";
 import {
   ICreateBudgetDTOInput,

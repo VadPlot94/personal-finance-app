@@ -1,3 +1,4 @@
+import "server-only";
 // lib/repositories/base.repository.ts
 import { Prisma, PrismaClient } from "@prisma/client";
 

@@ -1,3 +1,4 @@
+import "server-only";
 import { Prisma, User } from "@prisma/client";
 import prisma from "@/back-end/prisma/prisma-client";
 import { BaseRepository } from "./base.repository";

@@ -1,3 +1,4 @@
+import "server-only";
 import { Balance } from "@prisma/client";
 import { IBalanceDTOOutput } from "@/back-end/dto-models/balance-dto.model";
 

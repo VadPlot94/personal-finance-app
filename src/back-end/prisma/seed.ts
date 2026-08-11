@@ -1,3 +1,4 @@
+import "server-only";
 import prisma from "@/back-end/prisma/prisma-client";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";

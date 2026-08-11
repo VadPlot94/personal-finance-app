@@ -1,3 +1,4 @@
+import "server-only";
 import { Balance } from "@prisma/client";
 
 export type IGetBalanceDTOInput = void;

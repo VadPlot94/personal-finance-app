@@ -1,4 +1,5 @@
 "use server";
+import "server-only";
 
 import { validationObjectWrapper } from "./common";
 import authService from "../DAL/db-services/auth.service";

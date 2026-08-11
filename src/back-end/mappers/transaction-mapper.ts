@@ -1,3 +1,4 @@
+import "server-only";
 import { Transaction } from "@prisma/client";
 import { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
 import {

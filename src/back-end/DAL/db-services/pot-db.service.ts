@@ -1,3 +1,4 @@
+import "server-only";
 import validationService from "@/shared/services/validation.service";
 import { Pot } from "@prisma/client";
 import { potRepository } from "../repositories/pot.repository";

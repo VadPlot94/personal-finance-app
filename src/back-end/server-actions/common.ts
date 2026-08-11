@@ -1,3 +1,4 @@
+import "server-only";
 import type { Session } from "next-auth";
 import { ServerActionResult } from "./types";
 import authService from "../DAL/db-services/auth.service";
