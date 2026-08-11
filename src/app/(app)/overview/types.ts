@@ -6,4 +6,5 @@ export interface IOverviewLayoutProps {
   recurring: ReactNode;
   budgets: ReactNode;
   children?: ReactNode;
+  notfound?: ReactNode;
 }

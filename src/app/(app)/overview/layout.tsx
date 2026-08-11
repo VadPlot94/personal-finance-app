@@ -9,6 +9,7 @@ export default async function OverviewLayout({
   pots,
   recurring,
   budgets,
+  notfound,
 }: IOverviewLayoutProps) {
   const balanceResult = await getBalanceServerAction();
   const balance = balanceResult.data;
@@ -48,6 +49,9 @@ export default async function OverviewLayout({
           {budgets}
           {recurring}
         </div>
+        {notfound && (
+          <div className="flex flex-col gap-4 col-span-2">{notfound}</div>
+        )}
       </div>
     </>
   );

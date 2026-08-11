@@ -60,7 +60,7 @@ export async function editBudget(
   });
 
   if (!response) {
-    throw new CustomError('Failed to update budget');
+    throw new CustomError("Failed to update budget");
   }
 
   return mapEditDBBudgetToOutput(response);
@@ -77,7 +77,7 @@ export async function deleteBudget(
   });
 
   if (!deletedCount) {
-    throw new CustomError('Failed to delete budget');
+    throw new CustomError("Failed to delete budget");
   }
 
   return true;

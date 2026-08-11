@@ -102,7 +102,7 @@ export default function RecurringTile({
   }, [recurringTransactions]);
 
   return (
-    <ItemCard>
+    <ItemCard className="h-full">
       <TileHeader
         title="Recurring Bills"
         href="/recurring"
@@ -112,7 +112,7 @@ export default function RecurringTile({
         hasItems={!!recurringTransactions?.length}
         emptyTitle="No recurring bills are available."
       >
-        <div className="flex flex-col gap-3 justify-between text-xs text-app-color font-semibold">
+        <div className="flex flex-col gap-3 justify-between flex-1 text-xs text-app-color font-semibold">
           <RecurringSummaryItem
             label="Paid Bills"
             amount={stats.paidAmount}

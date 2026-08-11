@@ -20,7 +20,7 @@ export default function EmptyContentWrapper({
     );
   }
 
-  if (hasItems) {
+  if (hasItems && children) {
     return <>{children}</>;
   }
 
