@@ -1,6 +1,6 @@
-import BudgetsTile from "@/front-end/components/budgets/budgets-tile";
 import { getAllBudgetsServerAction } from "@/back-end/server-actions/budget-actions";
 import { getTransactionsMonthlyExpensesByCategoryServerAction } from "@/back-end/server-actions/transaction-actions";
+import BudgetsTile from "@/front-end/components/budgets/budgets-tile";
 
 export default async function BudgetsTilePage() {
   const budgetsResponse = await getAllBudgetsServerAction();

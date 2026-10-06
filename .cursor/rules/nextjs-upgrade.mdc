@@ -1,0 +1,22 @@
+---
+description: Safe Next.js migration rules
+alwaysApply: false
+---
+
+# Next.js Upgrade Rules
+
+- Always run the official Next.js codemod first.
+- Do not do large refactors during an upgrade — only changes required for compatibility.
+- After each significant step, run:
+  1. `npm run build` (or npx)
+  2. `npm run lint` (or npx)
+  3. `npm run format` (or npx)
+  4. `npm run test`  (or npx) (if available)
+- When working with the App Router:
+  - Always `await` `params`, `searchParams`, `cookies()`, `headers()`, and `draftMode()`
+  - Server Components by default; add `'use client'` only when truly needed
+- Do not remove old code until the new version passes all checks.
+- At the end of the migration, verify:
+  - The app starts (`npm run dev` (or npx))
+  - No errors in the browser console
+  - The database connection works

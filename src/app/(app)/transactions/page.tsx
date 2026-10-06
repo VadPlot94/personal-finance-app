@@ -1,9 +1,9 @@
-import Transactions from "@/front-end/components/transactions/transactions";
+import { notFound } from "next/navigation";
 import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
+import Transactions from "@/front-end/components/transactions/transactions";
 import constants, {
   TransactionUICategory,
 } from "@/shared/services/constants.service";
-import { notFound } from "next/navigation";
 
 interface ITransactionsPageProps {
   searchParams: Promise<{ category: string }>;

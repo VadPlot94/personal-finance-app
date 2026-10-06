@@ -1,0 +1,91 @@
+---
+description: >-
+  Rules for creating git commits. Use whenever the user asks to commit,
+  make a commit, or commit changes.
+alwaysApply: false
+---
+
+# Git Commit Rules (Strict)
+
+When the user asks to create a commit:
+
+### 1. Preparation
+- Run `git status` and `git diff --stat`
+- Get the current branch name:
+  ```bash
+  git branch --show-current
+  ```
+
+### 2. Message format (required)
+The commit message must always be exactly:
+
+```text
+[branch_name] short_description
+```
+
+Valid examples:
+
+- `[feature/auth] add email validation`
+- `[fix/next-16] migrate cookies to async API`
+- `[chore/deps] update next to 16.3.8`
+
+Forbidden:
+
+- Messages without `[branch_name]`
+- Conventional Commits prefixes (`feat:`, `fix:`, `chore:`, etc.) unless the user explicitly asks for them
+- Long multi-line messages unless necessary
+
+### 3. Mandatory confirmation
+Never run `git commit` immediately.
+
+First show the user:
+
+- The list of files that will be included
+- The proposed commit message in the exact format
+- A few alternative short descriptions for the commit
+
+Only after explicit confirmation (`yes`, `ok`, `commit`, etc.) run the commit.
+
+The user may provide their own description. Always keep the `[branch_name]` prefix, and do not duplicate it if the user already included it.
+
+### 4. Commit command
+Use:
+
+```bash
+git add -A   # or only the files the user specified
+git commit -m "[branch_name] description"
+```
+
+### 5. After commit
+Show: `git log -1 --oneline`
+
+---
+
+### Usage example
+
+User:
+
+```text
+make a commit: added form validation
+```
+
+Agent:
+
+```text
+Current branch: feature/auth
+
+Files:
+- src/components/LoginForm.tsx
+- src/lib/validation.ts
+
+Proposed message:
+[feature/auth] added form validation
+
+Alternatives:
+- [feature/auth] add form validation
+- [feature/auth] validate login form input
+
+Commit?
+```
+
+Only after the user confirms, create the commit.

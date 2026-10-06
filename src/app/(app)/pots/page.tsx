@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import Pots from "@/front-end/components/pots/pots";
-import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
-import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
-import potService from "@/front-end/services/pot.service";
 import authService from "@/back-end/DAL/db-services/auth.service";
+import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
+import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
+import Pots from "@/front-end/components/pots/pots";
+import potService from "@/front-end/services/pot.service";
 
 export default function PotsPage() {
   return (

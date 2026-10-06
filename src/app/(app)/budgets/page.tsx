@@ -1,6 +1,6 @@
-import Budgets from "@/front-end/components/budgets/budgets";
 import { getAllBudgetsServerAction } from "@/back-end/server-actions/budget-actions";
 import { getTransactionsMonthlyExpensesByCategoryServerAction } from "@/back-end/server-actions/transaction-actions";
+import Budgets from "@/front-end/components/budgets/budgets";
 
 export const dynamic = "force-dynamic";
 

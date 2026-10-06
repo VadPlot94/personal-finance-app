@@ -1,5 +1,5 @@
-import Recurring from "@/front-end/components/recurring/recurring";
 import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
+import Recurring from "@/front-end/components/recurring/recurring";
 
 export const dynamic = "force-dynamic";
 

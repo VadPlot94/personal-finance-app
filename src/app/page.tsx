@@ -1,6 +1,6 @@
 import Link from "next/link";
-import SignInButton from "@/front-end/components/sign-in-button";
 import CreateAccountLink from "@/front-end/components/create-account-link";
+import SignInButton from "@/front-end/components/sign-in-button";
 
 export default function HomePage() {
   return (

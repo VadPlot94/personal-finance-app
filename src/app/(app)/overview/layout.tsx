@@ -1,8 +1,8 @@
 import "@/app/globals.css";
+import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
-import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
-import { IOverviewLayoutProps } from "./types";
+import type { IOverviewLayoutProps } from "./types";
 
 export default async function OverviewLayout({
   transactions,
