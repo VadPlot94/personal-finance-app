@@ -46,7 +46,9 @@ First show the user:
 
 Only after explicit confirmation (`yes`, `ok`, `commit`, etc.) run the commit.
 
-The user may provide their own description. Always keep the `[branch_name]` prefix, and do not duplicate it if the user already included it.
+The user may provide their own description.
+Always keep the `[branch_name]` prefix, and do not duplicate it if the user already included it.
+Translate user commit message in English language if it not in it.
 
 ### 4. Commit command
 Use:
