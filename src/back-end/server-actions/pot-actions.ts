@@ -2,24 +2,24 @@
 import "server-only";
 
 import { revalidatePath } from "next/cache";
-import { ServerActionResult } from "./types";
-import {
-  ICreatePotDTOInput,
-  ICreatePotDTOOutput,
-  IEditPotDTOInput,
-  IEditPotDTOOutput,
-} from "../dto-models/pot-dto.model";
+import type { Session } from "next-auth";
 import {
   createPot,
   deletePot,
   editPot,
   setPotTotal,
-} from "../DAL/db-services/pot-db.service";
-import { validationObjectWrapper } from "./common";
-import { Session } from "next-auth";
+} from "@/back-end/DAL/db-services/pot-db.service";
+import type {
+  ICreatePotDTOInput,
+  ICreatePotDTOOutput,
+  IEditPotDTOInput,
+  IEditPotDTOOutput,
+} from "@/back-end/dto-models/pot-dto.model";
+import { validationObjectWrapper } from "@/back-end/server-actions/common";
+import type { ServerActionResult } from "@/back-end/server-actions/types";
 
 export async function createPotServerAction(
-  prevState: { success: boolean } | null,
+  _prevState: { success: boolean } | null,
   formData: ICreatePotDTOInput,
 ): Promise<ServerActionResult<ICreatePotDTOOutput>> {
   const validatedResponse = await validationObjectWrapper<ICreatePotDTOOutput>(
@@ -34,7 +34,7 @@ export async function createPotServerAction(
 }
 
 export async function editPotServerAction(
-  prevState: { success: boolean } | null,
+  _prevState: { success: boolean } | null,
   formData: IEditPotDTOInput,
 ): Promise<ServerActionResult<IEditPotDTOOutput>> {
   const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(

@@ -1,24 +1,24 @@
 "use server";
 import "server-only";
 
-import { Budget } from "@prisma/client";
-import { ServerActionResult } from "./types";
+import type { Budget } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { validationObjectWrapper } from "./common";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 import {
   createBudget,
-  editBudget,
   deleteBudget,
+  editBudget,
   getAllBudgets,
-} from "../DAL/db-services/budget-db.service";
-import {
+} from "@/back-end/DAL/db-services/budget-db.service";
+import type {
   ICreateBudgetDTOInput,
   ICreateBudgetDTOOutput,
   IEditBudgetDTOInput,
   IEditBudgetDTOOutput,
   IGetAllBudgetsDTOOutput,
-} from "../dto-models/budget-dto.model";
+} from "@/back-end/dto-models/budget-dto.model";
+import { validationObjectWrapper } from "@/back-end/server-actions/common";
+import type { ServerActionResult } from "@/back-end/server-actions/types";
 
 export async function getAllBudgetsServerAction(): Promise<
   ServerActionResult<Budget[]>
@@ -38,7 +38,7 @@ export async function getAllBudgetsServerAction(): Promise<
 }
 
 export async function addBudgetServerAction(
-  prevState: { success: boolean } | null,
+  _prevState: { success: boolean } | null,
   formData: ICreateBudgetDTOInput,
 ): Promise<ServerActionResult<ICreateBudgetDTOOutput>> {
   const validatedResponse =
@@ -54,7 +54,7 @@ export async function addBudgetServerAction(
 }
 
 export async function editBudgetServerAction(
-  prevState: { success: boolean } | null,
+  _prevState: { success: boolean } | null,
   formData: IEditBudgetDTOInput,
 ): Promise<ServerActionResult<IEditBudgetDTOOutput>> {
   const validatedResponse = await validationObjectWrapper<IEditBudgetDTOOutput>(

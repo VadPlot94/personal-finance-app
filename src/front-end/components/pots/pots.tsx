@@ -1,15 +1,15 @@
 "use client";
 
-import { createContext, useEffect, useRef, useState } from "react";
-import { IPotsProps } from "./types";
-import { EditPotDialog } from "./dialogs/edit-pot-dialog";
-import PotsItem from "./pots-item";
-import { Pot } from "@prisma/client";
-import PageHeader from "../page-header/page-header";
-import { cn } from "@/lib/utils";
+import type { Pot } from "@prisma/client";
 import { wrapGrid } from "animate-css-grid";
+import { createContext, useEffect, useRef, useState } from "react";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import PageHeader from "@/front-end/components/page-header/page-header";
+import { EditPotDialog } from "@/front-end/components/pots/dialogs/edit-pot-dialog";
+import PotsItem from "@/front-end/components/pots/pots-item";
+import type { IPotsProps } from "@/front-end/components/pots/types";
+import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
 
 export const PotsContext = createContext<Pot[]>([]);
 

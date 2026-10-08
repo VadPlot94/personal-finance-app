@@ -1,12 +1,12 @@
-import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { User } from "@prisma/client";
 import type { NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import prisma from "@/back-end/prisma/prisma-client";
+import GoogleProvider from "next-auth/providers/google";
 import authService from "@/back-end/DAL/db-services/auth.service";
-import { User } from "@prisma/client";
+import prisma from "@/back-end/prisma/prisma-client";
 
 export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -28,8 +28,8 @@ export const authOptions: NextAuthConfig = {
           | undefined,
       ) {
         // authorize method only for login (not register)
-        const validationResponse = await authService.autorizeUser(credentials);
-        return validationResponse?.data as User | null;
+        const result = await authService.autorizeUser(credentials);
+        return (result.data ?? null) as User | null;
       },
     }),
     GoogleProvider({
@@ -55,7 +55,7 @@ export const authOptions: NextAuthConfig = {
   callbacks: {
     // By default NextAuth will set only user id, email, name to JWT token and session, but we want to have more user data there
     // so we set whole user object to token and session after successful login in authorize method of provider
-    async jwt({ token, user }: { token: any; user?: any }) {
+    async jwt({ token, user }) {
       // After successful login set user data to JWT token with first login
       if (user) {
         token.user = user as typeof token.user;
@@ -64,7 +64,7 @@ export const authOptions: NextAuthConfig = {
     },
     // By default NextAuth will set to session only base fields (user id, email, name) from token, but we want to have more user data in session
     // so we set whole user object to session from token
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }) {
       // After successful login set user to session and send to client
       // After that we can use session user data on the client side and in server actions
       if (token.user) {

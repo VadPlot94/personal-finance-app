@@ -2,14 +2,14 @@
 import "server-only";
 
 import { revalidatePath } from "next/cache";
-import { ServerActionResult } from "./types";
-import { IBalanceDTOOutput } from "@/back-end/dto-models/balance-dto.model";
+import type { Session } from "next-auth";
 import {
   getBalance,
   updateBalanceForTransaction,
 } from "@/back-end/DAL/db-services/balance-db.service";
-import { validationObjectWrapper } from "./common";
-import { Session } from "next-auth";
+import type { IBalanceDTOOutput } from "@/back-end/dto-models/balance-dto.model";
+import { validationObjectWrapper } from "@/back-end/server-actions/common";
+import type { ServerActionResult } from "@/back-end/server-actions/types";
 
 export async function getBalanceServerAction(): Promise<
   ServerActionResult<IBalanceDTOOutput>

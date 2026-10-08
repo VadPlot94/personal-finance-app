@@ -1,5 +1,5 @@
-import { Transaction } from "@prisma/client";
-import {
+import type { Transaction } from "@prisma/client";
+import type {
   TransactionType,
   TransactionUICategory,
 } from "@/shared/services/constants.service";

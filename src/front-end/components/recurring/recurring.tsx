@@ -1,22 +1,22 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import PageHeader from "../page-header/page-header";
-import TransactionsTableLayout from "../transactions/transactions-table-layout";
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
-import { IRecurringProps } from "./types";
+import { useMemo, useState } from "react";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import PageHeader from "@/front-end/components/page-header/page-header";
+import { RecurringSummaryItem } from "@/front-end/components/recurring/recurring-summary-item";
+import type { IRecurringProps } from "@/front-end/components/recurring/types";
+import BillsTable from "@/front-end/components/transactions/tables/bills-table";
+import TransactionsTableLayout from "@/front-end/components/transactions/transactions-table-layout";
 import recurringService from "@/front-end/services/recurring.service";
-import constants from "@/shared/services/constants.service";
 import { cn } from "@/lib/utils";
-import BillsTable from "../transactions/tables/bills-table";
-import { RecurringSummaryItem } from "./recurring-summary-item";
-import ItemCard from "../item-card/item-card";
+import constants from "@/shared/services/constants.service";
 
 export default function Recurring({
   recurringTransactions = [],
   paginationData,
 }: IRecurringProps) {
-  const [isAddTransactionDialogOpen, setAddRecurringBillDialogOpen] =
+  const [_isAddTransactionDialogOpen, setAddRecurringBillDialogOpen] =
     useState(false);
   const [referenceDate, setReferenceDate] = useState<Date | null>(null);
 
@@ -39,7 +39,7 @@ export default function Recurring({
       };
     }
 
-    // Шаг 1: самая поздняя дата
+    // Step 1: latest date
     const latestDate = recurringService.findLatestRecurringDate(
       recurringTransactions,
     );
@@ -56,16 +56,16 @@ export default function Recurring({
       };
     }
 
-    // Шаг 2: месяц прогноза
+    // Step 2: forecast month
     const {
       year,
       month,
       name: referenceMonthName,
     } = recurringService.getForecastMonthAndName(latestDate);
 
-    // Шаг 3: referenceDate (перенос текущего дня/времени)
-    const realToday = new Date(); // ← в продакшене текущая дата
-    // const realToday = new Date("2026-03-12"); // для тестов
+    // Step 3: referenceDate (carry over current day/time)
+    const realToday = new Date(); // in production: current date
+    // const realToday = new Date("2026-03-12"); // for tests
 
     const referenceDate = recurringService.createReferenceDate(
       realToday,
@@ -74,7 +74,7 @@ export default function Recurring({
     );
     setReferenceDate(referenceDate);
 
-    // Шаг 4: все recurring bills за месяц
+    // Step 4: all recurring bills for the month
     const monthBills = recurringService.getRecurringBillsInMonth(
       recurringTransactions,
       year,
@@ -94,7 +94,7 @@ export default function Recurring({
       };
     }
 
-    // Шаг 5: расчёт paid/upcoming/due soon — теперь через сервис
+    // Step 5: compute paid/upcoming/due soon — now via the service
     const billStats = recurringService.calculateStatsFromBills(
       monthBills,
       referenceDate,

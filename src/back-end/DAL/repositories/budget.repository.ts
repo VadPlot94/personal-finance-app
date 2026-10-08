@@ -1,7 +1,7 @@
 import "server-only";
+import type { Budget } from "@prisma/client";
+import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import { BaseRepository } from "./base.repository";
-import { Budget } from "@prisma/client";
 
 export class BudgetRepository extends BaseRepository<"budget"> {
   constructor() {
@@ -9,7 +9,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   }
 
   /**
-   * Получить все бюджеты (с сортировкой по категории)
+   * Get all budgets (sorted by category)
    */
   async getAll(userId: string): Promise<Budget[]> {
     return this.findMany({
@@ -19,7 +19,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   }
 
   /**
-   * Получить бюджет по категории
+   * Get budget by category
    */
   async getByCategory(
     category: string,
@@ -31,7 +31,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   }
 
   /**
-   * Создать или обновить бюджет (upsert)
+   * Create or update a budget (upsert)
    */
   async upsertBudget(data: {
     userId: string;
@@ -42,7 +42,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
     return this.upsert({
       where: {
         userId_category: { userId: data.userId, category: data.category },
-      }, // предполагаем уникальность по category
+      }, // assume uniqueness by category
       update: {
         maximum: data.maximum,
         theme: data.theme,
@@ -56,7 +56,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   }
 
   /**
-   * Получить общую сумму максимальных бюджетов
+   * Get the total of all budget maximums
    */
   async getTotalMaximum(): Promise<number | null> {
     const result = await prisma.budget.aggregate({

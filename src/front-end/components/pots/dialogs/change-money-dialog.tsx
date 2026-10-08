@@ -1,5 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { setPotTotalServerAction } from "@/back-end/server-actions/pot-actions";
+import type { IAddMoneyPotDialogProps } from "@/front-end/components/pots/types";
+import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,15 +12,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/front-end/components/ui/dialog";
-import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
-import { useEffect, useState } from "react";
-import validationService from "@/shared/services/validation.service";
-import { setPotTotalServerAction } from "@/back-end/server-actions/pot-actions";
-import { IAddMoneyPotDialogProps } from "@/front-end/components/pots/types";
-import { toast } from "sonner";
 import financeService from "@/front-end/services/finance.service";
+import validationService from "@/shared/services/validation.service";
 
 export function ChangeMoneyDialog({
   children,
@@ -30,6 +30,11 @@ export function ChangeMoneyDialog({
   const [amountProgress, setAmountProgress] = useState(0);
   const [validationError, setValidationError] = useState<string | null>(null);
 
+  const getResultPotTotal = (newAmount: string, total: number): number => {
+    const currentAmount = +newAmount || 0;
+    return isWithdraw ? total - currentAmount : total + currentAmount;
+  };
+
   useEffect(() => {
     setNewAmount("");
     setAmountProgress(0);
@@ -40,8 +45,8 @@ export function ChangeMoneyDialog({
   const handleTotalInputChange = (val: string) => {
     const newAmount = val?.replaceAll(" ", "");
     setNewAmount(newAmount);
-    let targetValidationAmount = isWithdraw ? pot.total : pot.target;
-    let oldTotal = isWithdraw ? 0 : pot.total;
+    const targetValidationAmount = isWithdraw ? pot.total : pot.target;
+    const oldTotal = isWithdraw ? 0 : pot.total;
     if (newAmount !== "") {
       const result = validationService.validateTotal(
         newAmount,
@@ -95,11 +100,6 @@ export function ChangeMoneyDialog({
 
   const isFormValid = () => {
     return !validationError && newAmount;
-  };
-
-  const getResultPotTotal = (newAmount: string, total: number): number => {
-    const currentAmount = +newAmount || 0;
-    return isWithdraw ? total - currentAmount : total + currentAmount;
   };
 
   const initialPotTotalProgress = financeService.calculateProgressPercentage(

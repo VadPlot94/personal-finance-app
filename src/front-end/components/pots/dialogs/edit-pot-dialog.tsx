@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/front-end/components/ui/dialog";
-import { Button } from "@/front-end/components/ui/button";
-import { Input } from "@/front-end/components/ui/input";
-import { Label } from "@/front-end/components/ui/label";
+import type { Pot } from "@prisma/client";
 import {
   useActionState,
   useContext,
@@ -17,27 +8,34 @@ import {
   useMemo,
   useState,
 } from "react";
-import validationService from "@/shared/services/validation.service";
+import { toast } from "sonner";
+import {
+  createPotServerAction,
+  editPotServerAction,
+} from "@/back-end/server-actions/pot-actions";
+import { PotsContext } from "@/front-end/components/pots/pots";
+import type { IEditPotDialogProps } from "@/front-end/components/pots/types";
+import { Button } from "@/front-end/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/front-end/components/ui/dialog";
+import { Input } from "@/front-end/components/ui/input";
+import { Label } from "@/front-end/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
-import constants, { Theme } from "@/shared/services/constants.service";
-import {
-  createPotServerAction,
-  editPotServerAction,
-} from "@/back-end/server-actions/pot-actions";
-import { Pot } from "@prisma/client";
-import {
-  IEditPotDialogProps,
-  ICreatePotFormData,
-} from "@/front-end/components/pots/types";
-import { toast } from "sonner";
-import { PotsContext } from "../pots";
+} from "@/front-end/components/ui/select";
 import financeService from "@/front-end/services/finance.service";
+import constants, { Theme } from "@/shared/services/constants.service";
+import type { ICreatePotFormData } from "@/shared/services/types";
+import validationService from "@/shared/services/validation.service";
 
 export function EditPotDialog({
   children,
@@ -79,6 +77,32 @@ export function EditPotDialog({
     Record<keyof ICreatePotFormData, string>
   > | null>(null);
 
+  const validateForm = (formPotData: ICreatePotFormData) => {
+    const result = validationService.validateCreatePotSchema(
+      formPotData,
+      potNames,
+      pot?.total,
+    );
+
+    if (result.success) {
+      setFormErrors(null);
+      return;
+    }
+    const errors =
+      validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
+        result,
+      );
+    setFormErrors(errors);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setFormData(setFormPotData());
+      setFormErrors(null);
+    }
+    setDialogOpen(isOpen);
+  };
+
   useEffect(() => {
     setFormData(setFormPotData(pot));
   }, [pot, isDialogOpen]);
@@ -113,24 +137,6 @@ export function EditPotDialog({
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
 
-  const validateForm = (formPotData: ICreatePotFormData) => {
-    const result = validationService.validateCreatePotSchema(
-      formPotData,
-      potNames,
-      pot?.total,
-    );
-
-    if (result.success) {
-      setFormErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
-        result,
-      );
-    setFormErrors(errors);
-  };
-
   const isFormValid = () => {
     return (
       !formErrors &&
@@ -138,14 +144,6 @@ export function EditPotDialog({
       formPotData?.target &&
       formPotData?.theme
     );
-  };
-
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setFormData(setFormPotData());
-      setFormErrors(null);
-    }
-    setDialogOpen(isOpen);
   };
 
   const handlePotNameInputChange = (value: string): void => {
@@ -156,7 +154,7 @@ export function EditPotDialog({
     setFormData(
       setFormPotData({
         ...formPotData,
-        target: value.replaceAll(" ", "") as any,
+        target: value.replaceAll(" ", ""),
       }),
     );
   };
@@ -215,9 +213,7 @@ export function EditPotDialog({
                   maxLength={constants.MaxPotNameCharacters}
                 />
                 <div className="flex flex-row justify-between items-center">
-                  <p className="text-xs text-red-500">
-                    {formErrors?.["potName"]}
-                  </p>
+                  <p className="text-xs text-red-500">{formErrors?.potName}</p>
                   <p className="text-app-color text-xs min-w-25">
                     {constants.MaxPotNameCharacters -
                       (formPotData?.potName?.length || 0)}{" "}
@@ -247,7 +243,7 @@ export function EditPotDialog({
                   }}
                   placeholder="$ e.g. 2000"
                 />
-                <p className="text-xs text-red-500">{formErrors?.["target"]}</p>
+                <p className="text-xs text-red-500">{formErrors?.target}</p>
               </div>
               <div className="flex flex-col gap-2">
                 <Label

@@ -10,3 +10,6 @@ alwaysApply: true
 - Use Server Components by default
 - `params`, `searchParams`, `cookies()`, `headers()` must be awaited
 - Package manager: npm
+- For user project preferences, follow [`.cursor/rules/preferences.mdc`](preferences.mdc).
+- For code comments, follow [`.cursor/rules/comments.mdc`](comments.mdc).
+- For subagent routing, follow [`.cursor/rules/agents.mdc`](agents.mdc).

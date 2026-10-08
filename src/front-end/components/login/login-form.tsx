@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { registerUserServerAction } from "@/back-end/server-actions/auth-actions";
-import {
-  ISignInFormData,
-  IRegisterFormData,
-  IRegisterValidationData,
-  ISignInValidationData,
-} from "@/shared/services/types";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { registerUserServerAction } from "@/back-end/server-actions/auth-actions";
+import ItemCard from "@/front-end/components/item-card/item-card";
 import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
-import ItemCard from "@/front-end/components/item-card/item-card";
+import type {
+  IRegisterFormData,
+  IRegisterValidationData,
+  ISignInFormData,
+  ISignInValidationData,
+} from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
 export enum AuthMode {
@@ -82,19 +82,6 @@ export default function LoginForm() {
     Record<keyof IRegisterValidationData, string>
   > | null>(() => null);
 
-  // Client-side validation effects
-  useEffect(() => {
-    if (formSignInData) {
-      validateSignInForm(formSignInData);
-    }
-  }, [formSignInData]);
-
-  useEffect(() => {
-    if (formRegisterData) {
-      validateRegisterForm(formRegisterData);
-    }
-  }, [formRegisterData]);
-
   const validateSignInForm = (formData: ISignInFormData) => {
     const result = validationService.validateAuthSchema(formData, "signin");
 
@@ -122,6 +109,18 @@ export default function LoginForm() {
       );
     setRegisterErrors(errors);
   };
+
+  useEffect(() => {
+    if (formSignInData) {
+      validateSignInForm(formSignInData);
+    }
+  }, [formSignInData]);
+
+  useEffect(() => {
+    if (formRegisterData) {
+      validateRegisterForm(formRegisterData);
+    }
+  }, [formRegisterData]);
 
   const isSignInFormValid = () => {
     return !signInErrors && formSignInData?.email && formSignInData?.password;

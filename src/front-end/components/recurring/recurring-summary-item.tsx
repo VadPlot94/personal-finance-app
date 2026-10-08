@@ -1,6 +1,6 @@
 "use client";
 
-import { IRecurringSummaryItemProps } from "./types";
+import type { IRecurringSummaryItemProps } from "@/front-end/components/recurring/types";
 
 export function RecurringSummaryItem({
   label,

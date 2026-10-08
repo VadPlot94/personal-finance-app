@@ -1,36 +1,36 @@
 "use client";
 
+import { useActionState, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { createTransactionServerAction } from "@/back-end/server-actions/transaction-actions";
+import type {
+  ICreateTransactionDialogProps,
+  ICreateTransactionFormData,
+  TransactionCategory,
+} from "@/front-end/components/transactions/types";
+import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/front-end/components/ui/dialog";
-import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
-import { useActionState, useEffect, useState } from "react";
-import validationService from "@/shared/services/validation.service";
-import { ICreateTransactionValidationData } from "@/shared/services/types";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
+} from "@/front-end/components/ui/select";
+import financeService from "@/front-end/services/finance.service";
 import constants, {
   TransactionType,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
-import {
-  ICreateTransactionFormData,
-  ICreateTransactionDialogProps,
-  TransactionCategory,
-} from "../types";
-import { toast } from "sonner";
-import financeService from "@/front-end/services/finance.service";
-import { createTransactionServerAction } from "@/back-end/server-actions/transaction-actions";
+import type { ICreateTransactionValidationData } from "@/shared/services/types";
+import validationService from "@/shared/services/validation.service";
 
 export function CreateTransactionDialog({
   isDialogOpen,
@@ -62,6 +62,36 @@ export function CreateTransactionDialog({
     Record<keyof ICreateTransactionValidationData, string>
   > | null>(null);
 
+  const validateForm = (formTransactionData: ICreateTransactionFormData) => {
+    const validationData: ICreateTransactionValidationData = {
+      transactionType: formTransactionData.transactionType,
+      category: formTransactionData.category,
+      recipientOrSender: formTransactionData.recipientOrSender,
+      amount: formTransactionData.amount?.toString() || "",
+      date: formTransactionData.date,
+    };
+
+    const result =
+      validationService.validateCreateTransactionSchema(validationData);
+    if (result.success) {
+      setFormErrors(null);
+      return;
+    }
+    const errors =
+      validationService.createErrorsWithPath<ICreateTransactionValidationData>(
+        result,
+      );
+    setFormErrors(errors);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setFormData(setFormTransactionData());
+      setFormErrors(null);
+    }
+    setDialogOpen(isOpen);
+  };
+
   useEffect(() => {
     if (formTransactionData) {
       validateForm(formTransactionData);
@@ -88,28 +118,6 @@ export function CreateTransactionDialog({
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
 
-  const validateForm = (formTransactionData: ICreateTransactionFormData) => {
-    const validationData: ICreateTransactionValidationData = {
-      transactionType: formTransactionData.transactionType,
-      category: formTransactionData.category,
-      recipientOrSender: formTransactionData.recipientOrSender,
-      amount: formTransactionData.amount?.toString() || "",
-      date: formTransactionData.date,
-    };
-
-    const result =
-      validationService.validateCreateTransactionSchema(validationData);
-    if (result.success) {
-      setFormErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<ICreateTransactionValidationData>(
-        result,
-      );
-    setFormErrors(errors);
-  };
-
   const isFormValid = () => {
     return (
       !formErrors &&
@@ -119,14 +127,6 @@ export function CreateTransactionDialog({
       formTransactionData?.amount &&
       formTransactionData?.date
     );
-  };
-
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setFormData(setFormTransactionData());
-      setFormErrors(null);
-    }
-    setDialogOpen(isOpen);
   };
 
   const handleTransactionTypeChange = (value: TransactionType): void => {
@@ -150,7 +150,7 @@ export function CreateTransactionDialog({
     setFormData(
       setFormTransactionData({
         ...formTransactionData,
-        amount: value.replaceAll(" ", "") as any,
+        amount: value.replaceAll(" ", ""),
       }),
     );
   };
@@ -168,7 +168,7 @@ export function CreateTransactionDialog({
     // Validate date - not set transaction in future!
     let selectedDate: Date | undefined = new Date(value);
 
-    if (isNaN(selectedDate.getTime())) {
+    if (Number.isNaN(selectedDate.getTime())) {
       selectedDate = undefined;
     }
     setFormData(
@@ -304,7 +304,7 @@ export function CreateTransactionDialog({
                   }}
                   placeholder="$ e.g. 2000"
                 />
-                <p className="text-xs text-red-500">{formErrors?.["amount"]}</p>
+                <p className="text-xs text-red-500">{formErrors?.amount}</p>
               </div>
 
               <div className="flex flex-col gap-2">

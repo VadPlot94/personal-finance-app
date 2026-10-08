@@ -1,26 +1,23 @@
 import "server-only";
-import validationService from "@/shared/services/validation.service";
-import { Pot } from "@prisma/client";
-import { potRepository } from "../repositories/pot.repository";
-import {
-  CustomError,
-  throwValidationError,
-} from "@/back-end/server-actions/common";
+import type { Pot } from "@prisma/client";
+import { CustomError, throwValidationError } from "@/back-end/common/errors";
+import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
+import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
+import type {
+  ICreatePotDTOInput,
+  ICreatePotDTOOutput,
+  IEditPotDTOInput,
+  IEditPotDTOOutput,
+} from "@/back-end/dto-models/pot-dto.model";
 import {
   mapCreateDBPotToOutput,
   mapCreatePotInputToDBPot,
   mapEditDBPotToOutput,
   mapEditPotInputToDBPot,
 } from "@/back-end/mappers/pot-mapper";
-import {
-  ICreatePotDTOInput,
-  ICreatePotDTOOutput,
-  IEditPotDTOInput,
-  IEditPotDTOOutput,
-} from "@/back-end/dto-models/pot-dto.model";
-import { ICreatePotFormData } from "@/front-end/components/pots/types";
-import { balanceRepository } from "../repositories/balance.repository";
-import potService from "@/front-end/services/pot.service";
+import potService from "@/shared/services/pot.service";
+import type { ICreatePotFormData } from "@/shared/services/types";
+import validationService from "@/shared/services/validation.service";
 
 export async function createPot(
   potFormData: ICreatePotDTOInput,
@@ -105,7 +102,7 @@ async function validatePotTotal(
     throw new CustomError("ID is required for update");
   }
 
-  if (newTotal === 0 || isNaN(newTotal)) {
+  if (newTotal === 0 || Number.isNaN(newTotal)) {
     const zodErrorResult = validationService.createCustomZodIssueResult<object>(
       "total",
       "Total must be a valid positive number",

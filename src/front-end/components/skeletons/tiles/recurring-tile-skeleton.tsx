@@ -12,6 +12,7 @@ export default function RecurringTileSkeleton() {
 
       <div className="flex flex-col gap-3">
         {Array.from({ length: 3 }).map((_, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton placeholders
           <div key={index} className="h-12 rounded-lg bg-gray-100" />
         ))}
       </div>

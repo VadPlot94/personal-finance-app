@@ -1,23 +1,8 @@
 import "server-only";
 import type { Session } from "next-auth";
-import { ServerActionResult } from "./types";
-import authService from "../DAL/db-services/auth.service";
-import validationService from "@/shared/services/validation.service";
-import { ZodSafeParseResult } from "zod";
-
-export class CustomError extends Error {
-  public isCustomError = true as const;
-  public readonly isZodError: boolean;
-
-  constructor(
-    public message: string,
-    public zodErrors?: Record<string, string>,
-  ) {
-    super(message);
-    this.isZodError = !!zodErrors;
-    Object.setPrototypeOf(this, CustomError.prototype);
-  }
-}
+import { CustomError } from "@/back-end/common/errors";
+import authService from "@/back-end/DAL/db-services/auth.service";
+import type { ServerActionResult } from "@/back-end/server-actions/types";
 
 export async function validationObjectWrapper<T = unknown>(
   action: "get" | "update" | "delete" | "create",
@@ -55,16 +40,5 @@ export async function validationObjectWrapper<T = unknown>(
       success: false,
       error: `Failed to ${action} data. Please try again.`,
     };
-  }
-}
-
-export function throwValidationError<T>(
-  zodValidationResult: ZodSafeParseResult<T>,
-): void {
-  if (!zodValidationResult?.success) {
-    const errors = validationService.createErrorsWithPath<T>(
-      zodValidationResult,
-    ) as Record<keyof T, string>;
-    throw new CustomError("Validation error", errors);
   }
 }

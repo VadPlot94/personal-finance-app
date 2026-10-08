@@ -1,7 +1,7 @@
 import "server-only";
-import { Balance } from "@prisma/client";
+import type { Balance } from "@prisma/client";
 
-export type IGetBalanceDTOInput = void;
+export type IGetBalanceDTOInput = undefined;
 
 export interface IBalanceDTOOutput {
   id: string;

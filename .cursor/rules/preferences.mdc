@@ -1,0 +1,15 @@
+---
+description: User project rules preferences
+alwaysApply: true
+---
+
+# Preferences
+
+Living **user project preferences** — follow them by default. Prefer matching the user’s style; if a preference conflicts with a hard constraint (security, correctness, Next.js/App Router requirements), prioritize the constraint and note the trade-off.
+
+Current preferences:
+
+- Do not add re-export / barrel pass-through modules (`export … from "…"` that only forward another module). Import from the module that defines the symbol (e.g. `@/shared/services/types`, `@/back-end/common/errors`). Exception: UI kit barrels that re-export components defined in the same file (shadcn pattern) are fine.
+- Prefer array methods (`forEach`, `map`, `filter`, `reduce`, etc.) over `for...of` / classic `for` when iterating collections. Do not rewrite `forEach`/`map` into `for...of` for lint.
+- Type-only imports must use `import type { ... }` (e.g. `import type { IData } from "@/shared/services/types"`).
+- Enforce layer split: `src/front-end/` (UI), `src/shared/` (isomorphic), `src/back-end/` (server). Allowed: FE → shared + server-actions; BE → shared + lib; shared → neither FE nor BE; app → FE + server-actions. Forbidden: BE → FE, shared → FE/BE, FE → DAL/mappers/prisma.

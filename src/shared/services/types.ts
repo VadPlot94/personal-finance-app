@@ -1,8 +1,10 @@
-import {
+import type { Transaction } from "@prisma/client";
+import type {
+  SortBy,
   Theme,
   TransactionType,
   TransactionUICategory,
-} from "./constants.service";
+} from "@/shared/services/constants.service";
 
 export interface ISideBarMenuItem {
   href: string;
@@ -24,6 +26,10 @@ export interface IAddBudgetValidationData {
   maximum: string;
   theme: Theme;
 }
+
+/** Form-facing aliases of validation shapes (shared FE + BE). */
+export type ICreatePotFormData = ICreatePotValidationData;
+export type IAddBudgetFormData = IAddBudgetValidationData;
 
 export interface ICreateTransactionValidationData {
   transactionType?: TransactionType;
@@ -50,4 +56,34 @@ export interface IRegisterValidationData {
 
 export interface IRegisterFormData extends IRegisterValidationData {
   // Form-specific data structure matching the register fields
+}
+
+export interface IGetTransactionsParams {
+  page: number;
+  transactionsCount: number;
+  sortBy?: SortBy;
+  order?: string;
+  category?: TransactionUICategory;
+  search?: string;
+  isRecurring?: boolean;
+  userId?: string;
+}
+
+export interface IGetTransactionForCategoryParams {
+  transactionsCount: number;
+  categories?: TransactionUICategory[];
+}
+
+export interface ITransactionDataResponse {
+  transactions: Transaction[];
+  paginationData: {
+    allTransactionsCount: number;
+    page: number;
+    transactionsCount: number;
+  };
+}
+
+export interface ITransactionsForCategoryData {
+  category: TransactionUICategory;
+  transactions: Transaction[];
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ITileHeaderProps } from "./types";
-import LoadingIndicator from "../loading-indicator/loading-indicator";
+import LoadingIndicator from "@/front-end/components/loading-indicator/loading-indicator";
+import type { ITileHeaderProps } from "@/front-end/components/tile-header/types";
 
 export default function TileHeader({
   title,

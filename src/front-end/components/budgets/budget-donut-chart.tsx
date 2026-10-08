@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { IBudgetDonutChartProps } from "./types";
+import type { IBudgetDonutChartProps } from "@/front-end/components/budgets/types";
 import constants from "@/shared/services/constants.service";
 
 export default function BudgetDonutChart({
@@ -62,7 +64,7 @@ export default function BudgetDonutChart({
 
   cumulativePercent = Math.round(cumulativePercent);
 
-  // 6. Gray sector - если остаток реально заметен
+  // 6. Gray sector — if the remaining amount is really noticeable
   if (totalSpent > 0 && cumulativePercent < 99.99) {
     const startDeg = cumulativePercent * constants.MathDegreePercent;
     gradientStops.push(`#e5e7eb ${startDeg}deg 360deg`);

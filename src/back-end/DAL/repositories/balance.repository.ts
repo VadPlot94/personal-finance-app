@@ -1,7 +1,7 @@
 import "server-only";
+import type { Balance } from "@prisma/client";
+import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import { BaseRepository } from "./base.repository";
-import { Balance } from "@prisma/client";
 
 export class BalanceRepository extends BaseRepository<"balance"> {
   constructor() {
@@ -9,7 +9,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   }
 
   /**
-   * Получить текущий баланс (самый свежий по updatedAt)
+   * Get the current balance (most recent by updatedAt)
    */
   public async getCurrent(userId: string): Promise<Balance | null> {
     return this.findFirst({
@@ -21,7 +21,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   }
 
   /**
-   * Получить баланс по ID (если используешь фиксированный ID, например 'initial-balance')
+   * Get balance by ID (when using a fixed ID, e.g. 'initial-balance')
    */
   async getById(id: string, userId: string): Promise<Balance | null> {
     return this.findFirst({
@@ -30,7 +30,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   }
 
   /**
-   * Обновить текущий баланс (если запись уже существует)
+   * Update the current balance (if the record already exists)
    */
   async updateBalance(
     id: string,
@@ -48,7 +48,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   }
 
   /**
-   * Создать или обновить баланс (upsert)
+   * Create or update balance (upsert)
    */
   async upsertBalance(data: {
     userId: string;
@@ -75,7 +75,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   }
 
   /**
-   * Получить общий доход / расход / баланс (агрегация)
+   * Get total income / expenses / balance (aggregation)
    */
   async getSummary(userId: string): Promise<{
     current: number | null;

@@ -1,5 +1,5 @@
-import { IPaginationData } from "@/front-end/components/transactions/types";
-import { Transaction } from "@prisma/client";
+import type { Transaction } from "@prisma/client";
+import type { IPaginationData } from "@/front-end/components/transactions/types";
 
 class TransactionService {
   public getPaginationPagesNumber(

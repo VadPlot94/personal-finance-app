@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/front-end/components/ui/dialog";
-import { Button } from "@/front-end/components/ui/button";
-import { Input } from "@/front-end/components/ui/input";
-import { Label } from "@/front-end/components/ui/label";
+import type { Budget } from "@prisma/client";
 import {
   useActionState,
   useContext,
@@ -17,31 +8,38 @@ import {
   useMemo,
   useState,
 } from "react";
-import validationService from "@/shared/services/validation.service";
+import { useUpdateEffect } from "react-use";
+import { toast } from "sonner";
+import {
+  addBudgetServerAction,
+  editBudgetServerAction,
+} from "@/back-end/server-actions/budget-actions";
+import { BudgetsContext } from "@/front-end/components/budgets/budgets";
+import type { IEditBudgetDialogProps } from "@/front-end/components/budgets/types";
+import { Button } from "@/front-end/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/front-end/components/ui/dialog";
+import { Input } from "@/front-end/components/ui/input";
+import { Label } from "@/front-end/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
+} from "@/front-end/components/ui/select";
+import financeService from "@/front-end/services/finance.service";
 import {
   Theme,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
-import { Budget } from "@prisma/client";
-import {
-  IAddBudgetFormData,
-  IEditBudgetDialogProps,
-} from "@/front-end/components/budgets/types";
-import { toast } from "sonner";
-import {
-  addBudgetServerAction,
-  editBudgetServerAction,
-} from "@/back-end/server-actions/budget-actions";
-import { BudgetsContext } from "../budgets";
-import financeService from "@/front-end/services/finance.service";
-import { useUpdateEffect } from "react-use";
+import type { IAddBudgetFormData } from "@/shared/services/types";
+import validationService from "@/shared/services/validation.service";
 
 export function EditBudgetDialog({
   children,
@@ -87,6 +85,27 @@ export function EditBudgetDialog({
     Record<keyof IAddBudgetFormData, string>
   > | null>(null);
 
+  const validateForm = (formBudgetData: IAddBudgetFormData) => {
+    const result = validationService.validateAddBudgetSchema(formBudgetData);
+    if (result.success) {
+      setFormErrors(null);
+      return;
+    }
+    const errors =
+      validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
+        result,
+      );
+    setFormErrors(errors);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setFormData(setFormBudgetData());
+      setFormErrors(null);
+    }
+    setDialogOpen(isOpen);
+  };
+
   useEffect(() => {
     setFormData(setFormBudgetData(budget));
   }, [budget, isDialogOpen]);
@@ -122,19 +141,6 @@ export function EditBudgetDialog({
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
 
-  const validateForm = (formBudgetData: IAddBudgetFormData) => {
-    const result = validationService.validateAddBudgetSchema(formBudgetData);
-    if (result.success) {
-      setFormErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
-        result,
-      );
-    setFormErrors(errors);
-  };
-
   const isFormValid = () => {
     return (
       !formErrors &&
@@ -142,14 +148,6 @@ export function EditBudgetDialog({
       formBudgetData?.maximum &&
       formBudgetData?.theme
     );
-  };
-
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setFormData(setFormBudgetData());
-      setFormErrors(null);
-    }
-    setDialogOpen(isOpen);
   };
 
   const handleBudgetCategoryInputChange = (
@@ -162,7 +160,7 @@ export function EditBudgetDialog({
     setFormData(
       setFormBudgetData({
         ...formBudgetData,
-        maximum: value.replaceAll(" ", "") as any,
+        maximum: value.replaceAll(" ", ""),
       }),
     );
   };
@@ -193,9 +191,9 @@ export function EditBudgetDialog({
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
                 <>
-                  {/* TODO: formErrors?.["id"] имеет место в диалоге когда пустой - надо как то спрятать */}
+                  {/* TODO: formErrors?.["id"] appears in the dialog when empty — need to hide somehow */}
                   <input type="hidden" name="id" value={formBudgetData.id} />
-                  <p className="text-xs text-red-500">{formErrors?.["id"]}</p>
+                  <p className="text-xs text-red-500">{formErrors?.id}</p>
                 </>
               )}
               <div className="flex flex-col gap-2">
@@ -238,9 +236,9 @@ export function EditBudgetDialog({
                       ))}
                   </SelectContent>
                 </Select>
-                {/* TODO: formErrors имеет место в диалоге когда пустой - надо как то спрятать */}
+                {/* TODO: formErrors appears in the dialog when empty — need to hide somehow */}
                 <p className="text-xs text-red-500">
-                  {formErrors?.["budgetCategory"]}
+                  {formErrors?.budgetCategory}
                 </p>
               </div>
               <div className="flex flex-col gap-2">
@@ -265,9 +263,7 @@ export function EditBudgetDialog({
                   }}
                   placeholder="$ e.g. 2000"
                 />
-                <p className="text-xs text-red-500">
-                  {formErrors?.["maximum"]}
-                </p>
+                <p className="text-xs text-red-500">{formErrors?.maximum}</p>
               </div>
               <div className="flex flex-col gap-2">
                 <Label
@@ -305,8 +301,8 @@ export function EditBudgetDialog({
                     ))}
                   </SelectContent>
                 </Select>
-                {/* TODO: formErrors имеет место в диалоге когда пустой - надо как то спрятать */}
-                <p className="text-xs text-red-500">{formErrors?.["theme"]}</p>
+                {/* TODO: formErrors appears in the dialog when empty — need to hide somehow */}
+                <p className="text-xs text-red-500">{formErrors?.theme}</p>
               </div>
             </div>
             <div className="flex flex-col gap-2">

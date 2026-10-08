@@ -1,7 +1,7 @@
 import "server-only";
-import { Prisma, User } from "@prisma/client";
+import type { Prisma, User } from "@prisma/client";
+import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import { BaseRepository } from "./base.repository";
 
 export class UserRepository extends BaseRepository<"user"> {
   constructor() {
@@ -15,7 +15,7 @@ export class UserRepository extends BaseRepository<"user"> {
     return this.findUnique({
       where: { email },
       select,
-    } as any);
+    });
   }
 
   async createUser(
@@ -29,7 +29,7 @@ export class UserRepository extends BaseRepository<"user"> {
     return this.create({
       data,
       select,
-    } as any);
+    });
   }
 
   async upsertByEmail(
@@ -52,7 +52,7 @@ export class UserRepository extends BaseRepository<"user"> {
         hashedPassword: data.hashedPassword,
       },
       select,
-    } as any);
+    });
   }
 }
 

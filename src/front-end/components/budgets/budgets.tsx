@@ -1,19 +1,19 @@
 "use client";
 
-import { TransactionUICategory } from "@/shared/services/constants.service";
-import TransactionsTile from "../transactions/transactions-tile";
-import { IBudgetsProps } from "./types";
-import ItemCard from "../item-card/item-card";
-import BudgetDonutChart from "./budget-donut-chart";
-import budgetService from "@/front-end/services/budget.service";
-import { BudgetsMenu } from "./budgets-menu";
-import PageHeader from "../page-header/page-header";
+import type { Budget } from "@prisma/client";
 import { createContext, useState } from "react";
-import { Budget } from "@prisma/client";
-import { EditBudgetDialog } from "./dialogs/edit-budget-dialog";
-import { DeleteBudgetDialog } from "./dialogs/delete-budget-dialog";
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import BudgetDonutChart from "@/front-end/components/budgets/budget-donut-chart";
+import { BudgetsMenu } from "@/front-end/components/budgets/budgets-menu";
+import { DeleteBudgetDialog } from "@/front-end/components/budgets/dialogs/delete-budget-dialog";
+import { EditBudgetDialog } from "@/front-end/components/budgets/dialogs/edit-budget-dialog";
+import type { IBudgetsProps } from "@/front-end/components/budgets/types";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import PageHeader from "@/front-end/components/page-header/page-header";
+import TransactionsTile from "@/front-end/components/transactions/transactions-tile";
+import budgetService from "@/front-end/services/budget.service";
 import { cn } from "@/lib/utils";
+import type { TransactionUICategory } from "@/shared/services/constants.service";
 
 export const BudgetsContext = createContext<Budget[]>([]);
 

@@ -1,23 +1,23 @@
 import "server-only";
-import validationService from "@/shared/services/validation.service";
-import { Transaction } from "@prisma/client";
-import { transactionRepository } from "../repositories/transaction.repository";
-import { throwValidationError } from "@/back-end/server-actions/common";
+import type { Transaction } from "@prisma/client";
+import { throwValidationError } from "@/back-end/common/errors";
+import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
+import type { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
 import {
   mapCreateTransactionInputToDBTransaction,
-  mapGetTransactionsInputToDBTransactionsParams,
   mapGetTransactionsForCategoryInputToParams,
+  mapGetTransactionsInputToDBTransactionsParams,
 } from "@/back-end/mappers/transaction-mapper";
-import { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
-import { IGetTransactionsParams } from "@/back-end/server-actions/types";
-import {
-  ITransactionDataResponse,
-  ITransactionsForCategoryData,
-} from "../repositories/types";
-import {
+import type {
   TransactionType,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
+import type {
+  IGetTransactionsParams,
+  ITransactionDataResponse,
+  ITransactionsForCategoryData,
+} from "@/shared/services/types";
+import validationService from "@/shared/services/validation.service";
 
 export async function getTransactions(
   data: Partial<IGetTransactionsParams> | undefined,
@@ -104,7 +104,7 @@ export async function getTransactionsForCategory(
   userId: string,
 ): Promise<ITransactionsForCategoryData[]> {
   const { categories, transactionsCount } =
-    mapGetTransactionsForCategoryInputToParams(data as any);
+    mapGetTransactionsForCategoryInputToParams(data!);
 
   if (!categories || categories.length === 0) {
     return [];

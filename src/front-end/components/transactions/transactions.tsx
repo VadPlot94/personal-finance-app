@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ITransactionsProps } from "./types";
-import PageHeader from "../page-header/page-header";
-import TransactionsTableLayout from "./transactions-table-layout";
-import { CreateTransactionDialog } from "./dialogs/create-transaction-dialog";
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
-import ItemCard from "../item-card/item-card";
-import TransactionsTable from "./tables/transactions-table";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import PageHeader from "@/front-end/components/page-header/page-header";
+import { CreateTransactionDialog } from "@/front-end/components/transactions/dialogs/create-transaction-dialog";
+import TransactionsTable from "@/front-end/components/transactions/tables/transactions-table";
+import TransactionsTableLayout from "@/front-end/components/transactions/transactions-table-layout";
+import type { ITransactionsProps } from "@/front-end/components/transactions/types";
 
 export default function Transactions({
   transactions = [],

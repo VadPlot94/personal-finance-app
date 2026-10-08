@@ -1,9 +1,9 @@
 "use client";
 
-import ItemCard from "../item-card/item-card";
-import TileHeader from "../tile-header/tile-header";
-import { IBudgetsTileProps } from "./types";
-import BudgetDonutChart from "./budget-donut-chart";
+import BudgetDonutChart from "@/front-end/components/budgets/budget-donut-chart";
+import type { IBudgetsTileProps } from "@/front-end/components/budgets/types";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import TileHeader from "@/front-end/components/tile-header/tile-header";
 
 export default function BudgetsTile({
   budgets = [],

@@ -1,9 +1,9 @@
 "use client";
 
-import { deletePotServerAction } from "@/back-end/server-actions/pot-actions";
 import { toast } from "sonner";
+import { deletePotServerAction } from "@/back-end/server-actions/pot-actions";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
-import { IDeletePotDialogProps } from "@/front-end/components/pots/types";
+import type { IDeletePotDialogProps } from "@/front-end/components/pots/types";
 
 export function DeletePotDialog({
   pot,

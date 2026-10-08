@@ -1,0 +1,38 @@
+---
+description: When and how the main agent should launch project subagents
+alwaysApply: true
+---
+
+# Subagents
+
+## Freedom of choice
+
+Project agents in [`.cursor/agents/`](../agents/) are the **default starting point** — prefer them when they fit. The main agent is free to:
+
+- Launch as many subagents as useful (including in parallel)
+- Use project agents, other built-in/internal Task subagent types, or ad-hoc/custom subagents
+- Skip project agents entirely when another approach is more effective
+- Decide *whether*, *which*, and *when* to spawn — efficiency over ritual
+
+Do not feel limited to the table below. Use judgment: if a project agent is a good match, use it; if not, use something else or none.
+
+## Project agents (defaults)
+
+On each user prompt, classify intent, then either handle alone or launch via the Task tool (`subagent_type` = agent `name` below when using a project agent). Prefer parallel launch when several concerns apply (e.g. feature + tests). Do **not** launch subagents for trivial one-file edits, typos, or pure Q&A.
+
+| Agent | Role | Launch when |
+|-------|------|-------------|
+| **reviewer** | Read-only: correctness, security, quality, tests | After substantive code changes; before commit/PR; user asks for review / “проверь” / “review” |
+| **tester** | Writes/updates tests only | New behavior or bugfix that needs coverage; can run **in parallel** while main agent implements |
+| **architect** | Read-only: layers, boundaries, patterns | Layer-split / FE-shared-BE questions; large structural design; suspected circular deps or boundary violations |
+| **refactorer** | Edits: quality-preserving refactors | Dedicated refactor / cleanup / DRY / rename-structure (not feature work) |
+| **accessibility-checker** | a11y review/fixes | UI with forms, dialogs, buttons, images, keyboard/ARIA; user mentions a11y / WCAG / screen reader |
+| **performance-analyzer** | Perf analysis/opts | Slow paths, lists/tables, N+1, heavy client renders, caching; user mentions perf / lag / optimize |
+
+Efficiency:
+
+- Match **intent**, not keywords alone (Russian/English both count).
+- One clear specialist task → that subagent; mixed “build + review” → main implements, then **reviewer**.
+- Do not spawn **reviewer** before there is something to review.
+- Do not use **refactorer** for feature delivery or **architect** for line-level bugfixes.
+- After launching, incorporate findings; for **reviewer**/**architect**, report findings and only edit if the user asked for fixes.

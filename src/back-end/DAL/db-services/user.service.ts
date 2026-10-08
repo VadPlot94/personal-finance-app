@@ -1,13 +1,13 @@
 import "server-only";
+import type { Session } from "next-auth";
+import { CustomError } from "@/back-end/common/errors";
+import cryptoService from "@/back-end/DAL/db-services/crypto.service";
+import { userRepository } from "@/back-end/DAL/repositories/user.repository";
 import { auth } from "@/lib/auth";
-import { Session } from "next-auth";
-import { CustomError } from "@/back-end/server-actions/common";
-import { userRepository } from "../repositories/user.repository";
-import cryptoService from "./crypto.service";
 
 class UserService {
   public async getUser(email: string, password: string) {
-    let user = await userRepository.findByEmail(email, {
+    const user = await userRepository.findByEmail(email, {
       id: true,
       email: true,
       name: true,

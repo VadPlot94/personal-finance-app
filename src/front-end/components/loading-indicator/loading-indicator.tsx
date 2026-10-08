@@ -1,7 +1,7 @@
 "use client";
 
 import { useLinkStatus } from "next/link";
-import type { ILoadingIndicatorProps } from "./types";
+import type { ILoadingIndicatorProps } from "@/front-end/components/loading-indicator/types";
 
 export default function LoadingIndicator({
   children,

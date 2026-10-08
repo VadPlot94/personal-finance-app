@@ -1,14 +1,14 @@
 "use client";
 
+import type { Transaction } from "@prisma/client";
+import { RecurringMenu } from "@/front-end/components/recurring/recurring-menu";
+import type { IBillsTableProps } from "@/front-end/components/transactions/types";
 import recurringService, {
   RecurringStatus,
 } from "@/front-end/services/recurring.service";
 import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import { RecurringMenu } from "@/front-end/components/recurring/recurring-menu";
-import { IBillsTableProps } from "../types";
-import { Transaction } from "@prisma/client";
 
 export default function BillsTable({
   transactions,

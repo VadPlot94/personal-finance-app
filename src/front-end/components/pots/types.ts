@@ -1,5 +1,4 @@
-import { Pot } from "@prisma/client";
-import { Theme } from "@/shared/services/constants.service";
+import type { Pot } from "@prisma/client";
 
 export interface IPotsProps {
   pots?: Pot[] | null;
@@ -29,13 +28,6 @@ export interface IEditPotDialogProps {
   pot?: Pot;
   isDialogOpen: boolean;
   setDialogOpen: (isDialogOpen: boolean) => void;
-}
-
-export interface ICreatePotFormData {
-  id: string;
-  potName: string;
-  target: string;
-  theme: Theme;
 }
 
 export interface IPotsMenuProps {

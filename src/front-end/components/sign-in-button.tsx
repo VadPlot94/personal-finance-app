@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
 
 export default function SignInButton({ className }: { className?: string }) {
   const { data: session, status } = useSession();
@@ -15,6 +15,7 @@ export default function SignInButton({ className }: { className?: string }) {
   if (session?.user) {
     return (
       <button
+        type="button"
         onClick={() => signOut()}
         className={cn(
           "rounded-lg py-2 text-slate-700 hover:bg-slate-100",

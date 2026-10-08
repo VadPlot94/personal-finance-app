@@ -1,5 +1,5 @@
-import { Transaction } from "@prisma/client";
-import financeService from "./finance.service";
+import type { Transaction } from "@prisma/client";
+import financeService from "@/front-end/services/finance.service";
 
 class BudgetService {
   public getBudgetPercentageData(

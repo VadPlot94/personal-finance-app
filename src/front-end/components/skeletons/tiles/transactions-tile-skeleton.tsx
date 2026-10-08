@@ -13,6 +13,7 @@ export default function TransactionsTileSkeleton() {
       <div className="flex flex-col gap-3">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton placeholders
             key={index}
             className="flex items-center justify-between gap-4 py-2"
           >

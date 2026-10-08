@@ -3,7 +3,7 @@ class FinanceService {
     if (!target) {
       return 100.0;
     }
-    if (!current || isNaN(current)) {
+    if (!current || Number.isNaN(current)) {
       return 0.0;
     }
     const percentage = (current / target) * 100;
@@ -13,12 +13,12 @@ class FinanceService {
   }
 
   public getStrPercentage(value: number): string {
-    return isNaN(value) ? "--.--%" : `${value.toFixed(2)}%`;
+    return Number.isNaN(value) ? "--.--%" : `${value.toFixed(2)}%`;
   }
 
   public createCacheNumberFormat(val: string | number | undefined): string {
     const value = val?.toString();
-    if (!value || value.trim() === "" || isNaN(+value)) {
+    if (!value || value.trim() === "" || Number.isNaN(+value)) {
       return value || "";
     }
     const [integer, decimal = ""] = value.split(".");

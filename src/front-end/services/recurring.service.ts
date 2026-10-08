@@ -1,4 +1,4 @@
-import { Transaction } from "@prisma/client";
+import type { Transaction } from "@prisma/client";
 
 export enum RecurringStatus {
   Paid = "Paid",
@@ -57,6 +57,7 @@ class RecurringService {
     let month = latestDate.getMonth();
 
     // TODO: !!!For test use July 2024!!!
+    // biome-ignore lint/correctness/noConstantCondition: temporary test gate for forecast month offset
     if (true) {
       month -= 1;
       if (month < 0) {
@@ -166,7 +167,7 @@ class RecurringService {
 
     monthBills.forEach((bill) => {
       const amount = Number(bill.amount);
-      if (isNaN(amount)) return; // защита от некорректных данных
+      if (Number.isNaN(amount)) return;
 
       const billDate = new Date(bill.date);
 

@@ -1,9 +1,11 @@
 import "server-only";
+import { Prisma, type Transaction } from "@prisma/client";
+import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import { BaseRepository } from "./base.repository";
-import { Prisma, Transaction } from "@prisma/client";
-import { IGetTransactionsParams } from "@/back-end/server-actions/types";
-import { ITransactionDataResponse } from "./types";
+import type {
+  IGetTransactionsParams,
+  ITransactionDataResponse,
+} from "@/shared/services/types";
 
 export class TransactionRepository extends BaseRepository<"transaction"> {
   constructor() {
@@ -54,12 +56,12 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
   public async getMonthlyExpensesByCategory(
     userId: string,
   ): Promise<Transaction[]> {
-    const startOfMonth = new Date(
+    const _startOfMonth = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),
       1,
     );
-    const endOfMonth = new Date(
+    const _endOfMonth = new Date(
       new Date().getFullYear(),
       new Date().getMonth() + 1,
       1,

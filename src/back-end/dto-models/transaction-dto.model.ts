@@ -1,5 +1,5 @@
 import "server-only";
-import { Transaction } from "@prisma/client";
+import type { Transaction } from "@prisma/client";
 
 export type ICreateTransactionDTOInput = FormData;
 

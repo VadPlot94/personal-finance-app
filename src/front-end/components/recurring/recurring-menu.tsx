@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { DeleteRecurringDialog } from "@/front-end/components/recurring/dialogs/delete-recurring-dialog";
+import type { IRecurringMenuProps } from "@/front-end/components/recurring/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/front-end/components/ui/dropdown-menu";
-import { useState } from "react";
-import { IRecurringMenuProps } from "./types";
-import { DeleteRecurringDialog } from "./dialogs/delete-recurring-dialog";
 
 export function RecurringMenu({
   recurringTransaction,

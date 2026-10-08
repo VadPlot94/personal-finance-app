@@ -1,4 +1,4 @@
-import { Pot } from "@prisma/client";
+import type { Pot } from "@prisma/client";
 
 class PotService {
   public getAllSavedPotsMoney(pots: Pot[]) {

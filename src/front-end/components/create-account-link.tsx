@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { AuthMode } from "./login/login-form";
+import { useSession } from "next-auth/react";
+import { AuthMode } from "@/front-end/components/login/login-form";
 
 export default function CreateAccountLink() {
   const { data: session, status } = useSession();

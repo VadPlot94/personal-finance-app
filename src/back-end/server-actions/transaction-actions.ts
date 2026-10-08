@@ -1,30 +1,28 @@
 "use server";
 import "server-only";
 
+import { revalidatePath } from "next/cache";
+import type { Session } from "next-auth";
 import {
   createTransaction,
-  getTransactions,
-  getMonthlyExpensesByCategory,
-  getTransactionsForCategory,
   deleteRecurring,
+  getMonthlyExpensesByCategory,
+  getTransactions,
+  getTransactionsForCategory,
 } from "@/back-end/DAL/db-services/transaction-db.service";
-import {
+import type { ICreateTransactionDTOOutput } from "@/back-end/dto-models/transaction-dto.model";
+import { updateBalanceFromTransactionServerAction } from "@/back-end/server-actions/balance-actions";
+import { validationObjectWrapper } from "@/back-end/server-actions/common";
+import type { ServerActionResult } from "@/back-end/server-actions/types";
+import type {
   IGetTransactionForCategoryParams,
   IGetTransactionsParams,
-  ServerActionResult,
-} from "./types";
-import { updateBalanceFromTransactionServerAction } from "@/back-end/server-actions/balance-actions";
-import { revalidatePath } from "next/cache";
-import {
   ITransactionDataResponse,
   ITransactionsForCategoryData,
-} from "@/back-end/DAL/repositories/types";
-import { ICreateTransactionDTOOutput } from "@/back-end/dto-models/transaction-dto.model";
-import { validationObjectWrapper } from "./common";
-import { Session } from "next-auth";
+} from "@/shared/services/types";
 
 export async function createTransactionServerAction(
-  prevState: { success: boolean } | null,
+  _prevState: { success: boolean } | null,
   formData: FormData,
 ): Promise<ServerActionResult<ICreateTransactionDTOOutput>> {
   return await validationObjectWrapper<ICreateTransactionDTOOutput>(
@@ -66,7 +64,7 @@ export async function getTransactionsForCategoryServerAction(
   return await validationObjectWrapper<ITransactionsForCategoryData[]>(
     "get",
     async (session?: Session) => {
-      return await getTransactionsForCategory(data as any, session?.user?.id!);
+      return await getTransactionsForCategory(data, session?.user?.id!);
     },
   );
 }

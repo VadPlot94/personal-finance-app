@@ -1,13 +1,13 @@
 "use client";
 
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
-import ItemCard from "../item-card/item-card";
-import TileHeader from "../tile-header/tile-header";
-import { IRecurringTileProps } from "./types";
-import { RecurringSummaryItem } from "./dialogs/recurring-summary-item";
+import { useMemo } from "react";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import { RecurringSummaryItem } from "@/front-end/components/recurring/dialogs/recurring-summary-item";
+import type { IRecurringTileProps } from "@/front-end/components/recurring/types";
+import TileHeader from "@/front-end/components/tile-header/tile-header";
 import recurringService from "@/front-end/services/recurring.service";
 import constants from "@/shared/services/constants.service";
-import { useMemo } from "react";
 
 export default function RecurringTile({
   recurringTransactions = [],
@@ -26,7 +26,7 @@ export default function RecurringTile({
       };
     }
 
-    // Шаг 1: самая поздняя дата
+    // Step 1: latest date
     const latestDate = recurringService.findLatestRecurringDate(
       recurringTransactions,
     );
@@ -43,16 +43,16 @@ export default function RecurringTile({
       };
     }
 
-    // Шаг 2: месяц прогноза
+    // Step 2: forecast month
     const {
       year,
       month,
       name: referenceMonthName,
     } = recurringService.getForecastMonthAndName(latestDate);
 
-    // Шаг 3: referenceDate (перенос текущего дня/времени)
-    const realToday = new Date(); // ← в продакшене текущая дата
-    // const realToday = new Date("2026-03-12"); // для тестов
+    // Step 3: referenceDate (carry over current day/time)
+    const realToday = new Date(); // in production: current date
+    // const realToday = new Date("2026-03-12"); // for tests
 
     const referenceDate = recurringService.createReferenceDate(
       realToday,
@@ -60,7 +60,7 @@ export default function RecurringTile({
       month,
     );
 
-    // Шаг 4: все recurring bills за месяц
+    // Step 4: all recurring bills for the month
     const monthBills = recurringService.getRecurringBillsInMonth(
       recurringTransactions,
       year,
@@ -80,7 +80,7 @@ export default function RecurringTile({
       };
     }
 
-    // Шаг 5: расчёт paid/upcoming/due soon — теперь через сервис
+    // Step 5: compute paid/upcoming/due soon — now via the service
     const billStats = recurringService.calculateStatsFromBills(
       monthBills,
       referenceDate,

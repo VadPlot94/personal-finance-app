@@ -1,7 +1,7 @@
 import "server-only";
-import { Balance } from "@prisma/client";
+import type { Balance } from "@prisma/client";
+import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import { balanceRepository } from "../repositories/balance.repository";
 
 export async function getBalance(userId: string): Promise<Balance> {
   const currentBalance = await balanceRepository.getCurrent(userId);

@@ -1,6 +1,6 @@
 "use client";
 
-import { IPageHeaderProps } from "./types";
+import type { IPageHeaderProps } from "@/front-end/components/page-header/types";
 
 export default function PageHeader({
   name = "",
@@ -12,6 +12,7 @@ export default function PageHeader({
       <div className="font-bold text-3xl max-mobileM:text-xl">{name}</div>
       {buttonName && (
         <button
+          type="button"
           onClick={() => handleButtonClick?.()}
           className="bg-black rounded-lg text-white text-sm p-2 cursor-pointer"
         >

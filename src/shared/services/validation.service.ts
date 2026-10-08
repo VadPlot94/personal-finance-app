@@ -1,18 +1,18 @@
+import type { Pot } from "@prisma/client";
 import { z } from "zod";
-import logger from "../../front-end/services/logger.service";
 import constants, {
-  Theme,
+  type Theme,
   TransactionType,
   TransactionUICategory,
-} from "./constants.service";
-import {
+} from "@/shared/services/constants.service";
+import logger from "@/shared/services/logger.service";
+import type {
   IAddBudgetValidationData,
   ICreatePotValidationData,
   ICreateTransactionValidationData,
   IRegisterValidationData,
   ISignInValidationData,
-} from "./types";
-import { Pot } from "@prisma/client";
+} from "@/shared/services/types";
 
 class ValidationService {
   private getCommonCashNumberSchema(
@@ -31,7 +31,7 @@ class ValidationService {
           .refine(
             (val) => {
               const num = Number(val);
-              return !isNaN(num);
+              return !Number.isNaN(num);
             },
             { message: "Value must be a valid number" },
           )
@@ -135,7 +135,7 @@ class ValidationService {
           .string()
           .trim()
           .min(1, { message: "Date is required" })
-          .refine((val) => !isNaN(Date.parse(val)), {
+          .refine((val) => !Number.isNaN(Date.parse(val)), {
             message: "Please select a valid date",
           })
           .transform((val) => new Date(val))
@@ -248,16 +248,17 @@ class ValidationService {
     formData: { email: string; password: string; name?: string },
     schema: "signin" | "register",
   ): z.ZodSafeParseResult<{ email: string; password: string; name?: string }> {
-    let validationObj;
-
-    if (schema === "signin") {
-      validationObj = this.signInFormSchema.safeParse({
-        email: formData.email,
-        password: formData.password,
-      });
-    } else {
-      validationObj = this.registerFormSchema.safeParse(formData);
-    }
+    const validationObj: z.ZodSafeParseResult<{
+      email: string;
+      password: string;
+      name?: string;
+    }> =
+      schema === "signin"
+        ? this.signInFormSchema.safeParse({
+            email: formData.email,
+            password: formData.password,
+          })
+        : this.registerFormSchema.safeParse(formData);
 
     if (validationObj.error) {
       this.logZodErrors(
@@ -266,11 +267,7 @@ class ValidationService {
       );
     }
 
-    return validationObj as z.ZodSafeParseResult<{
-      email: string;
-      password: string;
-      name?: string;
-    }>;
+    return validationObj;
   }
 
   public validateCreateTransactionSchema(
@@ -289,14 +286,16 @@ class ValidationService {
   public createErrorsWithPath<T>(
     result: z.ZodSafeParseError<T>,
   ): Partial<Record<keyof T, string>> {
-    const errors: Partial<Record<keyof T, string>> = {};
-    result.error.issues.map((issue) => {
-      const path = issue.path[0] as keyof T;
-      if (!errors[path]) {
-        errors[path] = validationService.getZodIssueErrorMessage(issue);
-      }
-    });
-    return errors;
+    return result.error.issues.reduce<Partial<Record<keyof T, string>>>(
+      (errors, issue) => {
+        const path = issue.path[0] as keyof T;
+        if (!errors[path]) {
+          errors[path] = validationService.getZodIssueErrorMessage(issue);
+        }
+        return errors;
+      },
+      {},
+    );
   }
 
   public createCustomZodIssueResult<T = string>(
@@ -330,13 +329,13 @@ class ValidationService {
     let message = Array.isArray(issue.message)
       ? issue.message.join(", ")
       : issue.message;
-    const innerErrors = (issue as any)?.errors
+    const innerErrors = (issue as { errors: z.core.$ZodIssue[] })?.errors
       ?.flat()
-      ?.map((error: any) => error?.message)
+      ?.map((error: z.core.$ZodIssue) => error?.message)
       ?.filter((message: string) => !!message)
       ?.join(", ");
     if (innerErrors) {
-      message += ": " + innerErrors;
+      message += `: ${innerErrors}`;
     }
     return message;
   }

@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { DeletePotDialog } from "@/front-end/components/pots/dialogs/delete-pot-dialog";
+import { EditPotDialog } from "@/front-end/components/pots/dialogs/edit-pot-dialog";
+import type { IPotsMenuProps } from "@/front-end/components/pots/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,10 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/front-end/components/ui/dropdown-menu";
-import { EditPotDialog } from "./dialogs/edit-pot-dialog";
-import { useState } from "react";
-import { DeletePotDialog } from "./dialogs/delete-pot-dialog";
-import { IPotsMenuProps } from "./types";
 
 export function PotsMenu({ pot, children }: IPotsMenuProps) {
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);

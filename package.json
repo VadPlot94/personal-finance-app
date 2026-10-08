@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
+    "format-and-fix": "biome check --write",
     "prisma:generate": "prisma generate --schema=src/back-end/prisma/schema.prisma",
     "prisma:push": "prisma db push --schema=src/back-end/prisma/schema.prisma",
     "prisma:push-force": "prisma db push --schema=src/back-end/prisma/schema.prisma --force-reset",

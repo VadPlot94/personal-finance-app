@@ -1,8 +1,8 @@
 "use client";
 
-import { ITransactionsTableProps } from "../types";
-import { cn } from "@/lib/utils";
+import type { ITransactionsTableProps } from "@/front-end/components/transactions/types";
 import transactionService from "@/front-end/services/transaction.service";
+import { cn } from "@/lib/utils";
 
 export default function TransactionsTable({
   transactions,

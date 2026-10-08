@@ -1,10 +1,11 @@
 import "server-only";
-import prisma from "@/back-end/prisma/prisma-client";
+import type { Budget, Pot, Transaction } from "@prisma/client";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
-import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
 import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
+import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
+import prisma from "@/back-end/prisma/prisma-client";
 import constants from "@/shared/services/constants.service";
 
 const data = require("@/../initial-data/data.json");
@@ -32,7 +33,7 @@ export async function setTestAppData() {
     });
 
     await Promise.all(
-      data.transactions.map((transaction: any) =>
+      data.transactions.map((transaction: Transaction) =>
         transactionRepository.createTransaction({
           userId,
           name: transaction.name,
@@ -46,7 +47,7 @@ export async function setTestAppData() {
     );
 
     await Promise.all(
-      data.budgets.map((budget: any) =>
+      data.budgets.map((budget: Budget) =>
         budgetRepository.upsertBudget({
           userId,
           category: budget.category,
@@ -57,7 +58,7 @@ export async function setTestAppData() {
     );
 
     await Promise.all(
-      data.pots.map((pot: any) =>
+      data.pots.map((pot: Pot) =>
         potRepository.createPot({
           userId,
           name: pot.name,

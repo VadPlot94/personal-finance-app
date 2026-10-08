@@ -1,5 +1,5 @@
+import type { IEmptyContentWrapperProps } from "@/front-end/components/empty-content-wrapper/types";
 import LoadingIndicator from "@/front-end/components/loading-indicator/loading-indicator";
-import { IEmptyContentWrapperProps } from "./types";
 
 export default function EmptyContentWrapper({
   hasItems,

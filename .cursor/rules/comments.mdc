@@ -1,0 +1,15 @@
+---
+description: Best practices for code comments
+alwaysApply: true
+---
+
+# Code comments
+
+- **When the agent may add comments:** Do **not** invent new comments on your own. Add a comment only if the user explicitly asks. You **may** improve or translate comments the user (or an earlier change) already left — do not invent new ones without a request.
+- **Exception:** Required lint suppressions (`biome-ignore` with a short reason on the line immediately above the diagnostic) are allowed when needed to pass the quality gate.
+- **Language:** English only. If any Russian comments are introduced or found, replace them with an English translation.
+- **Purpose:** Explain *why* / non-obvious intent, constraints, or trade-offs — not *what* the next line does.
+- **Avoid:** Narrating obvious code; large blocks of commented-out code; redundant JSDoc that only restates the name or types.
+- **When a comment is warranted (if asked):** Non-obvious business rules, workarounds, security/auth caveats, tricky async/effect ordering, temporary test gates.
+- **JSDoc:** Prefer for exported public APIs when behavior is not clear from the signature; keep short; use English — only when the user asks or when improving existing docs.
+- **TODO/FIXME:** `// TODO: <actionable note>` (English); include context, not vague “fix later” — only when the user asks or when improving an existing TODO.

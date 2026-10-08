@@ -1,9 +1,10 @@
 import "server-only";
 // lib/repositories/base.repository.ts
-import { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@prisma/client";
 
 export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
-  protected model: any; // ← Ключевой момент: any здесь упрощает жизнь
+  // biome-ignore lint/suspicious/noExplicitAny: Prisma delegate typing on generic BaseRepository
+  protected model: any; // Key point: any here keeps generic Prisma delegates workable
 
   constructor(model: PrismaClient[ModelName]) {
     this.model = model;
@@ -25,7 +26,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
    */
   public async isUnique<K extends string>(
     field: K,
-    value: any,
+    value: unknown,
     userId: string,
     excludeId?: string | null,
   ): Promise<boolean> {
@@ -37,7 +38,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
         id: excludeId ? { not: excludeId } : undefined,
       },
       select: { id: true }, // minimal data
-    } as any);
+    } as Prisma.Args<PrismaClient[ModelName], "findFirst">);
 
     // true = prop does not exist and available, false = prop already used
     return !existing;
@@ -49,33 +50,33 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   >(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "findUnique"> | null> {
-    return this.model.findUnique(args) as any;
+    return this.model.findUnique(args);
   }
 
   async findFirst<T extends Prisma.Args<PrismaClient[ModelName], "findFirst">>(
     args?: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "findFirst"> | null> {
-    return this.model.findFirst(args) as any;
+    return this.model.findFirst(args);
   }
 
   async findMany<T extends Prisma.Args<PrismaClient[ModelName], "findMany">>(
     args?: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "findMany">> {
-    return this.model.findMany(args) as any;
+    return this.model.findMany(args);
   }
 
   // ====================== UPDATE ======================
   async update<T extends Prisma.Args<PrismaClient[ModelName], "update">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "update">> {
-    return this.model.update(args) as any;
+    return this.model.update(args);
   }
 
   // ====================== DELETE ======================
   async delete<T extends Prisma.Args<PrismaClient[ModelName], "delete">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "delete">> {
-    return this.model.delete(args) as any;
+    return this.model.delete(args);
   }
 
   // ====================== UPDATE OWNED ======================
@@ -83,6 +84,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
     where: Record<string, unknown>;
     data: unknown;
     select?: Record<string, boolean>;
+    // biome-ignore lint/suspicious/noExplicitAny: Prisma delegate typing on generic BaseRepository
   }): Promise<any> {
     const result = await this.model.updateMany({
       where: args.where,
@@ -90,9 +92,10 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
     });
 
     if ((result?.count ?? 0) === 0) return null;
+    // biome-ignore lint/suspicious/noExplicitAny: Prisma delegate typing on generic BaseRepository
     const findArgs: any = { where: args.where };
     if (args.select) findArgs.select = args.select;
-    return this.findFirst(findArgs as any);
+    return this.findFirst(findArgs);
   }
 
   // ====================== DELETE OWNED ======================
@@ -105,7 +108,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   async upsert<T extends Prisma.Args<PrismaClient[ModelName], "upsert">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "upsert">> {
-    return this.model.upsert(args) as any;
+    return this.model.upsert(args);
   }
 
   // ====================== COUNT ======================
@@ -137,7 +140,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
         [userIdField]: userId,
       },
       select: options?.select ?? { id: true },
-    } as any);
+    } as Prisma.Args<PrismaClient[ModelName], "findFirst">);
 
     return !!item;
   }

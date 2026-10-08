@@ -1,5 +1,5 @@
-import { Transaction } from "@prisma/client";
-import { IPaginationData } from "../transactions/types";
+import type { Transaction } from "@prisma/client";
+import type { IPaginationData } from "@/front-end/components/transactions/types";
 
 export interface IRecurringProps {
   recurringTransactions: Transaction[] | undefined;

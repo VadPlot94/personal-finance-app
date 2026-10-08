@@ -1,15 +1,14 @@
 import "server-only";
+import type { User } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { Session } from "next-auth";
-import {
-  CustomError,
-  validationObjectWrapper,
-} from "@/back-end/server-actions/common";
-import constants from "@/shared/services/constants.service";
-import userService from "./user.service";
-import { User } from "@prisma/client";
+import type { Session } from "next-auth";
+import { CustomError } from "@/back-end/common/errors";
+import userService from "@/back-end/DAL/db-services/user.service";
 import { setTestAppData } from "@/back-end/prisma/seed";
+import { validationObjectWrapper } from "@/back-end/server-actions/common";
+import type { ServerActionResult } from "@/back-end/server-actions/types";
+import { auth } from "@/lib/auth";
+import constants from "@/shared/services/constants.service";
 import validationService from "@/shared/services/validation.service";
 
 class AuthService {
@@ -138,14 +137,14 @@ class AuthService {
   }
 
   /**
-   * Authorization method that call when user login to the site (not register)
-   * @param credentials
-   * @returns user information if credentials are valid, otherwise null
+   * Authorization method called when the user logs in (not register).
+   * Wraps with validationObjectWrapper (requireAuth: false) for error logging.
+   * @returns ServerActionResult with user data if valid, otherwise null data
    */
   public async autorizeUser(
     credentials: Partial<Record<"email" | "password", unknown>> | undefined,
-  ) {
-    return await validationObjectWrapper<Partial<User> | null>(
+  ): Promise<ServerActionResult<Partial<User> | null>> {
+    return validationObjectWrapper<Partial<User> | null>(
       "get",
       async () => this.authUser("signin", credentials),
       { requireAuth: false },

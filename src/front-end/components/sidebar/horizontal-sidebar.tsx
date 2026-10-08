@@ -1,12 +1,12 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+import type { User } from "next-auth";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import { ISideBarMenuItem } from "@/shared/services/types";
-import { User } from "next-auth";
-import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import type { ISideBarMenuItem } from "@/shared/services/types";
 
 export default function HorizontalSidebar() {
   const pathname = usePathname();

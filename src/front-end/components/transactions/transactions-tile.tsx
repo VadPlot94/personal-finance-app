@@ -1,9 +1,9 @@
 "use client";
 
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
-import ItemCard from "../item-card/item-card";
-import TileHeader from "../tile-header/tile-header";
-import { ITransactionsTileProps } from "./types";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import TileHeader from "@/front-end/components/tile-header/tile-header";
+import type { ITransactionsTileProps } from "@/front-end/components/transactions/types";
 import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
 import { TransactionUICategory } from "@/shared/services/constants.service";

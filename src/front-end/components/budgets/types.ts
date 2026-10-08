@@ -1,6 +1,5 @@
-import { ITransactionsForCategoryData } from "@/back-end/DAL/repositories/types";
-import { Theme } from "@/shared/services/constants.service";
-import { Budget } from "@prisma/client";
+import type { Budget } from "@prisma/client";
+import type { ITransactionsForCategoryData } from "@/shared/services/types";
 
 export interface IBudgetsProps {
   transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
@@ -38,11 +37,4 @@ export interface IEditBudgetDialogProps {
   budget?: Budget | null;
   isDialogOpen: boolean;
   setDialogOpen: (isDialogOpen: boolean) => void;
-}
-
-export interface IAddBudgetFormData {
-  id: string;
-  budgetCategory: string;
-  maximum: string;
-  theme: Theme;
 }

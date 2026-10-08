@@ -1,5 +1,6 @@
 "use client";
 
+import type { IBudgetsMenuProps } from "@/front-end/components/budgets/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/front-end/components/ui/dropdown-menu";
-import { IBudgetsMenuProps } from "./types";
 
 export function BudgetsMenu({
   budget,

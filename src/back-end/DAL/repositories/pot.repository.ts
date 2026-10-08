@@ -1,7 +1,7 @@
 import "server-only";
+import type { Pot, Prisma } from "@prisma/client";
+import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import { BaseRepository } from "./base.repository";
-import { Pot, Prisma } from "@prisma/client";
 
 export class PotRepository extends BaseRepository<"pot"> {
   constructor() {
@@ -17,7 +17,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   public async createNewPot() {}
 
   /**
-   * Получить все копилки (с сортировкой по имени)
+   * Get all pots (sorted by name)
    */
   async getAll(userId: string): Promise<Pot[]> {
     return this.findMany({
@@ -36,7 +36,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   }
 
   /**
-   * Получить копилку по имени
+   * Get pot by name
    */
   async getByName(name: string, userId: string): Promise<Pot | null> {
     return this.findFirst({
@@ -66,7 +66,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   // }
 
   /**
-   * Создать новую копилку
+   * Create a new pot
    */
   async createPot(
     data: {
@@ -91,7 +91,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   }
 
   /**
-   * Обновить текущую сумму в копилке (добавление/снятие)
+   * Update the current amount in a pot (add/withdraw)
    */
   async addToPot(id: string, amount: number, userId: string): Promise<Pot> {
     return this.updateOwned({
@@ -105,7 +105,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   }
 
   /**
-   * Получить прогресс всех копилок (сколько осталось до цели)
+   * Get progress for all pots (how much remains until the target)
    */
   async getProgress(userId: string): Promise<
     Array<{

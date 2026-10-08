@@ -1,10 +1,10 @@
 "use client";
 
-import { IPotsItemProps } from "./types";
-import ItemCard from "../item-card/item-card";
-import { PotsMenu } from "./pots-menu";
-import { ChangeMoneyDialog } from "./dialogs/change-money-dialog";
 import { useState } from "react";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import { ChangeMoneyDialog } from "@/front-end/components/pots/dialogs/change-money-dialog";
+import { PotsMenu } from "@/front-end/components/pots/pots-menu";
+import type { IPotsItemProps } from "@/front-end/components/pots/types";
 import financeService from "@/front-end/services/finance.service";
 import constants from "@/shared/services/constants.service";
 
@@ -64,12 +64,14 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
           </div>
           <div className="flex flex-row justify-between items-center gap-3">
             <button
+              type="button"
               onClick={() => setAddMoneyDialogOpen(true)}
               className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold h-10 cursor-pointer border-2 border-transparent hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
             >
               + Add Money
             </button>
             <button
+              type="button"
               onClick={() => setWithdrawDialogOpen(true)}
               className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold cursor-pointer hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
             >

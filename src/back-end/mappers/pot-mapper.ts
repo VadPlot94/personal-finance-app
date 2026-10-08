@@ -1,13 +1,13 @@
 import "server-only";
-import { Pot } from "@prisma/client";
-import {
+import type { Pot } from "@prisma/client";
+import type {
   ICreatePotDTOInput,
   ICreatePotDTOOutput,
   IEditPotDTOInput,
   IEditPotDTOOutput,
-} from "../dto-models/pot-dto.model";
-import { Theme } from "@/shared/services/constants.service";
+} from "@/back-end/dto-models/pot-dto.model";
 import { removeUndefinedFields } from "@/lib/utils";
+import { Theme } from "@/shared/services/constants.service";
 
 export function mapCreatePotInputToDBPot(
   input: ICreatePotDTOInput,

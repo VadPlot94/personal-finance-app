@@ -1,17 +1,17 @@
 import "server-only";
-import { Transaction } from "@prisma/client";
-import { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
-import {
-  IGetTransactionsParams,
-  IGetTransactionForCategoryParams,
-} from "@/back-end/server-actions/types";
+import type { Transaction } from "@prisma/client";
+import type { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
+import { removeUndefinedFields } from "@/lib/utils";
 import constants, {
   SortBy,
+  sortByPrismaMap,
   TransactionType,
   TransactionUICategory,
-  sortByPrismaMap,
 } from "@/shared/services/constants.service";
-import { removeUndefinedFields } from "@/lib/utils";
+import type {
+  IGetTransactionForCategoryParams,
+  IGetTransactionsParams,
+} from "@/shared/services/types";
 
 export function mapCreateTransactionInputToDBTransaction(
   input: ICreateTransactionDTOInput,
@@ -26,7 +26,7 @@ export function mapGetTransactionsInputToDBTransactionsParams(
 }
 
 export function mapGetTransactionsForCategoryInputToParams(
-  data: Partial<IGetTransactionForCategoryParams> | undefined,
+  data: Partial<IGetTransactionForCategoryParams>,
 ): { categories: string[]; transactionsCount: number } {
   const categories = (data?.categories ?? []).filter(
     (c) => c !== TransactionUICategory.AllTransactions,
@@ -84,7 +84,7 @@ export function getTransactionsParams(
     page: data?.page || 1,
     transactionsCount:
       data?.transactionsCount || constants.TransactionRecordsPerPage,
-    sortBy: sortByField as any,
+    sortBy: sortByField,
     order: orderField,
     category:
       data?.category && data?.category !== TransactionUICategory.AllTransactions

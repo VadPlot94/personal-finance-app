@@ -1,9 +1,9 @@
 "use client";
 
-import { deleteRecurringServerAction } from "@/back-end/server-actions/transaction-actions";
 import { toast } from "sonner";
+import { deleteRecurringServerAction } from "@/back-end/server-actions/transaction-actions";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
-import { IDeleteRecurringDialogProps } from "@/front-end/components/recurring/types";
+import type { IDeleteRecurringDialogProps } from "@/front-end/components/recurring/types";
 
 export function DeleteRecurringDialog({
   recurringTransaction,

@@ -1,9 +1,9 @@
 "use client";
 
 import { toast } from "sonner";
-import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
-import { IDeleteBudgetDialogProps } from "@/front-end/components/budgets/types";
 import { deleteBudgetServerAction } from "@/back-end/server-actions/budget-actions";
+import type { IDeleteBudgetDialogProps } from "@/front-end/components/budgets/types";
+import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
 
 export function DeleteBudgetDialog({
   budget,

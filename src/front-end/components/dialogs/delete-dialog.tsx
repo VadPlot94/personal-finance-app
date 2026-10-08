@@ -1,13 +1,13 @@
 "use client";
 
+import type { IDeleteDialogProps } from "@/front-end/components/dialogs/types";
+import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/front-end/components/ui/dialog";
-import { Button } from "@/front-end/components/ui/button";
-import { IDeleteDialogProps } from "./types";
 
 export function DeleteDialog({
   data,

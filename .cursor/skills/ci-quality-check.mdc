@@ -1,0 +1,102 @@
+---
+name: ci-quality-check
+description: >-
+  Pre-commit CI quality gate: runs lint, build, and test (if configured),
+  then launches reviewer and tester agents. Use when the user invokes
+  /ci-quality-check, asks to verify changes before commit, or wants a
+  local quality check on the current diff.
+disable-model-invocation: true
+---
+
+# CI Quality Check
+
+Fail-fast pre-commit gate. Do **not** create a git commit from this skill.
+
+## Workflow
+
+Copy and track:
+
+```
+CI Quality Check:
+- [ ] Step 0: Scope (git status + diff)
+- [ ] Step 1: npm run format-and-fix
+- [ ] Step 2: npm run build
+- [ ] Step 3: npm run test (if available)
+- [ ] Step 4: reviewer + tester agents
+- [ ] Step 5: Verdict report
+```
+
+### Step 0 — Scope
+
+1. Run `git status` and `git diff` (staged + unstaged).
+2. Note the change summary and file list for agent handoff.
+3. If the working tree is clean, say so and still run the CI commands (full-tree gate).
+
+### Step 1 — Format and Lint
+
+Run: `npm run format-and-fix`
+
+On non-zero exit: **stop**. Report failures. Do not run build, test, or agents unless the user explicitly asks to continue.
+
+### Step 2 — Build
+
+Run: `npm run build`
+
+Same fail-fast rule as lint.
+
+### Step 3 — Test (if available)
+
+1. Check `package.json` → `scripts.test`.
+2. If present: run `npm run test`. Fail-fast on non-zero exit.
+3. If missing: record `tests skipped: none configured` and continue.
+
+### Step 4 — Agents
+
+After CI commands succeed (or tests skipped), launch **in parallel** via the Task tool:
+
+| Subagent | `subagent_type` | Role |
+|----------|-----------------|------|
+| Reviewer | `reviewer` | Read-only review per `.cursor/agents/reviewer.mdc` |
+| Tester | `tester` | Coverage / gaps per `.cursor/agents/tester.mdc` |
+
+Pass each agent:
+
+- Change summary and relevant file list from Step 0
+- CI outcomes: pass / fail / skipped + short log excerpts
+
+**Reviewer:** findings only (Critical / Suggestion / Nice to have). No source edits.
+
+**Tester:** report coverage gaps or needed tests. If no test script/framework: report skip — do **not** invent a full test stack unless the user asked for that separately.
+
+### Step 5 — Verdict
+
+Return exactly this structure:
+
+```markdown
+# CI Quality Check
+
+## Commands
+- lint: pass | fail
+- build: pass | fail
+- test: pass | fail | skipped (reason)
+
+## Reviewer
+- Critical: ...
+- Suggestion: ...
+- Nice to have: ...
+
+## Tester
+- coverage / gaps / skip note
+
+## Verdict
+- READY TO COMMIT | BLOCKED (list blockers)
+```
+
+**READY TO COMMIT** only when:
+
+- lint passed
+- build passed
+- test passed **or** skipped
+- reviewer reported **no Critical** findings
+
+Otherwise: **BLOCKED** with a short blocker list.

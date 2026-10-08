@@ -1,13 +1,13 @@
 import "server-only";
-import { Budget } from "@prisma/client";
-import {
+import type { Budget } from "@prisma/client";
+import type {
   ICreateBudgetDTOInput,
   ICreateBudgetDTOOutput,
   IEditBudgetDTOInput,
   IEditBudgetDTOOutput,
-} from "../dto-models/budget-dto.model";
-import { Theme } from "@/shared/services/constants.service";
+} from "@/back-end/dto-models/budget-dto.model";
 import { removeUndefinedFields } from "@/lib/utils";
+import { Theme } from "@/shared/services/constants.service";
 
 export function mapCreateBudgetInputToDBBudget(
   input: ICreateBudgetDTOInput,

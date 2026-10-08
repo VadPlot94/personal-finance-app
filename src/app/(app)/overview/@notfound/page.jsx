@@ -1,11 +1,8 @@
-import PotsTile from "@/front-end/components/pots/pots-tile";
-import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
-import authService from "@/back-end/DAL/db-services/auth.service";
-import ItemCard from "@/front-end/components/item-card/item-card";
 import { notFound } from "next/navigation";
+import ItemCard from "@/front-end/components/item-card/item-card";
 
 export default async function NotFoundTestPage() {
-  const resolvedData = await new Promise((resolve, reject) => {
+  const resolvedData = await new Promise((resolve) => {
     setTimeout(async () => {
       resolve(null);
     }, 5000);

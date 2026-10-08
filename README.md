@@ -107,7 +107,8 @@ Open <http://localhost:3000> in your browser.
 | `npm run build` | Build production app |
 | `npm run start` | Run production server |
 | `npm run lint` | Run Biome lint checks |
-| `npm run format` | Format code with Biome |
+| `npm run format-and-fix` | Format code with Biome and lint checks |
+| `npm run format` | Light Format version - only code formatting (without for ex: import sorting) |
 | `npm run prisma:generate` | Generate Prisma client |
 | `npm run prisma:push` | Push Prisma schema to database |
 | `npm run init-db` | Seed database with initial data |
@@ -174,6 +175,7 @@ Open <http://localhost:3000> in your browser.
 - animation different breakpoints
 - add local not-found.tsx for appropriate route for test (do not add global not-found - used default Next.js not found page)
 - add import "server-only"; to back-end files
+- split back-end on different layers (add server only) — FE / shared / BE boundaries + `server-only` / `"use server"` / `"use client"`
 
 ---
 
@@ -187,7 +189,6 @@ Open <http://localhost:3000> in your browser.
 - calculate balance in right way
 - register github login
 - add error page
-- split back-end on different layers (add server only)
 - add route handlers
 
 - add error boundaries page (just some page that throw error every time - for testing this behavior)

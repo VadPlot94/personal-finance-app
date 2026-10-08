@@ -1,28 +1,31 @@
 "use client";
 
-import {
-  SortBy,
-  TransactionUICategory,
-} from "@/shared/services/constants.service";
+import type { Transaction } from "@prisma/client";
+import { Select as SelectPrimitive } from "radix-ui";
 import { useState } from "react";
-import { IPaginationData, ITransactionsTableLayoutProps } from "./types";
-import { Transaction } from "@prisma/client";
 import { useUpdateEffect } from "react-use";
-import transactionService from "@/front-end/services/transaction.service";
-import { IGetTransactionsParams } from "@/back-end/server-actions/types";
-import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
 import { toast } from "sonner";
-import { Input } from "../ui/input";
+import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
+import type {
+  IPaginationData,
+  ITransactionsTableLayoutProps,
+} from "@/front-end/components/transactions/types";
+import { Input } from "@/front-end/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/front-end/components/ui/select";
+import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
-import { Select as SelectPrimitive } from "radix-ui";
-import EmptyContentWrapper from "../empty-content-wrapper/empty-content-wrapper";
+import {
+  SortBy,
+  TransactionUICategory,
+} from "@/shared/services/constants.service";
+import type { IGetTransactionsParams } from "@/shared/services/types";
 
 export default function TransactionsTableLayout({
   transactions = [],
@@ -103,7 +106,7 @@ export default function TransactionsTableLayout({
       ...transactionParams,
       isRecurring: isRecurringOnly,
     });
-    let { data: { paginationData, transactions } = {} } = response;
+    const { data: { paginationData, transactions } = {} } = response;
     if (!response?.success || !transactions) {
       let error = response.error;
       error =
@@ -154,7 +157,6 @@ export default function TransactionsTableLayout({
               autoComplete="off"
               type="search"
               name="search"
-              role="search"
               placeholder={
                 isRecurringOnly ? "Search Bills" : "Search Transaction"
               }
@@ -216,6 +218,7 @@ export default function TransactionsTableLayout({
                     <img
                       className="size-6"
                       src="assets/images/icon-sort-mobile.svg"
+                      alt="Sort"
                     />
                   </div>
                 </SelectPrimitive.Trigger>
@@ -261,6 +264,7 @@ export default function TransactionsTableLayout({
                     <img
                       className="size-6"
                       src="assets/images/icon-filter-mobile.svg"
+                      alt="Filter"
                     />
                   </SelectPrimitive.Trigger>
 
@@ -298,6 +302,7 @@ export default function TransactionsTableLayout({
       <div className="grid grid-cols-[auto_1fr_auto] items-center w-full gap-10">
         <div className="justify-self-start">
           <button
+            type="button"
             onClick={() => handlePrevButtonClick()}
             className={cn(
               "flex items-center justify-center cursor-pointer text-app-color border-2 w-10 h-8 rounded-[10px] hover:bg-gray-100 border-gray-300",
@@ -309,6 +314,8 @@ export default function TransactionsTableLayout({
             <img
               className="text-app-color size-4"
               src="assets/images/icon-caret-left.svg"
+              alt=""
+              aria-hidden="true"
             />
           </button>
         </div>
@@ -319,6 +326,7 @@ export default function TransactionsTableLayout({
               const isCurrentPage = selectedPageNumber === pageNumber;
               return (
                 <button
+                  type="button"
                   key={pageNumber}
                   onClick={() => handlePaginationPageButtonClick(pageNumber)}
                   className={cn(
@@ -339,6 +347,7 @@ export default function TransactionsTableLayout({
         </div>
         <div className="justify-self-end">
           <button
+            type="button"
             onClick={() => handleNextButtonClick(totalPages)}
             className={cn(
               "flex items-center justify-center cursor-pointer text-app-color border-2 w-10 h-8 rounded-[10px] hover:bg-gray-100 border-gray-300",
@@ -350,6 +359,8 @@ export default function TransactionsTableLayout({
             <img
               className="text-app-color size-4"
               src="assets/images/icon-caret-right.svg"
+              alt=""
+              aria-hidden="true"
             />
           </button>
         </div>

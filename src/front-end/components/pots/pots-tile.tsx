@@ -1,9 +1,9 @@
 "use client";
-import ItemCard from "../item-card/item-card";
-import TileHeader from "../tile-header/tile-header";
-import { IPotsTileProps } from "./types";
-import potService from "@/front-end/services/pot.service";
+import ItemCard from "@/front-end/components/item-card/item-card";
+import type { IPotsTileProps } from "@/front-end/components/pots/types";
+import TileHeader from "@/front-end/components/tile-header/tile-header";
 import { cn } from "@/lib/utils";
+import potService from "@/shared/services/pot.service";
 
 export default function PotsTile({ pots = [] }: IPotsTileProps) {
   const totalSum = potService
@@ -23,7 +23,7 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
       >
         <div className="flex flex-row justify-start items-center w-full gap-3 rounded-lg pl-5 bg-app-background shadow-sm min-h-25">
           <div>
-            <img src="assets/images/icon-pot.svg" />
+            <img src="assets/images/icon-pot.svg" alt="" aria-hidden="true" />
           </div>
           <div className="flex flex-col justify-between items-stretch">
             <div className="text-app-color text-sm">Total Saved</div>

@@ -1,11 +1,11 @@
 "use client";
 
+import type { User } from "@prisma/client";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
-import { signOut, useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { User } from "@prisma/client";
 
 export default function VerticalSidebar() {
   const pathname = usePathname();
@@ -145,7 +145,8 @@ export default function VerticalSidebar() {
             </nav>
           </div>
         </div>
-        <div
+        <button
+          type="button"
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => toggleMenu(!isMenuOpened)}
           title={isMenuOpened ? "Minimize Menu" : "Maximize Menu"}
@@ -169,6 +170,8 @@ export default function VerticalSidebar() {
                     ? "assets/images/icon-minimize-menu.svg"
                     : "assets/images/icon-maximize-menu.svg"
                 }
+                alt=""
+                aria-hidden="true"
               />
               <div
                 className={cn(
@@ -183,8 +186,9 @@ export default function VerticalSidebar() {
               </div>
             </div>
           </div>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => handleSignOutClick()}
           title={constants.SignOutMenuItemConfig.title}
@@ -204,7 +208,8 @@ export default function VerticalSidebar() {
               <img
                 className="h-5 w-5"
                 src={constants.SignOutMenuItemConfig.iconUrl}
-                alt={constants.SignOutMenuItemConfig.title}
+                alt=""
+                aria-hidden="true"
               />
               <div
                 className={cn(
@@ -219,7 +224,7 @@ export default function VerticalSidebar() {
               </div>
             </div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );
