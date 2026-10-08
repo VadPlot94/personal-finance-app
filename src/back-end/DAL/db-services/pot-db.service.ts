@@ -19,6 +19,10 @@ import potService from "@/shared/services/pot.service";
 import type { ICreatePotFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
+export async function getAllPots(userId: string): Promise<Pot[]> {
+  return potRepository.getAll(userId);
+}
+
 export async function createPot(
   potFormData: ICreatePotDTOInput,
   userId: string,

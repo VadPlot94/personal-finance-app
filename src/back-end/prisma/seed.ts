@@ -1,26 +1,26 @@
 import "server-only";
 import type { Budget, Pot, Transaction } from "@prisma/client";
+import { authEnv } from "@/back-end/config/auth-env";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
 import prisma from "@/back-end/prisma/prisma-client";
-import constants from "@/shared/services/constants.service";
 
 const data = require("@/../initial-data/data.json");
 
 export async function setTestAppData() {
   try {
-    if (!constants.AuthEmail || !constants.AuthPassword) {
+    if (!authEnv.email || !authEnv.password) {
       console.error(
         "AUTH_EMAIL and AUTH_PASSWORD environment variables are not set",
       );
       process.exit(1);
     }
     const user = await userService.createAdminUser(
-      constants.AuthEmail,
-      constants.AuthPassword,
+      authEnv.email,
+      authEnv.password,
     );
 
     const userId = user.id;

@@ -1,12 +1,14 @@
 "use server";
 import "server-only";
 
+import type { Pot } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import type { Session } from "next-auth";
 import {
   createPot,
   deletePot,
   editPot,
+  getAllPots,
   setPotTotal,
 } from "@/back-end/DAL/db-services/pot-db.service";
 import type {
@@ -18,63 +20,70 @@ import type {
 import { validationObjectWrapper } from "@/back-end/server-actions/common";
 import type { ServerActionResult } from "@/back-end/server-actions/types";
 
+export async function getAllPotsServerAction(): Promise<
+  ServerActionResult<Pot[]>
+> {
+  return await validationObjectWrapper<Pot[]>(
+    "get",
+    async (session?: Session) => {
+      return getAllPots(session?.user?.id!);
+    },
+  );
+}
+
 export async function createPotServerAction(
   _prevState: { success: boolean } | null,
   formData: ICreatePotDTOInput,
 ): Promise<ServerActionResult<ICreatePotDTOOutput>> {
-  const validatedResponse = await validationObjectWrapper<ICreatePotDTOOutput>(
+  return await validationObjectWrapper<ICreatePotDTOOutput>(
     "create",
     async (session?: Session) => {
-      return createPot(formData, session?.user?.id!);
+      const result = await createPot(formData, session?.user?.id!);
+      syncChanges();
+      return result;
     },
   );
-
-  syncChanges();
-  return validatedResponse;
 }
 
 export async function editPotServerAction(
   _prevState: { success: boolean } | null,
   formData: IEditPotDTOInput,
 ): Promise<ServerActionResult<IEditPotDTOOutput>> {
-  const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(
+  return await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
     async (session?: Session) => {
-      return editPot(formData, session?.user?.id!);
+      const result = await editPot(formData, session?.user?.id!);
+      syncChanges();
+      return result;
     },
   );
-
-  syncChanges();
-  return validatedResponse;
 }
 
 export async function deletePotServerAction(
   id: string,
 ): Promise<ServerActionResult> {
-  const validatedResponse = await validationObjectWrapper<boolean>(
+  return await validationObjectWrapper<boolean>(
     "delete",
     async (session?: Session) => {
-      return deletePot(id, session?.user?.id!);
+      const result = await deletePot(id, session?.user?.id!);
+      syncChanges();
+      return result;
     },
   );
-
-  syncChanges();
-  return validatedResponse;
 }
 
 export async function setPotTotalServerAction(
   id: string,
   newTotal: number,
 ): Promise<ServerActionResult<IEditPotDTOOutput>> {
-  const validatedResponse = await validationObjectWrapper<IEditPotDTOOutput>(
+  return await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
     async (session?: Session) => {
-      return setPotTotal(id, newTotal, session?.user?.id!);
+      const result = await setPotTotal(id, newTotal, session?.user?.id!);
+      syncChanges();
+      return result;
     },
   );
-
-  syncChanges();
-  return validatedResponse;
 }
 
 function syncChanges() {

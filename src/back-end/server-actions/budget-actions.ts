@@ -41,45 +41,41 @@ export async function addBudgetServerAction(
   _prevState: { success: boolean } | null,
   formData: ICreateBudgetDTOInput,
 ): Promise<ServerActionResult<ICreateBudgetDTOOutput>> {
-  const validatedResponse =
-    await validationObjectWrapper<ICreateBudgetDTOOutput>(
-      "create",
-      async (session?: Session) => {
-        return createBudget(formData, session?.user?.id!);
-      },
-    );
-
-  syncChanges();
-  return validatedResponse;
+  return await validationObjectWrapper<ICreateBudgetDTOOutput>(
+    "create",
+    async (session?: Session) => {
+      const result = await createBudget(formData, session?.user?.id!);
+      syncChanges();
+      return result;
+    },
+  );
 }
 
 export async function editBudgetServerAction(
   _prevState: { success: boolean } | null,
   formData: IEditBudgetDTOInput,
 ): Promise<ServerActionResult<IEditBudgetDTOOutput>> {
-  const validatedResponse = await validationObjectWrapper<IEditBudgetDTOOutput>(
+  return await validationObjectWrapper<IEditBudgetDTOOutput>(
     "update",
     async (session?: Session) => {
-      return editBudget(formData, session?.user?.id!);
+      const result = await editBudget(formData, session?.user?.id!);
+      syncChanges();
+      return result;
     },
   );
-
-  syncChanges();
-  return validatedResponse;
 }
 
 export async function deleteBudgetServerAction(
   id: string | null | undefined,
 ): Promise<ServerActionResult<boolean>> {
-  const validatedResponse = await validationObjectWrapper<boolean>(
+  return await validationObjectWrapper<boolean>(
     "delete",
     async (session?: Session) => {
-      return deleteBudget(id, session?.user?.id!);
+      const result = await deleteBudget(id, session?.user?.id!);
+      syncChanges();
+      return result;
     },
   );
-
-  syncChanges();
-  return validatedResponse;
 }
 
 function syncChanges() {

@@ -3,6 +3,7 @@ import "server-only";
 
 import { revalidatePath } from "next/cache";
 import type { Session } from "next-auth";
+import { updateBalanceForTransaction } from "@/back-end/DAL/db-services/balance-db.service";
 import {
   createTransaction,
   deleteRecurring,
@@ -11,7 +12,6 @@ import {
   getTransactionsForCategory,
 } from "@/back-end/DAL/db-services/transaction-db.service";
 import type { ICreateTransactionDTOOutput } from "@/back-end/dto-models/transaction-dto.model";
-import { updateBalanceFromTransactionServerAction } from "@/back-end/server-actions/balance-actions";
 import { validationObjectWrapper } from "@/back-end/server-actions/common";
 import type { ServerActionResult } from "@/back-end/server-actions/types";
 import type {
@@ -28,8 +28,10 @@ export async function createTransactionServerAction(
   return await validationObjectWrapper<ICreateTransactionDTOOutput>(
     "create",
     async (session?: Session) => {
-      const transaction = await createTransaction(formData, session?.user?.id!);
-      await updateBalanceFromTransactionServerAction(transaction.amount);
+      const userId = session?.user?.id!;
+      const transaction = await createTransaction(formData, userId);
+      await updateBalanceForTransaction(userId, transaction.amount);
+      revalidatePath("/overview");
       syncChanges();
       return { id: transaction.id };
     },

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import authService from "@/back-end/DAL/db-services/auth.service";
-import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
+import { ensureSessionServerAction } from "@/back-end/server-actions/auth-actions";
 import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
+import { getAllPotsServerAction } from "@/back-end/server-actions/pot-actions";
 import Pots from "@/front-end/components/pots/pots";
 import potService from "@/shared/services/pot.service";
 
@@ -14,10 +14,13 @@ export default function PotsPage() {
 }
 
 async function PotsPageContent() {
-  const session = await authService.getSessionOrRedirectToLoginPage();
+  await ensureSessionServerAction();
 
-  const pots = await potRepository.getAll(session.user.id);
-  const balanceResult = await getBalanceServerAction();
+  const [potsResult, balanceResult] = await Promise.all([
+    getAllPotsServerAction(),
+    getBalanceServerAction(),
+  ]);
+  const pots = potsResult.data ?? [];
   const balance = balanceResult.data;
   const totalSum = potService.getAllSavedPotsMoney(pots);
   const availableBalance = balance ? balance.current - totalSum : 0;

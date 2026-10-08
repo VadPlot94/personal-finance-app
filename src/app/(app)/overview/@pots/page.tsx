@@ -1,10 +1,10 @@
-import authService from "@/back-end/DAL/db-services/auth.service";
-import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
+import { ensureSessionServerAction } from "@/back-end/server-actions/auth-actions";
+import { getAllPotsServerAction } from "@/back-end/server-actions/pot-actions";
 import PotsTile from "@/front-end/components/pots/pots-tile";
 
 export default async function PotsTilePage() {
-  const session = await authService.getSessionOrRedirectToLoginPage();
+  await ensureSessionServerAction();
 
-  const pots = await potRepository.getAll(session.user.id);
-  return <PotsTile pots={pots} />;
+  const potsResult = await getAllPotsServerAction();
+  return <PotsTile pots={potsResult.data ?? []} />;
 }

@@ -3,12 +3,12 @@ import type { User } from "@prisma/client";
 import { redirect } from "next/navigation";
 import type { Session } from "next-auth";
 import { CustomError } from "@/back-end/common/errors";
+import { authEnv } from "@/back-end/config/auth-env";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { setTestAppData } from "@/back-end/prisma/seed";
 import { validationObjectWrapper } from "@/back-end/server-actions/common";
 import type { ServerActionResult } from "@/back-end/server-actions/types";
 import { auth } from "@/lib/auth";
-import constants from "@/shared/services/constants.service";
 import validationService from "@/shared/services/validation.service";
 
 class AuthService {
@@ -155,7 +155,7 @@ class AuthService {
     email: string | undefined,
     password: string | undefined,
   ): boolean {
-    return email === constants.AuthEmail && password === constants.AuthPassword;
+    return email === authEnv.email && password === authEnv.password;
   }
 }
 

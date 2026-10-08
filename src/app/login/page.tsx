@@ -1,16 +1,12 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import authService from "@/back-end/DAL/db-services/auth.service";
+import { getOptionalSessionServerAction } from "@/back-end/server-actions/auth-actions";
 import LoginForm from "@/front-end/components/login/login-form";
 
 export default async function LoginPage() {
-  try {
-    const session = await authService.getAuthenticatedSession();
-    if (session?.user?.id) {
-      redirect("/overview");
-    }
-  } catch {
-    // Not authenticated, continue to login page
+  const session = await getOptionalSessionServerAction();
+  if (session?.user?.id) {
+    redirect("/overview");
   }
 
   return (

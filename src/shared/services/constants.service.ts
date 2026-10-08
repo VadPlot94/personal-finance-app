@@ -75,8 +75,6 @@ class ConstantsService {
   public readonly XSmallMobileBreakpoint = 375;
   public readonly DefaultDonutChartSize = 250;
   public readonly NumberFractionDigits = 2;
-  public readonly AuthEmail: string | undefined = process.env.AUTH_EMAIL;
-  public readonly AuthPassword: string | undefined = process.env.AUTH_PASSWORD;
   public readonly DefaultUserAvatarIconUrl =
     "assets/images/avatars/dummy-avatar.jpg";
 
