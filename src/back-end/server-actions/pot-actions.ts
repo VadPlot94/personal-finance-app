@@ -2,8 +2,9 @@
 import "server-only";
 
 import type { Pot } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import type { Session } from "next-auth";
+import { balanceTag, potsTag } from "@/back-end/DAL/cache/cache-tags";
 import {
   createPot,
   deletePot,
@@ -38,8 +39,9 @@ export async function createPotServerAction(
   return await validationObjectWrapper<ICreatePotDTOOutput>(
     "create",
     async (session?: Session) => {
-      const result = await createPot(formData, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await createPot(formData, userId);
+      syncChanges(userId);
       return result;
     },
   );
@@ -52,8 +54,9 @@ export async function editPotServerAction(
   return await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
     async (session?: Session) => {
-      const result = await editPot(formData, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await editPot(formData, userId);
+      syncChanges(userId);
       return result;
     },
   );
@@ -65,8 +68,9 @@ export async function deletePotServerAction(
   return await validationObjectWrapper<boolean>(
     "delete",
     async (session?: Session) => {
-      const result = await deletePot(id, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await deletePot(id, userId);
+      syncChanges(userId);
       return result;
     },
   );
@@ -79,13 +83,15 @@ export async function setPotTotalServerAction(
   return await validationObjectWrapper<IEditPotDTOOutput>(
     "update",
     async (session?: Session) => {
-      const result = await setPotTotal(id, newTotal, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await setPotTotal(id, newTotal, userId);
+      syncChanges(userId);
       return result;
     },
   );
 }
 
-function syncChanges() {
-  revalidatePath("/pots");
+function syncChanges(userId: string) {
+  updateTag(potsTag(userId));
+  updateTag(balanceTag(userId));
 }

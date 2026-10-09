@@ -17,21 +17,34 @@ When the user asks to create a commit:
   ```
 
 ### 2. Message format (required)
-The commit message must always be exactly:
+The commit message must always be:
 
 ```text
-[branch_name] short_description
+[branch_name] [optional_tag] ... short_description
 ```
+
+Rules for prefixes (square brackets):
+
+- **One or more** `[...]` prefixes are allowed before the description.
+- The **first** prefix must be the current branch name from `git branch --show-current`.
+- Further prefixes are optional tags (e.g. `[migration]`, `[cache]`, `[ui]`).
+- Prefixes must be **unique** (case-sensitive match of the text inside the brackets). Do not repeat the branch or any tag.
+- If the user supplies tags but omits the branch, prepend `[branch_name]`.
+- If the user puts a non-branch tag first, reorder so the branch prefix is first.
+- Translate the description to English if it is not in English. Do not translate tag names unless the user asks.
 
 Valid examples:
 
 - `[feature/auth] add email validation`
 - `[fix/next-16] migrate cookies to async API`
-- `[chore/deps] update next to 16.3.8`
+- `[main] [migration] enable cacheComponents: true`
+- `[feature/auth] [ui] [a11y] add email validation`
 
 Forbidden:
 
-- Messages without `[branch_name]`
+- Messages without a leading `[branch_name]` (after normalization)
+- First prefix not equal to the current branch name
+- Duplicate prefixes, e.g. `[main] [main] ...` or `[migration] [migration] ...`
 - Conventional Commits prefixes (`feat:`, `fix:`, `chore:`, etc.) unless the user explicitly asks for them
 - Long multi-line messages unless necessary
 
@@ -46,16 +59,16 @@ First show the user:
 
 Only after explicit confirmation (`yes`, `ok`, `commit`, etc.) run the commit.
 
-The user may provide their own description.
-Always keep the `[branch_name]` prefix, and do not duplicate it if the user already included it.
-Translate user commit message in English language if it not in it.
+The user may provide their own description and optional extra `[tag]` prefixes.
+Normalize to `[branch_name] [tag] ... description` per §2 (branch first, no duplicates).
+Translate user commit message description to English if it is not in English.
 
 ### 4. Commit command
 Use:
 
 ```bash
 git add -A   # or only the files the user specified
-git commit -m "[branch_name] description"
+git commit -m "[branch_name] [optional_tag] description"
 ```
 
 ### 5. After commit
@@ -68,7 +81,7 @@ Show: `git log -1 --oneline`
 User:
 
 ```text
-make a commit: added form validation
+make a commit: [migration] added form validation
 ```
 
 Agent:
@@ -81,11 +94,11 @@ Files:
 - src/lib/validation.ts
 
 Proposed message:
-[feature/auth] added form validation
+[feature/auth] [migration] added form validation
 
 Alternatives:
-- [feature/auth] add form validation
-- [feature/auth] validate login form input
+- [feature/auth] [migration] add form validation
+- [feature/auth] [migration] validate login form input
 
 Commit?
 ```

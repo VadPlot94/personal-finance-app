@@ -1,6 +1,8 @@
 import "server-only";
 import type { Pot } from "@prisma/client";
+import { cacheLife, cacheTag } from "next/cache";
 import { CustomError, throwValidationError } from "@/back-end/common/errors";
+import { potsTag } from "@/back-end/DAL/cache/cache-tags";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
 import type {
@@ -20,6 +22,10 @@ import type { ICreatePotFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
 export async function getAllPots(userId: string): Promise<Pot[]> {
+  "use cache";
+  cacheTag(potsTag(userId));
+  cacheLife("minutes");
+
   return potRepository.getAll(userId);
 }
 

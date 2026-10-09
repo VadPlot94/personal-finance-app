@@ -1,9 +1,15 @@
 import "server-only";
 import type { Balance } from "@prisma/client";
+import { cacheLife, cacheTag } from "next/cache";
+import { balanceTag } from "@/back-end/DAL/cache/cache-tags";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import prisma from "@/back-end/prisma/prisma-client";
 
 export async function getBalance(userId: string): Promise<Balance> {
+  "use cache";
+  cacheTag(balanceTag(userId));
+  cacheLife("minutes");
+
   const currentBalance = await balanceRepository.getCurrent(userId);
   if (currentBalance) {
     return currentBalance;

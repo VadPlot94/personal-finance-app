@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import { Suspense } from "react";
 import HorizontalSideBar from "@/front-end/components/sidebar/horizontal-sidebar";
 import VerticalSideBar from "@/front-end/components/sidebar/vertical-sidebar";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,9 @@ export default async function AppLayout({
           "w-fit max-md:opacity-0 max-md:w-0 max-md:h-0 bg-black",
         )}
       >
-        <VerticalSideBar />
+        <Suspense fallback={null}>
+          <VerticalSideBar />
+        </Suspense>
       </div>
       <div
         className={cn(
@@ -39,7 +42,9 @@ export default async function AppLayout({
           "md:opacity-0 md:h-0 md:w-0 flex flex-col justify-end fixed bottom-0 left-0 right-0 z-50 bg-black",
         )}
       >
-        <HorizontalSideBar />
+        <Suspense fallback={null}>
+          <HorizontalSideBar />
+        </Suspense>
       </div>
     </div>
   );

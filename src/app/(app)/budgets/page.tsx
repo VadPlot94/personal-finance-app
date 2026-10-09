@@ -2,8 +2,6 @@ import { getAllBudgetsServerAction } from "@/back-end/server-actions/budget-acti
 import { getTransactionsMonthlyExpensesByCategoryServerAction } from "@/back-end/server-actions/transaction-actions";
 import Budgets from "@/front-end/components/budgets/budgets";
 
-export const dynamic = "force-dynamic";
-
 export default async function BudgetsPage() {
   const budgetsResponse = await getAllBudgetsServerAction();
   const { data } = await getTransactionsMonthlyExpensesByCategoryServerAction();

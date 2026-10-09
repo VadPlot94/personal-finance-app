@@ -183,7 +183,7 @@ Open <http://localhost:3000> in your browser.
 
 - sourcemap front debug problem
 
-- caching (Old caching model usage - need to full migration to cache-components:true, also impossible replace revalidatePath with updateTag/revalidateTag as it for new aching model)
+- ~~caching~~ — migrated to `cacheComponents: true` (`use cache` + `cacheTag` / `updateTag`)
 - tests
 - translations
 - calculate balance in right way

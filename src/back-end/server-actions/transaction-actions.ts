@@ -1,8 +1,9 @@
 "use server";
 import "server-only";
 
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import type { Session } from "next-auth";
+import { balanceTag, transactionsTag } from "@/back-end/DAL/cache/cache-tags";
 import { updateBalanceForTransaction } from "@/back-end/DAL/db-services/balance-db.service";
 import {
   createTransaction,
@@ -31,8 +32,7 @@ export async function createTransactionServerAction(
       const userId = session?.user?.id!;
       const transaction = await createTransaction(formData, userId);
       await updateBalanceForTransaction(userId, transaction.amount);
-      revalidatePath("/overview");
-      syncChanges();
+      syncChanges(userId);
       return { id: transaction.id };
     },
   );
@@ -77,13 +77,15 @@ export async function deleteRecurringServerAction(
   return await validationObjectWrapper<boolean>(
     "delete",
     async (session?: Session) => {
-      const result = await deleteRecurring(id, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await deleteRecurring(id, userId);
+      syncChanges(userId);
       return result;
     },
   );
 }
 
-function syncChanges() {
-  revalidatePath("/transactions");
+function syncChanges(userId: string) {
+  updateTag(transactionsTag(userId));
+  updateTag(balanceTag(userId));
 }

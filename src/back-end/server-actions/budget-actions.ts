@@ -2,8 +2,9 @@
 import "server-only";
 
 import type { Budget } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import type { Session } from "next-auth";
+import { budgetsTag } from "@/back-end/DAL/cache/cache-tags";
 import {
   createBudget,
   deleteBudget,
@@ -44,8 +45,9 @@ export async function addBudgetServerAction(
   return await validationObjectWrapper<ICreateBudgetDTOOutput>(
     "create",
     async (session?: Session) => {
-      const result = await createBudget(formData, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await createBudget(formData, userId);
+      syncChanges(userId);
       return result;
     },
   );
@@ -58,8 +60,9 @@ export async function editBudgetServerAction(
   return await validationObjectWrapper<IEditBudgetDTOOutput>(
     "update",
     async (session?: Session) => {
-      const result = await editBudget(formData, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await editBudget(formData, userId);
+      syncChanges(userId);
       return result;
     },
   );
@@ -71,13 +74,14 @@ export async function deleteBudgetServerAction(
   return await validationObjectWrapper<boolean>(
     "delete",
     async (session?: Session) => {
-      const result = await deleteBudget(id, session?.user?.id!);
-      syncChanges();
+      const userId = session?.user?.id!;
+      const result = await deleteBudget(id, userId);
+      syncChanges(userId);
       return result;
     },
   );
 }
 
-function syncChanges() {
-  revalidatePath("/budgets");
+function syncChanges(userId: string) {
+  updateTag(budgetsTag(userId));
 }

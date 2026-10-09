@@ -1,6 +1,8 @@
 import "server-only";
 import type { Budget } from "@prisma/client";
+import { cacheLife, cacheTag } from "next/cache";
 import { CustomError, throwValidationError } from "@/back-end/common/errors";
+import { budgetsTag } from "@/back-end/DAL/cache/cache-tags";
 import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
 import type {
   ICreateBudgetDTOInput,
@@ -84,6 +86,10 @@ export async function deleteBudget(
 export async function getAllBudgets(
   userId: string,
 ): Promise<IGetAllBudgetsDTOOutput> {
+  "use cache";
+  cacheTag(budgetsTag(userId));
+  cacheLife("minutes");
+
   const budgets = await budgetRepository.getAll(userId);
   return { budgets };
 }

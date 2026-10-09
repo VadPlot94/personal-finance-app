@@ -1,6 +1,8 @@
 import "server-only";
 import type { Transaction } from "@prisma/client";
+import { cacheLife, cacheTag } from "next/cache";
 import { throwValidationError } from "@/back-end/common/errors";
+import { transactionsTag } from "@/back-end/DAL/cache/cache-tags";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
 import type { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
 import {
@@ -23,6 +25,10 @@ export async function getTransactions(
   data: Partial<IGetTransactionsParams> | undefined,
   userId: string,
 ): Promise<ITransactionDataResponse> {
+  "use cache";
+  cacheTag(transactionsTag(userId));
+  cacheLife("minutes");
+
   return await transactionRepository.getTransactions({
     ...mapGetTransactionsInputToDBTransactionsParams(data),
     userId,
@@ -32,6 +38,10 @@ export async function getTransactions(
 export async function getMonthlyExpensesByCategory(
   userId: string,
 ): Promise<ITransactionsForCategoryData[]> {
+  "use cache";
+  cacheTag(transactionsTag(userId));
+  cacheLife("minutes");
+
   const expenses =
     await transactionRepository.getMonthlyExpensesByCategory(userId);
 
