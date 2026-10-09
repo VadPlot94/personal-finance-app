@@ -13,9 +13,8 @@
     "prisma:push": "prisma db push --schema=src/back-end/prisma/schema.prisma",
     "prisma:push-force": "prisma db push --schema=src/back-end/prisma/schema.prisma --force-reset",
     "prisma:migrate": "prisma migrate dev --schema=src/back-end/prisma/schema.prisma",
-    "init-db": "npx tsx src/back-end/prisma/seed.ts",
-    "recreate-db": "npm run prisma:generate && npm run prisma:push && npm run init-db",
-    "postinstall": "npm run prisma:generate && npm run prisma:push"
+    "recreate-db": "npm run prisma:generate && npm run prisma:push",
+    "postinstall": "npm run recreate-db"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

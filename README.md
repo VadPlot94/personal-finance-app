@@ -111,8 +111,7 @@ Open <http://localhost:3000> in your browser.
 | `npm run format` | Light Format version - only code formatting (without for ex: import sorting) |
 | `npm run prisma:generate` | Generate Prisma client |
 | `npm run prisma:push` | Push Prisma schema to database |
-| `npm run init-db` | Seed database with initial data |
-| `npm run recreate-db` | Recreate database and seed data |
+| `npm run recreate-db` | Generate Prisma client and push schema (no seed) |
 
 ---
 
@@ -120,7 +119,7 @@ Open <http://localhost:3000> in your browser.
 
 - `src/lib/auth.ts` — NextAuth configuration
 - `src/back-end/prisma/schema.prisma` — Prisma schema
-- `src/back-end/prisma/seed.ts` — database seed script
+- `src/back-end/prisma/seed.ts` — `setTestAppData` helper; runs on first admin login, not via CLI
 - `src/back-end/DAL/db-services` — database services layer
 - `src/back-end/server-actions` — server actions for auth and data operations
 
@@ -144,6 +143,7 @@ Open <http://localhost:3000> in your browser.
 - Google and GitHub OAuth providers
 - Session handling with JWT callbacks
 - Login flow handled in `src/front-end/components/login/login-form.tsx`
+- Demo data is seeded when the admin user is created on first matching credentials login
 
 ---
 
@@ -187,7 +187,6 @@ Open <http://localhost:3000> in your browser.
 - tests
 - translations
 - calculate balance in right way
-- register github login
 - add error page
 - add route handlers
 

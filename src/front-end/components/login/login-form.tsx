@@ -44,6 +44,13 @@ export default function LoginForm() {
     setIsFormReady(true);
   }, [searchParams]);
 
+  const handleOAuthSignIn = (provider: "google" | "github") => {
+    signIn(provider, {
+      redirect: true,
+      redirectTo: "/overview",
+    });
+  };
+
   // Transform and set sign in form data
   const getSignInFormData = (
     data?: Partial<ISignInFormData> | null,
@@ -316,12 +323,7 @@ export default function LoginForm() {
                 <Button
                   type="button"
                   disabled={isSigningIn}
-                  onClick={() =>
-                    signIn("google", {
-                      redirect: true,
-                      redirectTo: "/overview",
-                    })
-                  }
+                  onClick={() => handleOAuthSignIn("google")}
                   variant="outline"
                   className="w-full h-12 cursor-pointer"
                 >
@@ -330,12 +332,7 @@ export default function LoginForm() {
                 <Button
                   type="button"
                   disabled={isSigningIn}
-                  onClick={() =>
-                    signIn("github", {
-                      redirect: true,
-                      redirectTo: "/overview",
-                    })
-                  }
+                  onClick={() => handleOAuthSignIn("github")}
                   variant="outline"
                   className="w-full h-12 cursor-pointer"
                 >

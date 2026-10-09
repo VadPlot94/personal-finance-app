@@ -1,30 +1,14 @@
 import "server-only";
 import type { Budget, Pot, Transaction } from "@prisma/client";
-import { authEnv } from "@/back-end/config/auth-env";
-import userService from "@/back-end/DAL/db-services/user.service";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
 import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
-import prisma from "@/back-end/prisma/prisma-client";
 
 const data = require("@/../initial-data/data.json");
 
-export async function setTestAppData() {
+export async function setTestAppData(userId: string) {
   try {
-    if (!authEnv.email || !authEnv.password) {
-      console.error(
-        "AUTH_EMAIL and AUTH_PASSWORD environment variables are not set",
-      );
-      process.exit(1);
-    }
-    const user = await userService.createAdminUser(
-      authEnv.email,
-      authEnv.password,
-    );
-
-    const userId = user.id;
-
     await balanceRepository.upsertBalance({
       userId,
       current: data.balance.current,
@@ -72,13 +56,7 @@ export async function setTestAppData() {
     console.log("Seed completed");
   } catch (error) {
     console.error("Error seeding database:", error);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
-// Not run more from package.json script, because we want to run it only on first admin login if database is empty
-// so we can test app features without manual adding data after each reset
-// main()
-//   .catch((e) => console.error(e))
-//   .finally(async () => await prisma.$disconnect());
+// Seed runs on first admin login (auth.service), not via package.json scripts.

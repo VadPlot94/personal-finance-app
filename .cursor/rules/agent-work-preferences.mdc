@@ -1,0 +1,10 @@
+---
+description: How agents should propose and add work (scope, ask first, verify)
+alwaysApply: true
+---
+
+# Agent work preferences
+
+- Do not add unsolicited changes the user did not ask for — new features, “hardening”, env vars, helpers, types, or config “just in case”. If you want something extra, ask first and wait for approval. Do not ship untested new behavior. Before proposing anything extra, verify it is actually needed (existing app behavior, framework defaults, whether the app already works without it) and test that claim. Applies equally to code and config.
+  - Bad: Auth error toast when Auth.js already shows `/api/auth/error`.
+  - Bad: adding `NEXTAUTH_URL` / `AUTH_URL` to `.env` without being asked, when localhost Auth.js already works without them.

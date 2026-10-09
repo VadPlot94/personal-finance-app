@@ -55,10 +55,10 @@ class UserService {
   }
 
   public async createAdminUser(email: string, password: string) {
-    const user = await userRepository.upsertByEmail(
+    return await userRepository.createUser(
       {
         email,
-        name: email.split("@")[0],
+        name: email.split("@")[0] ?? email,
         hashedPassword: await cryptoService.hashPassword(password),
       },
       {
@@ -68,8 +68,6 @@ class UserService {
         hashedPassword: true,
       },
     );
-
-    return user;
   }
 
   public async getAuthenticatedSession(): Promise<Session> {

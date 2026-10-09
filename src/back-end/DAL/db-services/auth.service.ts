@@ -36,21 +36,40 @@ class AuthService {
     name?: string;
   }): Promise<Partial<User> | null> {
     const { email, password } = validCredentials;
-    let user = await userService.getUser(email, password);
-    // Create admin user on first login if credentials match and no user exists
-    if (!user && this.isAdminUser(email, password)) {
-      user = await userService.createAdminUser(email, password);
-      // Fill database with test data on first admin login if database is empty
-      // so we can test app features without manual adding data after each reset
-      await setTestAppData();
+
+    // 1) Try normal credentials login (email + password against DB hash)
+    const user = await userService.getUser(email, password);
+    if (user) {
+      return {
+        id: user.id,
+        email: user.email,
+        name: user?.name ?? user.email,
+      };
     }
-    return user
-      ? {
-          id: user.id,
-          email: user.email,
-          name: user?.name ?? user.email,
-        }
-      : null;
+
+    // 2) getUser is null for missing user OR wrong password — only continue
+    //    bootstrap if the typed pair matches AUTH_EMAIL / AUTH_PASSWORD from env
+    if (!this.isAdminUser(email, password)) {
+      return null;
+    }
+
+    // 3) Admin env creds matched, but a user with this email already exists:
+    //    password did not verify — do not upsert/reset password or re-seed
+    const existingAdmin = await userService.findByEmail(email);
+    if (existingAdmin) {
+      return null;
+    }
+
+    // 4) Create admin user on first login if credentials match and no user exists
+    const admin = await userService.createAdminUser(email, password);
+    // 5) Fill database with test data on first admin create
+    //    so we can test app features without manual adding data after each reset
+    await setTestAppData(admin.id);
+    return {
+      id: admin.id,
+      email: admin.email,
+      name: admin?.name ?? admin.email,
+    };
   }
 
   private async registerUser(validCredentials: {

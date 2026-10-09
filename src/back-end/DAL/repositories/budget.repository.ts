@@ -48,6 +48,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
         theme: data.theme,
       },
       create: {
+        userId: data.userId,
         category: data.category,
         maximum: data.maximum,
         theme: data.theme,

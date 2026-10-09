@@ -49,6 +49,7 @@ export default async function OverviewLayout({
           {budgets}
           {recurring}
         </div>
+        {/* Intentional @notfound demo parallel route (loader + not-found). Do not remove. */}
         {notfound && (
           <div className="flex flex-col gap-4 col-span-2">{notfound}</div>
         )}
