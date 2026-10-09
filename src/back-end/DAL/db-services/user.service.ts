@@ -54,22 +54,6 @@ class UserService {
     return user;
   }
 
-  public async createAdminUser(email: string, password: string) {
-    return await userRepository.createUser(
-      {
-        email,
-        name: email.split("@")[0] ?? email,
-        hashedPassword: await cryptoService.hashPassword(password),
-      },
-      {
-        id: true,
-        email: true,
-        name: true,
-        hashedPassword: true,
-      },
-    );
-  }
-
   public async getAuthenticatedSession(): Promise<Session> {
     const session = await this.getAppSession();
 

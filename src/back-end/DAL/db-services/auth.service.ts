@@ -61,7 +61,11 @@ class AuthService {
     }
 
     // 4) Create admin user on first login if credentials match and no user exists
-    const admin = await userService.createAdminUser(email, password);
+    const admin = await userService.createUser(
+      email,
+      password,
+      email.split("@")[0] ?? email,
+    );
     // 5) Fill database with test data on first admin create
     //    so we can test app features without manual adding data after each reset
     await setTestAppData(admin.id);
@@ -174,7 +178,8 @@ class AuthService {
     email: string | undefined,
     password: string | undefined,
   ): boolean {
-    return email === authEnv.email && password === authEnv.password;
+    const { email: adminEmail, password: adminPassword } = authEnv;
+    return email === adminEmail && password === adminPassword;
   }
 }
 

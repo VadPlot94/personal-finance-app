@@ -13,3 +13,4 @@ Current preferences:
 - Prefer array methods (`forEach`, `map`, `filter`, `reduce`, etc.) over `for...of` / classic `for` when iterating collections. Do not rewrite `forEach`/`map` into `for...of` for lint.
 - Type-only imports must use `import type { ... }` (e.g. `import type { IData } from "@/shared/services/types"`).
 - Enforce layer split: `src/front-end/` (UI), `src/shared/` (isomorphic), `src/back-end/` (server). Allowed: FE → shared + server-actions; BE → shared + lib; shared → neither FE nor BE; app → FE + server-actions. Forbidden: BE → FE, shared → FE/BE, FE → DAL/mappers/prisma.
+- Logging: use `@/shared/services/logger.service` (`logError` / `logWarn` / `logInfo`) with the matching severity. Do not use bare `console.*` for app logs. Prefix every message with the logical area in brackets, e.g. `[auth] AUTH_EMAIL and AUTH_PASSWORD environment variables are not set`, `[pots] Failed to get pots data`.

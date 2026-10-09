@@ -106,7 +106,7 @@ export function ChangeMoneyDialog({
     pot.total,
     pot.target,
   );
-  console.log(isDialogOpen);
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
