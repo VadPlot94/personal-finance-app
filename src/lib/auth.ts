@@ -1,6 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { User } from "@prisma/client";
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthConfig, User } from "next-auth";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
@@ -29,7 +28,15 @@ export const authOptions: NextAuthConfig = {
       ) {
         // authorize method only for login (not register)
         const result = await authService.autorizeUser(credentials);
-        return (result.data ?? null) as User | null;
+        if (!result.data?.id) {
+          return null;
+        }
+        return {
+          id: result.data.id,
+          email: result.data.email,
+          name: result.data.name,
+          isAdmin: Boolean(result.data.isAdmin),
+        } satisfies User;
       },
     }),
     GoogleProvider({
@@ -58,7 +65,12 @@ export const authOptions: NextAuthConfig = {
     async jwt({ token, user }) {
       // After successful login set user data to JWT token with first login
       if (user) {
-        token.user = user as typeof token.user;
+        token.user = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          isAdmin: Boolean(user.isAdmin),
+        };
       }
       return token;
     },
@@ -68,7 +80,13 @@ export const authOptions: NextAuthConfig = {
       // After successful login set user to session and send to client
       // After that we can use session user data on the client side and in server actions
       if (token.user) {
-        session.user = token.user as typeof session.user;
+        session.user = {
+          ...session.user,
+          id: token.user.id,
+          email: token.user.email ?? session.user.email,
+          name: token.user.name ?? session.user.name,
+          isAdmin: Boolean(token.user.isAdmin),
+        };
       }
       return session;
     },

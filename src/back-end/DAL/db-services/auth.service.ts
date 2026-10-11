@@ -40,10 +40,17 @@ class AuthService {
     // 1) Try normal credentials login (email + password against DB hash)
     const user = await userService.getUser(email, password);
     if (user) {
+      // Backfill: env admin may predate User.isAdmin (defaulted false on db push)
+      let isAdmin = user.isAdmin;
+      if (!isAdmin && email === authEnv.email) {
+        const updated = await userService.setIsAdmin(user.id, true);
+        isAdmin = updated.isAdmin;
+      }
       return {
         id: user.id,
         email: user.email,
         name: user?.name ?? user.email,
+        isAdmin,
       };
     }
 
@@ -65,6 +72,7 @@ class AuthService {
       email,
       password,
       email.split("@")[0] ?? email,
+      { isAdmin: true },
     );
     // 5) Fill database with test data on first admin create
     //    so we can test app features without manual adding data after each reset
@@ -73,6 +81,7 @@ class AuthService {
       id: admin.id,
       email: admin.email,
       name: admin?.name ?? admin.email,
+      isAdmin: true,
     };
   }
 
@@ -92,6 +101,7 @@ class AuthService {
       id: user.id,
       email: user.email,
       name: user.name,
+      isAdmin: user.isAdmin,
     };
   }
 

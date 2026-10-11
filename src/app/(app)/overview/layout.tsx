@@ -6,6 +6,7 @@ import type {
 } from "@/app/(app)/overview/types";
 import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
+import TestAppErrorButton from "@/front-end/components/test/test-app-error-button/test-app-error-button";
 import { cn } from "@/lib/utils";
 
 export default function OverviewLayout({
@@ -14,11 +15,13 @@ export default function OverviewLayout({
   recurring,
   budgets,
   notfound,
+  throwerror,
 }: IOverviewLayoutProps) {
   return (
     <>
-      <div className="h-15 flex items-center justify-start font-bold text-3xl">
+      <div className="h-15 flex items-center justify-between gap-4 font-bold text-3xl">
         <span>Overview</span>
+        <TestAppErrorButton />
       </div>
       <Suspense fallback={<OverviewBalanceCards />}>
         <OverviewBalance />
@@ -29,17 +32,21 @@ export default function OverviewLayout({
           "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
         )}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 @max-containerQueryBreakpoint820/mainLayout:col-span-2">
           {pots}
           {transactions}
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 @max-containerQueryBreakpoint820/mainLayout:col-span-2">
           {budgets}
           {recurring}
         </div>
         {/* Intentional @notfound demo parallel route (loader + not-found). Do not remove. */}
         {notfound && (
           <div className="flex flex-col gap-4 col-span-2">{notfound}</div>
+        )}
+        {/* Intentional @throwerror demo parallel route (loader + page throws + error.tsx). Do not remove. */}
+        {throwerror && (
+          <div className="flex flex-col gap-4 col-span-2">{throwerror}</div>
         )}
       </div>
     </>

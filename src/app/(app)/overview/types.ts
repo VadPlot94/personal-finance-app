@@ -8,6 +8,7 @@ export interface IOverviewLayoutProps {
   budgets: ReactNode;
   children?: ReactNode;
   notfound?: ReactNode;
+  throwerror?: ReactNode;
 }
 
 export interface IOverviewBalanceCardsProps {

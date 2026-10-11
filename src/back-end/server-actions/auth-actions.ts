@@ -36,3 +36,13 @@ export async function getOptionalSessionServerAction(): Promise<Session | null> 
     return null;
   }
 }
+
+/** True when the current session user was persisted as admin (User.isAdmin). */
+export async function isAdminSessionServerAction(): Promise<boolean> {
+  try {
+    const session = await authService.getAuthenticatedSession();
+    return Boolean(session.user?.isAdmin);
+  } catch {
+    return false;
+  }
+}

@@ -12,5 +12,6 @@ alwaysApply: true
 - Package manager: npm
 - For agent work rules, follow [`.cursor/rules/agent-work-preferences.mdc`](agent-work-preferences.mdc).
 - For user project preferences, follow [`.cursor/rules/preferences.mdc`](preferences.mdc).
+- For naming conventions (files, folders, exports, interfaces), follow [`.cursor/rules/naming-convention-preferences.mdc`](naming-convention-preferences.mdc).
 - For code comments, follow [`.cursor/rules/comments.mdc`](comments.mdc).
 - For subagent routing, follow [`.cursor/rules/agents.mdc`](agents.mdc).

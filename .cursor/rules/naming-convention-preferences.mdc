@@ -1,0 +1,40 @@
+---
+description: Project naming conventions for files, folders, exports, and interfaces
+alwaysApply: true
+---
+
+# Naming convention preferences
+
+Living **naming rules** for this project. Prefer matching the user’s style; if a preference conflicts with a hard constraint (security, correctness, Next.js/App Router requirements), prioritize the constraint and note the trade-off.
+
+## Component folder and file names
+
+- Each UI component lives in `src/front-end/components/<component-name>/` with the main file named `<component-name>.tsx` (**folder name === file basename**).
+- Examples: `components/error-view/error-view.tsx`, `components/tile-error-view/tile-error-view.tsx`, `components/test/test-throw-error-button/test-throw-error-button.tsx`.
+- Co-locate `types.ts` and related files in that folder. Do not place standalone component files directly under `components/`.
+- For App Router parallel routes, the `@` prefix is ignored when the FE component shares the route name; otherwise the convention wrapper imports the appropriate component (e.g. `@throwerror/error.tsx` → `components/tile-error-view/tile-error-view.tsx`).
+- Exception: Next.js App Router special files (`error.tsx`, `global-error.tsx`, `loading.tsx`, `not-found.tsx`, `layout.tsx`, `page.tsx`, etc.) stay under `src/app/` as thin convention wrappers and import shared UI from `components/` — do not put the real UI only in those special filenames when a matching feature folder exists.
+
+## Export name matches file name
+
+### Non-convention UI modules
+
+(e.g. under `src/front-end/components/`): the default exported function must be **exactly** the PascalCase form of the file basename (kebab-case → PascalCase).
+
+- Examples: `tile-error-view.tsx` → `TileErrorView`, `test-throw-error-button.tsx` → `TestThrowErrorButton`.
+
+### Next.js App Router convention files
+
+(`page`, `layout`, `loading`, `error`, `global-error`, `not-found`, `default`, `template`, … under `src/app/`): the name may include a custom PascalCase prefix, but **must end with** the PascalCase form of the file basename, and that suffix must appear **once** at the end (no doubled postfix). The whole name must be PascalCase.
+
+- Suffix map examples: `page.tsx` → `…Page`, `layout.tsx` → `…Layout`, `loading.tsx` → `…Loading`, `error.tsx` → `…Error`, `global-error.tsx` → `…GlobalError`, `not-found.tsx` → `…NotFound`, `default.tsx` → `…Default`.
+- Valid: `Page`, `TilePage`, `BudgetsTilePage`, `HomePage`, `RootLayout`, `AppLayout`, `GlobalError`, `NotFound`.
+- Invalid: `page`, `pagePage`, `TilepagePage`, `TilePagePage`, `PagePage`, `BudgetsTilePagePage`.
+
+### Biome restricted names
+
+If Biome flags a restricted name (e.g. `Error`), keep the matching / suffix-correct name and add a one-line `biome-ignore` with a short reason.
+
+## TypeScript interfaces
+
+- All TypeScript `interface` names must start with `I` and use PascalCase after the prefix (e.g. `ILoginFormProps`, `IBudgetsProps`). Enforced by Biome `useNamingConvention`.
