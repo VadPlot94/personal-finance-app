@@ -13,9 +13,12 @@ import constants from "@/shared/services/constants.service";
 
 export const PotsContext = createContext<Pot[]>([]);
 
-export default function Pots({ pots, availableBalance }: IPotsProps) {
+export default function Pots({
+  pots = [],
+  availableBalance = 0,
+  isLoading = false,
+}: IPotsProps) {
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
-
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,18 +75,18 @@ export default function Pots({ pots, availableBalance }: IPotsProps) {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [pots?.length]);
+  }, [pots.length]);
 
   return (
-    <PotsContext value={pots ?? []}>
+    <PotsContext value={pots}>
       <PageHeader
         name="Pots"
         buttonName="+ Add New Pot"
         handleButtonClick={() => setEditPotDialogOpen(true)}
       />
       <EmptyContentWrapper
-        hasItems={!!(pots ?? []).length}
-        isLoading={pots === null}
+        hasItems={!!pots.length}
+        isLoading={isLoading}
         emptyTitle="No pots are available."
         emptyBody={
           <>
@@ -101,9 +104,9 @@ export default function Pots({ pots, availableBalance }: IPotsProps) {
             "*:transition-all *:duration-300", // for animation
           )}
         >
-          {(pots ?? [])
-            ?.filter((pot) => !!pot)
-            ?.map((pot) => (
+          {pots
+            .filter((pot) => !!pot)
+            .map((pot) => (
               <PotsItem
                 key={pot.id}
                 pot={pot}

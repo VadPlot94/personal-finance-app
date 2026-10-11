@@ -1,7 +1,9 @@
 import "@/app/globals.css";
 import { Suspense } from "react";
-import type { IOverviewLayoutProps } from "@/app/(app)/overview/types";
-import type { IBalanceDTOOutput } from "@/back-end/dto-models/balance-dto.model";
+import type {
+  IOverviewBalanceCardsProps,
+  IOverviewLayoutProps,
+} from "@/app/(app)/overview/types";
 import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import { cn } from "@/lib/utils";
@@ -49,7 +51,7 @@ async function OverviewBalance() {
   return <OverviewBalanceCards balance={balanceResult.data} />;
 }
 
-function OverviewBalanceCards({ balance }: { balance?: IBalanceDTOOutput }) {
+function OverviewBalanceCards({ balance }: IOverviewBalanceCardsProps) {
   return (
     <div
       className={cn(

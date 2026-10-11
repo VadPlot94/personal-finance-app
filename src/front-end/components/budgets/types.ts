@@ -2,8 +2,9 @@ import type { Budget } from "@prisma/client";
 import type { ITransactionsForCategoryData } from "@/shared/services/types";
 
 export interface IBudgetsProps {
-  transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
-  budgets: Budget[] | undefined;
+  transactionsByCategoryList?: ITransactionsForCategoryData[];
+  budgets?: Budget[];
+  isLoading?: boolean;
 }
 
 export interface IBudgetsTileProps {

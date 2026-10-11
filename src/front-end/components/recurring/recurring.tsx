@@ -15,6 +15,7 @@ import constants from "@/shared/services/constants.service";
 export default function Recurring({
   recurringTransactions = [],
   paginationData,
+  isLoading = false,
 }: IRecurringProps) {
   const [_isAddTransactionDialogOpen, setAddRecurringBillDialogOpen] =
     useState(false);
@@ -122,9 +123,9 @@ export default function Recurring({
         buttonName="Add Recurring Bill"
         handleButtonClick={() => setAddRecurringBillDialogOpen(true)}
       />
-
       <EmptyContentWrapper
         hasItems={!!recurringTransactions?.length}
+        isLoading={isLoading}
         emptyTitle="No recurring bills are available."
         emptyBody={
           <>

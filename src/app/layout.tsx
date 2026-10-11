@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Public_Sans } from "next/font/google";
 import "./globals.css";
 import Providers from "@/app/providers";
+import type { IRootLayoutProps } from "@/app/types";
 import NotificationBanner from "@/front-end/components/notification-banner/notification-banner";
 
 // ! Need to replace with Public_Sans font - Tailwind CSS default fonts. It is done in global.css
@@ -31,11 +32,7 @@ export const metadata: Metadata = {
   description: "Personal Finance App",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: IRootLayoutProps) {
   return (
     <html lang="en">
       <body

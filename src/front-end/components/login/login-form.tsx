@@ -1,11 +1,13 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { registerUserServerAction } from "@/back-end/server-actions/auth-actions";
+import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
+import type { ILoginFormProps } from "@/front-end/components/login/types";
 import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
@@ -22,12 +24,22 @@ export enum AuthMode {
   Register = "register",
 }
 
-export default function LoginForm() {
+function resolveAuthMode(authMode?: string): AuthMode {
+  if (authMode && Object.values(AuthMode).includes(authMode as AuthMode)) {
+    return authMode as AuthMode;
+  }
+  return AuthMode.SignIn;
+}
+
+export default function LoginForm({
+  isLoading = false,
+  authMode,
+}: ILoginFormProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [authFormMode, setAuthFormMode] = useState<AuthMode>(AuthMode.SignIn);
-  const [isFormReady, setIsFormReady] = useState(false);
+  const [authFormMode, setAuthFormMode] = useState<AuthMode>(() =>
+    resolveAuthMode(authMode),
+  );
 
   // Redirect to overview if already logged in
   useEffect(() => {
@@ -35,14 +47,6 @@ export default function LoginForm() {
       router.push("/overview");
     }
   }, [session?.user?.id, router]);
-
-  useEffect(() => {
-    const mode = searchParams.get("authMode") as AuthMode;
-    if (!mode || Object.values(AuthMode).includes(mode)) {
-      setAuthFormMode(mode || AuthMode.SignIn);
-    }
-    setIsFormReady(true);
-  }, [searchParams]);
 
   const handleOAuthSignIn = (provider: "google" | "github") => {
     signIn(provider, {
@@ -222,220 +226,224 @@ export default function LoginForm() {
     }
   };
 
-  if (!isFormReady || session?.user?.id) {
-    return null;
-  }
+  const showLoading = isLoading || Boolean(session?.user?.id);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
       <ItemCard className="w-full max-w-md">
-        {/* Tab Toggle */}
-        <div className="flex gap-4 border-b border-slate-200">
-          <button
-            onClick={() => handleAuthFormToggleClick(AuthMode.SignIn)}
-            type="button"
-            className={`pb-3 font-bold text-3xl transition-colors cursor-pointer ${
-              authFormMode === AuthMode.SignIn
-                ? "border-b-2 border-black text-black"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            Sign In
-          </button>
+        <EmptyContentWrapper isLoading={showLoading} hasItems={!showLoading}>
+          {/* Tab Toggle */}
+          <div className="flex gap-4 border-b border-slate-200">
+            <button
+              onClick={() => handleAuthFormToggleClick(AuthMode.SignIn)}
+              type="button"
+              className={`pb-3 font-bold text-3xl transition-colors cursor-pointer ${
+                authFormMode === AuthMode.SignIn
+                  ? "border-b-2 border-black text-black"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Sign In
+            </button>
 
-          <button
-            onClick={() => handleAuthFormToggleClick(AuthMode.Register)}
-            type="button"
-            className={`pb-3 font-bold text-3xl transition-colors cursor-pointer ${
-              authFormMode === AuthMode.Register
-                ? "border-b-2 border-black text-black"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            Register
-          </button>
-        </div>
+            <button
+              onClick={() => handleAuthFormToggleClick(AuthMode.Register)}
+              type="button"
+              className={`pb-3 font-bold text-3xl transition-colors cursor-pointer ${
+                authFormMode === AuthMode.Register
+                  ? "border-b-2 border-black text-black"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Register
+            </button>
+          </div>
 
-        {/* Sign In Form */}
-        {authFormMode === "signin" && (
-          <form onSubmit={handleSignIn}>
-            <div className="flex flex-col gap-5">
-              <div className="text-app-color text-xs">
-                Sign in to your account to access your personal finance
-                dashboard.
+          {/* Sign In Form */}
+          {authFormMode === "signin" && (
+            <form onSubmit={handleSignIn}>
+              <div className="flex flex-col gap-5">
+                <div className="text-app-color text-xs">
+                  Sign in to your account to access your personal finance
+                  dashboard.
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="signin-email"
+                    className="text-app-color text-xs font-bold"
+                  >
+                    Email
+                  </Label>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    className="border-gray-300"
+                    value={formSignInData?.email || ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFormSignInStateData(
+                        getSignInFormData({
+                          ...formSignInData,
+                          email: e.target.value,
+                        }),
+                      )
+                    }
+                    placeholder="admin@example.com"
+                  />
+                  <p className="text-xs text-red-500">{signInErrors?.email}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="signin-password"
+                    className="text-app-color text-xs font-bold"
+                  >
+                    Password
+                  </Label>
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    className="border-gray-300"
+                    value={formSignInData?.password || ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFormSignInStateData(
+                        getSignInFormData({
+                          ...formSignInData,
+                          password: e.target.value,
+                        }),
+                      )
+                    }
+                    placeholder="please enter password"
+                  />
+                  <p className="text-xs text-red-500">
+                    {signInErrors?.password}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="submit"
+                    disabled={isSigningIn || !isSignInFormValid()}
+                    className="w-full h-12 cursor-pointer"
+                  >
+                    {isSigningIn ? "Signing in..." : "Sign in"}
+                  </Button>
+                  <Button
+                    type="button"
+                    disabled={isSigningIn}
+                    onClick={() => handleOAuthSignIn("google")}
+                    variant="outline"
+                    className="w-full h-12 cursor-pointer"
+                  >
+                    Continue with Gmail
+                  </Button>
+                  <Button
+                    type="button"
+                    disabled={isSigningIn}
+                    onClick={() => handleOAuthSignIn("github")}
+                    variant="outline"
+                    className="w-full h-12 cursor-pointer"
+                  >
+                    Continue with GitHub
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="signin-email"
-                  className="text-app-color text-xs font-bold"
-                >
-                  Email
-                </Label>
-                <Input
-                  id="signin-email"
-                  type="email"
-                  className="border-gray-300"
-                  value={formSignInData?.email || ""}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFormSignInStateData(
-                      getSignInFormData({
-                        ...formSignInData,
-                        email: e.target.value,
-                      }),
-                    )
-                  }
-                  placeholder="admin@example.com"
-                />
-                <p className="text-xs text-red-500">{signInErrors?.email}</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="signin-password"
-                  className="text-app-color text-xs font-bold"
-                >
-                  Password
-                </Label>
-                <Input
-                  id="signin-password"
-                  type="password"
-                  className="border-gray-300"
-                  value={formSignInData?.password || ""}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFormSignInStateData(
-                      getSignInFormData({
-                        ...formSignInData,
-                        password: e.target.value,
-                      }),
-                    )
-                  }
-                  placeholder="please enter password"
-                />
-                <p className="text-xs text-red-500">{signInErrors?.password}</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button
-                  type="submit"
-                  disabled={isSigningIn || !isSignInFormValid()}
-                  className="w-full h-12 cursor-pointer"
-                >
-                  {isSigningIn ? "Signing in..." : "Sign in"}
-                </Button>
-                <Button
-                  type="button"
-                  disabled={isSigningIn}
-                  onClick={() => handleOAuthSignIn("google")}
-                  variant="outline"
-                  className="w-full h-12 cursor-pointer"
-                >
-                  Continue with Gmail
-                </Button>
-                <Button
-                  type="button"
-                  disabled={isSigningIn}
-                  onClick={() => handleOAuthSignIn("github")}
-                  variant="outline"
-                  className="w-full h-12 cursor-pointer"
-                >
-                  Continue with GitHub
-                </Button>
-              </div>
-            </div>
-          </form>
-        )}
+            </form>
+          )}
 
-        {/* Register Form */}
-        {authFormMode === "register" && (
-          <form onSubmit={handleRegisterSubmit}>
-            <div className="flex flex-col gap-5">
-              <div className="text-app-color text-xs">
-                Create a new account to start managing your personal finances.
+          {/* Register Form */}
+          {authFormMode === "register" && (
+            <form onSubmit={handleRegisterSubmit}>
+              <div className="flex flex-col gap-5">
+                <div className="text-app-color text-xs">
+                  Create a new account to start managing your personal finances.
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="register-name"
+                    className="text-app-color text-xs font-bold"
+                  >
+                    Name
+                  </Label>
+                  <Input
+                    id="register-name"
+                    type="text"
+                    className="border-gray-300"
+                    value={formRegisterData?.name || ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFormRegisterStateData(
+                        getRegisterFormData({
+                          ...formRegisterData,
+                          name: e.target.value,
+                        }),
+                      )
+                    }
+                    placeholder="John Doe"
+                  />
+                  <p className="text-xs text-red-500">{registerErrors?.name}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="register-email"
+                    className="text-app-color text-xs font-bold"
+                  >
+                    Email
+                  </Label>
+                  <Input
+                    id="register-email"
+                    type="email"
+                    className="border-gray-300"
+                    value={formRegisterData?.email || ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFormRegisterStateData(
+                        getRegisterFormData({
+                          ...formRegisterData,
+                          email: e.target.value,
+                        }),
+                      )
+                    }
+                    placeholder="your@email.com"
+                  />
+                  <p className="text-xs text-red-500">
+                    {registerErrors?.email}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="register-password"
+                    className="text-app-color text-xs font-bold"
+                  >
+                    Password
+                  </Label>
+                  <Input
+                    id="register-password"
+                    type="password"
+                    className="border-gray-300"
+                    value={formRegisterData?.password || ""}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFormRegisterStateData(
+                        getRegisterFormData({
+                          ...formRegisterData,
+                          password: e.target.value,
+                        }),
+                      )
+                    }
+                    placeholder="at least 6 characters"
+                  />
+                  <p className="text-xs text-red-500">
+                    {registerErrors?.password}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="submit"
+                    disabled={!isRegisterFormValid()}
+                    className="w-full h-12 cursor-pointer"
+                  >
+                    Create Account
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="register-name"
-                  className="text-app-color text-xs font-bold"
-                >
-                  Name
-                </Label>
-                <Input
-                  id="register-name"
-                  type="text"
-                  className="border-gray-300"
-                  value={formRegisterData?.name || ""}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFormRegisterStateData(
-                      getRegisterFormData({
-                        ...formRegisterData,
-                        name: e.target.value,
-                      }),
-                    )
-                  }
-                  placeholder="John Doe"
-                />
-                <p className="text-xs text-red-500">{registerErrors?.name}</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="register-email"
-                  className="text-app-color text-xs font-bold"
-                >
-                  Email
-                </Label>
-                <Input
-                  id="register-email"
-                  type="email"
-                  className="border-gray-300"
-                  value={formRegisterData?.email || ""}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFormRegisterStateData(
-                      getRegisterFormData({
-                        ...formRegisterData,
-                        email: e.target.value,
-                      }),
-                    )
-                  }
-                  placeholder="your@email.com"
-                />
-                <p className="text-xs text-red-500">{registerErrors?.email}</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="register-password"
-                  className="text-app-color text-xs font-bold"
-                >
-                  Password
-                </Label>
-                <Input
-                  id="register-password"
-                  type="password"
-                  className="border-gray-300"
-                  value={formRegisterData?.password || ""}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFormRegisterStateData(
-                      getRegisterFormData({
-                        ...formRegisterData,
-                        password: e.target.value,
-                      }),
-                    )
-                  }
-                  placeholder="at least 6 characters"
-                />
-                <p className="text-xs text-red-500">
-                  {registerErrors?.password}
-                </p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button
-                  type="submit"
-                  disabled={!isRegisterFormValid()}
-                  className="w-full h-12 cursor-pointer"
-                >
-                  Create Account
-                </Button>
-              </div>
-            </div>
-          </form>
-        )}
+            </form>
+          )}
+        </EmptyContentWrapper>
       </ItemCard>
     </div>
   );

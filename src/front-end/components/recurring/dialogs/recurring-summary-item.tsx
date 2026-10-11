@@ -1,11 +1,4 @@
-type RecurringSummaryItemProps = {
-  label: string;
-  count?: number | string;
-  amount: string;
-  labelClassName?: string;
-  valueClassName?: string;
-  wrapperClassName?: string;
-};
+import type { IRecurringSummaryItemProps } from "@/front-end/components/recurring/types";
 
 export function RecurringSummaryItem({
   label,
@@ -14,7 +7,7 @@ export function RecurringSummaryItem({
   labelClassName = "text-app-color font-semibold",
   valueClassName = "font-bold",
   wrapperClassName = "",
-}: RecurringSummaryItemProps) {
+}: IRecurringSummaryItemProps) {
   const value =
     count != null && count !== "" ? `${count} ($${amount})` : `$${amount}`;
 

@@ -1,8 +1,9 @@
 import type { Pot } from "@prisma/client";
 
 export interface IPotsProps {
-  pots?: Pot[] | null;
-  availableBalance: number;
+  pots?: Pot[];
+  availableBalance?: number;
+  isLoading?: boolean;
 }
 
 export interface IPotsTileProps {

@@ -2,8 +2,9 @@ import type { Transaction } from "@prisma/client";
 import type { IPaginationData } from "@/front-end/components/transactions/types";
 
 export interface IRecurringProps {
-  recurringTransactions: Transaction[] | undefined;
-  paginationData: IPaginationData | undefined;
+  recurringTransactions?: Transaction[];
+  paginationData?: IPaginationData;
+  isLoading?: boolean;
 }
 
 export interface IRecurringTileProps {
@@ -17,7 +18,7 @@ export interface IRecurringMenuProps {
 
 export interface IRecurringSummaryItemProps {
   label: string;
-  count: number | string;
+  count?: number | string;
   amount: string;
   labelClassName?: string;
   valueClassName?: string;

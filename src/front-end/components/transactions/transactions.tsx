@@ -13,6 +13,7 @@ export default function Transactions({
   transactions = [],
   paginationData,
   category,
+  isLoading = false,
 }: ITransactionsProps) {
   const [isCreateTransactionDialogOpen, setCreateTransactionDialogOpen] =
     useState(false);
@@ -26,6 +27,7 @@ export default function Transactions({
       />
       <EmptyContentWrapper
         hasItems={!!transactions?.length}
+        isLoading={isLoading}
         emptyTitle="No transactions are available."
         emptyBody={
           <>

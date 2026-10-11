@@ -1,14 +1,11 @@
 import "@/app/globals.css";
 import { Suspense } from "react";
+import type { IAppLayoutProps } from "@/app/(app)/types";
 import HorizontalSideBar from "@/front-end/components/sidebar/horizontal-sidebar";
 import VerticalSideBar from "@/front-end/components/sidebar/vertical-sidebar";
 import { cn } from "@/lib/utils";
 
-export default async function AppLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function AppLayout({ children }: IAppLayoutProps) {
   const opacityTransition = "transition-opacity duration-500";
 
   return (

@@ -19,7 +19,28 @@
     "rules": {
       "recommended": true,
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "interface"
+                },
+                "match": "I(.+)",
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "any"
+                },
+                "match": ".+"
+              }
+            ]
+          }
+        }
       },
       "correctness": {
         "useExhaustiveDependencies": "off"

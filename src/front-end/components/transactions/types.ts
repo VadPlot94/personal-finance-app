@@ -17,12 +17,14 @@ export interface ITransactionsTileProps {
 }
 
 export interface ITransactionsProps {
-  transactions: Transaction[] | undefined;
-  paginationData: IPaginationData | undefined;
+  transactions?: Transaction[];
+  paginationData?: IPaginationData;
   category?: TransactionUICategory;
+  isLoading?: boolean;
 }
 
-export interface ITransactionsTableLayoutProps extends ITransactionsProps {
+export interface ITransactionsTableLayoutProps
+  extends Omit<ITransactionsProps, "isLoading"> {
   isRecurringOnly?: boolean;
   referenceDate?: Date | null;
   children: (transactionsItems: Transaction[]) => React.ReactNode;

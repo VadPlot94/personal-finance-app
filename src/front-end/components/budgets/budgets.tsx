@@ -20,6 +20,7 @@ export const BudgetsContext = createContext<Budget[]>([]);
 export default function Budgets({
   budgets = [],
   transactionsByCategoryList = [],
+  isLoading = false,
 }: IBudgetsProps) {
   const [isAddBudgetDialogOpen, setAddBudgetDialogOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
@@ -33,6 +34,7 @@ export default function Budgets({
       />
       <EmptyContentWrapper
         hasItems={!!budgets?.length}
+        isLoading={isLoading}
         emptyTitle="No budgets are available."
         emptyBody={
           <>

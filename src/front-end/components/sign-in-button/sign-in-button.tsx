@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import type { ISignInButtonProps } from "@/front-end/components/sign-in-button/types";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 
-export default function SignInButton({ className }: { className?: string }) {
+export default function SignInButton({ className }: ISignInButtonProps) {
   const { data: session, status } = useSession();
 
   if (status === "loading") {

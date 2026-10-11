@@ -1,13 +1,10 @@
 import { notFound } from "next/navigation";
+import type { ITransactionsPageProps } from "@/app/(app)/transactions/types";
 import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
 import Transactions from "@/front-end/components/transactions/transactions";
 import constants, {
   TransactionUICategory,
 } from "@/shared/services/constants.service";
-
-interface ITransactionsPageProps {
-  searchParams: Promise<{ category: string }>;
-}
 
 export default async function TransactionsPage({
   searchParams,
