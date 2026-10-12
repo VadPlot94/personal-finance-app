@@ -1,10 +1,10 @@
-import { ensureSessionSRF } from "@/back-end/server-actions/auth-actions";
-import { getAllPotsSRF } from "@/back-end/server-actions/pot-actions";
+import authController from "@/back-end/controllers/auth-controller";
+import potController from "@/back-end/controllers/pot-controller";
 import PotsTile from "@/front-end/components/pots/pots-tile";
 
 export default async function PotsTilePage() {
-  await ensureSessionSRF();
+  await authController.ensureSession();
 
-  const potsResult = await getAllPotsSRF();
+  const potsResult = await potController.getAllPots();
   return <PotsTile pots={potsResult.data ?? []} />;
 }

@@ -3,10 +3,6 @@ import "server-only";
 
 import budgetController from "@/back-end/controllers/budget-controller";
 
-export async function getAllBudgetsSRF() {
-  return budgetController.getAllBudgets();
-}
-
 export async function addBudgetSRF(
   _prevState: { success: boolean } | null,
   formData: FormData,

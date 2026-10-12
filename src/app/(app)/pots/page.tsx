@@ -1,15 +1,15 @@
-import { ensureSessionSRF } from "@/back-end/server-actions/auth-actions";
-import { getBalanceSRF } from "@/back-end/server-actions/balance-actions";
-import { getAllPotsSRF } from "@/back-end/server-actions/pot-actions";
+import authController from "@/back-end/controllers/auth-controller";
+import balanceController from "@/back-end/controllers/balance-controller";
+import potController from "@/back-end/controllers/pot-controller";
 import Pots from "@/front-end/components/pots/pots";
 import potService from "@/shared/services/pot.service";
 
 export default async function PotsPage() {
-  await ensureSessionSRF();
+  await authController.ensureSession();
 
   const [potsResult, balanceResult] = await Promise.all([
-    getAllPotsSRF(),
-    getBalanceSRF(),
+    potController.getAllPots(),
+    balanceController.getBalance(),
   ]);
   const pots = potsResult.data ?? [];
   const balance = balanceResult.data;

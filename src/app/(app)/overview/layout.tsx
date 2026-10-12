@@ -4,7 +4,7 @@ import type {
   IOverviewBalanceCardsProps,
   IOverviewLayoutProps,
 } from "@/app/(app)/overview/types";
-import { getBalanceSRF } from "@/back-end/server-actions/balance-actions";
+import balanceController from "@/back-end/controllers/balance-controller";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import TestAppErrorButton from "@/front-end/components/test/test-app-error-button/test-app-error-button";
 import { cn } from "@/lib/utils";
@@ -54,7 +54,7 @@ export default function OverviewLayout({
 }
 
 async function OverviewBalance() {
-  const balanceResult = await getBalanceSRF();
+  const balanceResult = await balanceController.getBalance();
   return <OverviewBalanceCards balance={balanceResult.data} />;
 }
 

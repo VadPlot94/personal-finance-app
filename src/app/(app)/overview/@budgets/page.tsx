@@ -1,10 +1,11 @@
-import { getAllBudgetsSRF } from "@/back-end/server-actions/budget-actions";
-import { getTransactionsMonthlyExpensesByCategorySRF } from "@/back-end/server-actions/transaction-actions";
+import budgetController from "@/back-end/controllers/budget-controller";
+import transactionController from "@/back-end/controllers/transaction-controller";
 import BudgetsTile from "@/front-end/components/budgets/budgets-tile";
 
 export default async function BudgetsTilePage() {
-  const budgetsResponse = await getAllBudgetsSRF();
-  const { data } = await getTransactionsMonthlyExpensesByCategorySRF();
+  const budgetsResponse = await budgetController.getAllBudgets();
+  const { data } =
+    await transactionController.getTransactionsMonthlyExpensesByCategory();
   return (
     <BudgetsTile
       budgets={budgetsResponse?.data}

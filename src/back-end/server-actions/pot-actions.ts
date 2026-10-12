@@ -3,10 +3,6 @@ import "server-only";
 
 import potController from "@/back-end/controllers/pot-controller";
 
-export async function getAllPotsSRF() {
-  return potController.getAllPots();
-}
-
 export async function createPotSRF(
   _prevState: { success: boolean } | null,
   formData: FormData,

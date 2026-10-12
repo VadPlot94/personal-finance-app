@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { ITransactionsPageProps } from "@/app/(app)/transactions/types";
-import { getAllTransactionsSRF } from "@/back-end/server-actions/transaction-actions";
+import transactionController from "@/back-end/controllers/transaction-controller";
 import Transactions from "@/front-end/components/transactions/transactions";
 import constants, {
   TransactionUICategory,
@@ -19,7 +19,7 @@ export default async function TransactionsPage({
     notFound();
   }
   const { data: { paginationData, transactions } = {} } =
-    await getAllTransactionsSRF({
+    await transactionController.getAllTransactions({
       transactionsCount: constants.TransactionRecordsPerPage,
     });
   return (
