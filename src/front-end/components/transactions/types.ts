@@ -26,7 +26,6 @@ export interface ITransactionsProps {
 export interface ITransactionsTableLayoutProps
   extends Omit<ITransactionsProps, "isLoading"> {
   isRecurringOnly?: boolean;
-  referenceDate?: Date | null;
   children: (transactionsItems: Transaction[]) => React.ReactNode;
 }
 

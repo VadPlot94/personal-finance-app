@@ -15,14 +15,14 @@ import type {
   ITransactionsForCategoryData,
 } from "@/shared/services/types";
 
-async function getTransactionsCached(
+async function getAllTransactionsCached(
   data: Partial<IGetTransactionsParams> | undefined,
   userId: string,
 ): Promise<ITransactionDataResponse> {
   "use cache";
   cacheTag(transactionsTag(userId));
   cacheLife("minutes");
-  return transactionDbService.getTransactions(data, userId);
+  return transactionDbService.getAllTransactions(data, userId);
 }
 
 async function getMonthlyExpensesByCategoryCached(
@@ -54,13 +54,13 @@ class TransactionController extends BaseController {
     );
   }
 
-  public async getTransactions(
+  public async getAllTransactions(
     data?: Partial<IGetTransactionsParams>,
   ): Promise<ValidationResponse<ITransactionDataResponse>> {
     return await this.validationObjectWrapper<ITransactionDataResponse>(
       "get",
       async (session?: Session) => {
-        return await getTransactionsCached(data, session?.user?.id!);
+        return await getAllTransactionsCached(data, session?.user?.id!);
       },
     );
   }
@@ -86,19 +86,6 @@ class TransactionController extends BaseController {
           data,
           session?.user?.id!,
         );
-      },
-    );
-  }
-
-  public async deleteRecurring(id: string): Promise<ValidationResponse> {
-    return await this.validationObjectWrapper<boolean>(
-      "delete",
-      async (session?: Session) => {
-        const userId = session?.user?.id!;
-        const result = await transactionDbService.deleteRecurring(id, userId);
-        await balanceDbService.recalculateBalance(userId);
-        this.syncChanges(userId);
-        return result;
       },
     );
   }

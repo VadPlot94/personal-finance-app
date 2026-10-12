@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { deleteRecurringSRF } from "@/back-end/server-actions/transaction-actions";
+import { deleteRecurringSRF } from "@/back-end/server-actions/recurring-actions";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
 import type { IDeleteRecurringDialogProps } from "@/front-end/components/recurring/types";
 

@@ -201,7 +201,6 @@ export default function Recurring({
               transactions={recurringTransactionsForTable}
               paginationData={paginationData}
               isRecurringOnly={true}
-              referenceDate={referenceDate}
             >
               {(transactionsItems) => (
                 <BillsTable

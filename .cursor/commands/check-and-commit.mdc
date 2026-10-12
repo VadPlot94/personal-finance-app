@@ -27,7 +27,9 @@ Check and Commit:
    - Playwright / Cypress config in the repo
 2. If any exist: run them. On non-zero exit — **stop**. Do not commit or push.
 3. If none exist: manual smoke via **cursor-ide-browser** against the local app (default base URL `http://localhost:3000`):
-   - Ensure `next dev` is running (start it if nothing is listening on the port).
+   - **Before starting the app:** check whether port `3000` is in use (e.g. listener on `localhost:3000`).
+   - If the port is busy: stop **all** processes tied to that listener / this project's `next dev` (npm `run dev`, `next dev`, Next start-server, Turbopack workers for this repo). Confirm port `3000` is free.
+   - Start a **fresh** `npm run dev` (or equivalent) in a separate background process dedicated to this smoke run. Wait until Ready / `Local: http://localhost:3000` before opening the browser.
    - Visit core routes: `/login`, `/overview`, `/transactions`, `/budgets`, `/pots`, `/recurring`.
    - Per route pass criteria: page loads; no Next.js error overlay / obvious crash; main content visible (snapshot or screenshot).
    - Auth-gated pages: redirect to login is OK when unauthenticated. Do **not** invent credentials. If a session already exists, verify the authenticated page renders.

@@ -12,7 +12,7 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
     super(prisma.transaction);
   }
 
-  public async getTransactions(
+  public async getAllTransactions(
     params: IGetTransactionsParams,
   ): Promise<ITransactionDataResponse> {
     const {

@@ -14,10 +14,10 @@ export async function createTransactionSRF(
   return transactionController.createTransaction(_prevState, formData);
 }
 
-export async function getTransactionsSRF(
+export async function getAllTransactionsSRF(
   data?: Partial<IGetTransactionsParams>,
 ) {
-  return transactionController.getTransactions(data);
+  return transactionController.getAllTransactions(data);
 }
 
 export async function getTransactionsMonthlyExpensesByCategorySRF() {
@@ -28,8 +28,4 @@ export async function getTransactionsForCategorySRF(
   data?: Partial<IGetTransactionForCategoryParams>,
 ) {
   return transactionController.getTransactionsForCategory(data);
-}
-
-export async function deleteRecurringSRF(id: string) {
-  return transactionController.deleteRecurring(id);
 }

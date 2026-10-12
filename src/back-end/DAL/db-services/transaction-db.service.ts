@@ -19,11 +19,11 @@ import type {
 import validationService from "@/shared/services/validation.service";
 
 class TransactionDbService {
-  public async getTransactions(
+  public async getAllTransactions(
     data: Partial<IGetTransactionsParams> | undefined,
     userId: string,
   ): Promise<ITransactionDataResponse> {
-    const response = await transactionRepository.getTransactions({
+    const response = await transactionRepository.getAllTransactions({
       ...transactionMapper.mapGetTransactionsInputToDBTransactionsParams(data),
       userId,
     });
@@ -109,7 +109,7 @@ class TransactionDbService {
     }
 
     const categoryPromises = categories.map(async (category) => {
-      const response = await this.getTransactions(
+      const response = await this.getAllTransactions(
         { category, transactionsCount } as Partial<IGetTransactionsParams>,
         userId,
       );
