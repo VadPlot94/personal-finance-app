@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { setPotTotalServerAction } from "@/back-end/server-actions/pot-actions";
+import { setPotTotalSRF } from "@/back-end/server-actions/pot-actions";
 import type { IAddMoneyPotDialogProps } from "@/front-end/components/pots/types";
 import { Button } from "@/front-end/components/ui/button";
 import {
@@ -79,7 +79,7 @@ export function ChangeMoneyDialog({
     const newTotal = isWithdraw
       ? pot.total - amountValue
       : pot.total + amountValue;
-    const response = await setPotTotalServerAction(pot.id, newTotal);
+    const response = await setPotTotalSRF(pot.id, newTotal);
     if (response?.success) {
       toast.success("Success", {
         description: response.message || "OK",

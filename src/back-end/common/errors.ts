@@ -6,7 +6,7 @@ export class CustomError extends Error {
   public isCustomError = true as const;
   public readonly isZodError: boolean;
 
-  constructor(
+  public constructor(
     public message: string,
     public zodErrors?: Record<string, string>,
   ) {

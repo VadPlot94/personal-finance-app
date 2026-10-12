@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { createTransactionServerAction } from "@/back-end/server-actions/transaction-actions";
+import { createTransactionSRF } from "@/back-end/server-actions/transaction-actions";
 import type {
   ICreateTransactionDialogProps,
   ICreateTransactionFormData,
@@ -37,7 +37,7 @@ export function CreateTransactionDialog({
   setDialogOpen,
 }: ICreateTransactionDialogProps) {
   const [formResultState, formAction, isPending] = useActionState(
-    createTransactionServerAction,
+    createTransactionSRF,
     null,
   );
 

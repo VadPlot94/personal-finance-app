@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import type { ILoginPageProps } from "@/app/login/types";
-import { getOptionalSessionServerAction } from "@/back-end/server-actions/auth-actions";
+import { getOptionalSessionSRF } from "@/back-end/server-actions/auth-actions";
 import LoginForm from "@/front-end/components/login/login-form";
 
 async function LoginRedirectIfAuthenticated() {
-  const session = await getOptionalSessionServerAction();
+  const session = await getOptionalSessionSRF();
   if (session?.user?.id) {
     redirect("/overview");
   }

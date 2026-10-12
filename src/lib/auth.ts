@@ -27,15 +27,15 @@ export const authOptions: NextAuthConfig = {
           | undefined,
       ) {
         // authorize method only for login (not register)
-        const result = await authService.autorizeUser(credentials);
-        if (!result.data?.id) {
+        const user = await authService.authUser("signin", credentials);
+        if (!user?.id) {
           return null;
         }
         return {
-          id: result.data.id,
-          email: result.data.email,
-          name: result.data.name,
-          isAdmin: Boolean(result.data.isAdmin),
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          isAdmin: Boolean(user.isAdmin),
         } satisfies User;
       },
     }),

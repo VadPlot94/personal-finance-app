@@ -4,14 +4,14 @@ import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
 
 export class BudgetRepository extends BaseRepository<"budget"> {
-  constructor() {
+  public constructor() {
     super(prisma.budget);
   }
 
   /**
    * Get all budgets (sorted by category)
    */
-  async getAll(userId: string): Promise<Budget[]> {
+  public async getAll(userId: string): Promise<Budget[]> {
     return this.findMany({
       where: { userId },
       orderBy: { category: "asc" },
@@ -21,7 +21,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   /**
    * Get budget by category
    */
-  async getByCategory(
+  public async getByCategory(
     category: string,
     userId: string,
   ): Promise<Budget | null> {
@@ -33,7 +33,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   /**
    * Create or update a budget (upsert)
    */
-  async upsertBudget(data: {
+  public async upsertBudget(data: {
     userId: string;
     category: string;
     maximum: number;
@@ -59,7 +59,7 @@ export class BudgetRepository extends BaseRepository<"budget"> {
   /**
    * Get the total of all budget maximums
    */
-  async getTotalMaximum(): Promise<number | null> {
+  public async getTotalMaximum(): Promise<number | null> {
     const result = await prisma.budget.aggregate({
       _sum: {
         maximum: true,

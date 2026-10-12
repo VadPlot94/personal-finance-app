@@ -4,11 +4,11 @@ import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
 
 export class UserRepository extends BaseRepository<"user"> {
-  constructor() {
+  public constructor() {
     super(prisma.user);
   }
 
-  async findByEmail(
+  public async findByEmail(
     email: string,
     select?: Prisma.UserSelect,
   ): Promise<User | null> {
@@ -18,7 +18,7 @@ export class UserRepository extends BaseRepository<"user"> {
     });
   }
 
-  async createUser(
+  public async createUser(
     data: {
       email: string;
       name: string;
@@ -32,7 +32,7 @@ export class UserRepository extends BaseRepository<"user"> {
     });
   }
 
-  async upsertByEmail(
+  public async upsertByEmail(
     data: {
       email: string;
       name: string;

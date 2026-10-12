@@ -4,7 +4,7 @@ import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
 
 export class BalanceRepository extends BaseRepository<"balance"> {
-  constructor() {
+  public constructor() {
     super(prisma.balance);
   }
 
@@ -23,7 +23,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Get balance by ID (when using a fixed ID, e.g. 'initial-balance')
    */
-  async getById(id: string, userId: string): Promise<Balance | null> {
+  public async getById(id: string, userId: string): Promise<Balance | null> {
     return this.findFirst({
       where: { id, userId },
     });
@@ -32,7 +32,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Update the current balance (if the record already exists)
    */
-  async updateBalance(
+  public async updateBalance(
     id: string,
     data: {
       current?: number;
@@ -50,7 +50,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Create or update balance (upsert)
    */
-  async upsertBalance(data: {
+  public async upsertBalance(data: {
     userId: string;
     id?: string;
     current: number;
@@ -77,7 +77,7 @@ export class BalanceRepository extends BaseRepository<"balance"> {
   /**
    * Get total income / expenses / balance (aggregation)
    */
-  async getSummary(userId: string): Promise<{
+  public async getSummary(userId: string): Promise<{
     current: number | null;
     totalIncome: number | null;
     totalExpenses: number | null;

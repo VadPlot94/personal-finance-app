@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { deletePotServerAction } from "@/back-end/server-actions/pot-actions";
+import { deletePotSRF } from "@/back-end/server-actions/pot-actions";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
 import type { IDeletePotDialogProps } from "@/front-end/components/pots/types";
 
@@ -11,7 +11,7 @@ export function DeletePotDialog({
   setDialogOpen,
 }: IDeletePotDialogProps) {
   const handlePotDelete = async (): Promise<void> => {
-    const response = await deletePotServerAction(pot?.id);
+    const response = await deletePotSRF(pot?.id);
     if (response?.success) {
       toast.success("Success", {
         description: response.message || "OK",

@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { deleteRecurringServerAction } from "@/back-end/server-actions/transaction-actions";
+import { deleteRecurringSRF } from "@/back-end/server-actions/transaction-actions";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
 import type { IDeleteRecurringDialogProps } from "@/front-end/components/recurring/types";
 
@@ -11,9 +11,7 @@ export function DeleteRecurringDialog({
   setDialogOpen,
 }: IDeleteRecurringDialogProps) {
   const handleRecurringDelete = async (): Promise<void> => {
-    const response = await deleteRecurringServerAction(
-      recurringTransaction?.id,
-    );
+    const response = await deleteRecurringSRF(recurringTransaction?.id);
     if (response?.success) {
       toast.success("Success", {
         description: response.message || "OK",

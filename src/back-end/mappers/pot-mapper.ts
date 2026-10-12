@@ -5,50 +5,61 @@ import type {
   ICreatePotDTOOutput,
   IEditPotDTOInput,
   IEditPotDTOOutput,
-} from "@/back-end/dto-models/pot-dto.model";
+} from "@/back-end/dto-model-types/pot-dto-model.type";
 import { removeUndefinedFields } from "@/lib/utils";
 import { Theme } from "@/shared/services/constants.service";
 
-export function mapCreatePotInputToDBPot(
-  input: ICreatePotDTOInput,
-): Partial<Pot> | null {
-  const potModel = getPotModel(input);
-  return potModel;
-}
-
-export function mapCreateDBPotToOutput(
-  dbPOutput: ICreatePotDTOOutput,
-): ICreatePotDTOOutput {
-  return { id: dbPOutput?.id };
-}
-
-export function mapEditPotInputToDBPot(
-  input: IEditPotDTOInput,
-): Partial<Pot> | null {
-  return mapCreatePotInputToDBPot(input as ICreatePotDTOInput);
-}
-
-export function mapEditDBPotToOutput(
-  dbPOutput: IEditPotDTOOutput,
-): IEditPotDTOOutput {
-  return mapCreateDBPotToOutput(dbPOutput as ICreatePotDTOOutput);
-}
-
-function getPotModel(formData: FormData): Partial<Pot> | null {
-  if (!formData) {
-    return null;
+class PotMapper {
+  public mapCreatePotInputToDBPot(
+    input: ICreatePotDTOInput,
+  ): Partial<Pot> | null {
+    return this.getPotModel(input);
   }
 
-  const potModel: Partial<Pot> = {
-    id: formData.get("id") as string,
-    userId: formData.get("userId") as string | null,
-    name: formData.get("potName") as string,
-    target: Number(
-      formData.get("target")?.toString()?.replaceAll(" ", "") || 0,
-    ),
-    theme: (formData.get("theme") as Theme) || Theme.NavyGrey,
-    total: Number(formData.get("total") || 0),
-  };
+  public mapCreateDBPotToOutput(
+    dbPOutput: ICreatePotDTOOutput,
+  ): ICreatePotDTOOutput {
+    return { id: dbPOutput?.id };
+  }
 
-  return removeUndefinedFields(potModel);
+  public mapEditPotInputToDBPot(input: IEditPotDTOInput): Partial<Pot> | null {
+    return this.mapCreatePotInputToDBPot(input as ICreatePotDTOInput);
+  }
+
+  public mapEditDBPotToOutput(dbPOutput: IEditPotDTOOutput): IEditPotDTOOutput {
+    return this.mapCreateDBPotToOutput(dbPOutput as ICreatePotDTOOutput);
+  }
+
+  public mapSetPotTotalInputToDBPot(
+    id: string,
+    newTotal: number,
+  ): Pick<Pot, "id" | "total"> {
+    return { id, total: newTotal };
+  }
+
+  public mapGetAllPotsToOutput(pots: Pot[]): Pot[] {
+    return pots;
+  }
+
+  private getPotModel(formData: FormData): Partial<Pot> | null {
+    if (!formData) {
+      return null;
+    }
+
+    const potModel: Partial<Pot> = {
+      id: formData.get("id") as string,
+      userId: formData.get("userId") as string | null,
+      name: formData.get("potName") as string,
+      target: Number(
+        formData.get("target")?.toString()?.replaceAll(" ", "") || 0,
+      ),
+      theme: (formData.get("theme") as Theme) || Theme.NavyGrey,
+      total: Number(formData.get("total") || 0),
+    };
+
+    return removeUndefinedFields(potModel);
+  }
 }
+
+const potMapper = new PotMapper();
+export default potMapper;

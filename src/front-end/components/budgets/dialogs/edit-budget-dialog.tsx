@@ -11,8 +11,8 @@ import {
 import { useUpdateEffect } from "react-use";
 import { toast } from "sonner";
 import {
-  addBudgetServerAction,
-  editBudgetServerAction,
+  addBudgetSRF,
+  editBudgetSRF,
 } from "@/back-end/server-actions/budget-actions";
 import { BudgetsContext } from "@/front-end/components/budgets/budgets";
 import type { IEditBudgetDialogProps } from "@/front-end/components/budgets/types";
@@ -48,7 +48,7 @@ export function EditBudgetDialog({
   setDialogOpen,
 }: IEditBudgetDialogProps) {
   const serverActionBudgetFn = useMemo(
-    () => (budget?.id ? editBudgetServerAction : addBudgetServerAction),
+    () => (budget?.id ? editBudgetSRF : addBudgetSRF),
     [budget?.id],
   );
   const [formResultState, formAction, isPending] = useActionState(

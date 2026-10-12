@@ -1,9 +1,9 @@
-import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
+import { getTransactionsSRF } from "@/back-end/server-actions/transaction-actions";
 import TransactionsTile from "@/front-end/components/transactions/transactions-tile";
 import { TransactionUICategory } from "@/shared/services/constants.service";
 
 export default async function TransactionsTilePage() {
-  const { data: { transactions } = {} } = await getTransactionsServerAction({
+  const { data: { transactions } = {} } = await getTransactionsSRF({
     transactionsCount: 5,
   });
   return (

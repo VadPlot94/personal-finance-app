@@ -35,6 +35,6 @@ Living **naming rules** for this project. Prefer matching the user’s style; if
 
 If Biome flags a restricted name (e.g. `Error`), keep the matching / suffix-correct name and add a one-line `biome-ignore` with a short reason.
 
-## TypeScript interfaces
+## Server actions (`SRF`)
 
-- All TypeScript `interface` names must start with `I` and use PascalCase after the prefix (e.g. `ILoginFormProps`, `IBudgetsProps`). Enforced by Biome `useNamingConvention`.
+- Controllers (`src/back-end/controllers/`) and db-services do **not** use the `SRF` postfix; action files are thin `"use server"` wrappers that call controller methods.

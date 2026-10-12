@@ -1,10 +1,10 @@
-import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
+import { getTransactionsSRF } from "@/back-end/server-actions/transaction-actions";
 import Recurring from "@/front-end/components/recurring/recurring";
 
 export default async function RecurringPage() {
   // TODO: Need to get recurring not by transactionsCount by by time - for ex last 2 months
   const { data: { paginationData, transactions } = {} } =
-    await getTransactionsServerAction({
+    await getTransactionsSRF({
       isRecurring: true,
       transactionsCount: 500,
     });

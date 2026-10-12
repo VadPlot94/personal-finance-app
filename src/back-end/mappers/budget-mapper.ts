@@ -5,49 +5,58 @@ import type {
   ICreateBudgetDTOOutput,
   IEditBudgetDTOInput,
   IEditBudgetDTOOutput,
-} from "@/back-end/dto-models/budget-dto.model";
+  IGetAllBudgetsDTOOutput,
+} from "@/back-end/dto-model-types/budget-dto-model.type";
 import { removeUndefinedFields } from "@/lib/utils";
 import { Theme } from "@/shared/services/constants.service";
 
-export function mapCreateBudgetInputToDBBudget(
-  input: ICreateBudgetDTOInput,
-): Partial<Budget> | null {
-  const budgetModel = getBudgetModel(input);
-  return budgetModel;
-}
-
-export function mapCreateDBBudgetToOutput(
-  dbOutput: ICreateBudgetDTOOutput,
-): ICreateBudgetDTOOutput {
-  return { id: dbOutput?.id };
-}
-
-export function mapEditBudgetInputToDBBudget(
-  input: IEditBudgetDTOInput,
-): Partial<Budget> | null {
-  return mapCreateBudgetInputToDBBudget(input as ICreateBudgetDTOInput);
-}
-
-export function mapEditDBBudgetToOutput(
-  dbOutput: IEditBudgetDTOOutput,
-): IEditBudgetDTOOutput {
-  return mapCreateDBBudgetToOutput(dbOutput as ICreateBudgetDTOOutput);
-}
-
-function getBudgetModel(formData: FormData): Partial<Budget> | null {
-  if (!formData) {
-    return null;
+class BudgetMapper {
+  public mapCreateBudgetInputToDBBudget(
+    input: ICreateBudgetDTOInput,
+  ): Partial<Budget> | null {
+    return this.getBudgetModel(input);
   }
 
-  const budgetModel: Partial<Budget> = {
-    id: formData.get("id") as string,
-    userId: formData.get("userId") as string | null,
-    category: formData.get("budgetCategory") as string,
-    maximum: Number(
-      formData.get("maximum")?.toString()?.replaceAll(" ", "") || 0,
-    ),
-    theme: (formData.get("theme") as Theme) || Theme.NavyGrey,
-  };
+  public mapCreateDBBudgetToOutput(
+    dbOutput: ICreateBudgetDTOOutput,
+  ): ICreateBudgetDTOOutput {
+    return { id: dbOutput?.id };
+  }
 
-  return removeUndefinedFields(budgetModel);
+  public mapEditBudgetInputToDBBudget(
+    input: IEditBudgetDTOInput,
+  ): Partial<Budget> | null {
+    return this.mapCreateBudgetInputToDBBudget(input as ICreateBudgetDTOInput);
+  }
+
+  public mapEditDBBudgetToOutput(
+    dbOutput: IEditBudgetDTOOutput,
+  ): IEditBudgetDTOOutput {
+    return this.mapCreateDBBudgetToOutput(dbOutput as ICreateBudgetDTOOutput);
+  }
+
+  public mapGetAllBudgetsToOutput(budgets: Budget[]): IGetAllBudgetsDTOOutput {
+    return { budgets };
+  }
+
+  private getBudgetModel(formData: FormData): Partial<Budget> | null {
+    if (!formData) {
+      return null;
+    }
+
+    const budgetModel: Partial<Budget> = {
+      id: formData.get("id") as string,
+      userId: formData.get("userId") as string | null,
+      category: formData.get("budgetCategory") as string,
+      maximum: Number(
+        formData.get("maximum")?.toString()?.replaceAll(" ", "") || 0,
+      ),
+      theme: (formData.get("theme") as Theme) || Theme.NavyGrey,
+    };
+
+    return removeUndefinedFields(budgetModel);
+  }
 }
+
+const budgetMapper = new BudgetMapper();
+export default budgetMapper;

@@ -4,6 +4,7 @@ import { balanceRepository } from "@/back-end/DAL/repositories/balance.repositor
 import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
+import logger from "@/shared/services/logger.service";
 
 const data = require("@/../initial-data/data.json");
 
@@ -53,9 +54,9 @@ export async function setTestAppData(userId: string) {
       ),
     );
 
-    console.log("Seed completed");
+    logger.logInfo("[seed] Seed completed");
   } catch (error) {
-    console.error("Error seeding database:", error);
+    logger.logError("[seed] Error seeding database:", error);
   }
 }
 

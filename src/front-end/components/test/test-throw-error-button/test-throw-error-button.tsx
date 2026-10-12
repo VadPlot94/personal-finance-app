@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isAdminSessionServerAction } from "@/back-end/server-actions/auth-actions";
+import { isAdminSessionSRF } from "@/back-end/server-actions/auth-actions";
 import type { ITestThrowErrorButtonProps } from "@/front-end/components/test/test-throw-error-button/types";
 
 export default function TestThrowErrorButton({
@@ -15,7 +15,7 @@ export default function TestThrowErrorButton({
   // fails with "Server Functions cannot be called during initial render"). use() +
   // useState(() => action()) hits that path; call the action after mount instead.
   useEffect(() => {
-    void isAdminSessionServerAction().then(setIsAdmin);
+    void isAdminSessionSRF().then(setIsAdmin);
   }, []);
 
   if (shouldRunAction) {

@@ -5,7 +5,7 @@ import { Select as SelectPrimitive } from "radix-ui";
 import { useState } from "react";
 import { useUpdateEffect } from "react-use";
 import { toast } from "sonner";
-import { getTransactionsServerAction } from "@/back-end/server-actions/transaction-actions";
+import { getTransactionsSRF } from "@/back-end/server-actions/transaction-actions";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import type {
   IPaginationData,
@@ -102,7 +102,7 @@ export default function TransactionsTableLayout({
   const updateTransactionsTableLayout = async (
     transactionParams: Partial<IGetTransactionsParams>,
   ) => {
-    const response = await getTransactionsServerAction({
+    const response = await getTransactionsSRF({
       ...transactionParams,
       isRecurring: isRecurringOnly,
     });

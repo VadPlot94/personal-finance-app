@@ -1,15 +1,12 @@
 import "server-only";
 import type { Transaction } from "@prisma/client";
-import { cacheLife, cacheTag } from "next/cache";
 import { throwValidationError } from "@/back-end/common/errors";
-import { transactionsTag } from "@/back-end/DAL/cache/cache-tags";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
-import type { ICreateTransactionDTOInput } from "@/back-end/dto-models/transaction-dto.model";
-import {
-  mapCreateTransactionInputToDBTransaction,
-  mapGetTransactionsForCategoryInputToParams,
-  mapGetTransactionsInputToDBTransactionsParams,
-} from "@/back-end/mappers/transaction-mapper";
+import type {
+  ICreateTransactionDTOInput,
+  ICreateTransactionDTOOutput,
+} from "@/back-end/dto-model-types/transaction-dto-model.type";
+import transactionMapper from "@/back-end/mappers/transaction-mapper";
 import type {
   TransactionType,
   TransactionUICategory,
@@ -21,142 +18,130 @@ import type {
 } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
-export async function getTransactions(
-  data: Partial<IGetTransactionsParams> | undefined,
-  userId: string,
-): Promise<ITransactionDataResponse> {
-  "use cache";
-  cacheTag(transactionsTag(userId));
-  cacheLife("minutes");
+class TransactionDbService {
+  public async getTransactions(
+    data: Partial<IGetTransactionsParams> | undefined,
+    userId: string,
+  ): Promise<ITransactionDataResponse> {
+    const response = await transactionRepository.getTransactions({
+      ...transactionMapper.mapGetTransactionsInputToDBTransactionsParams(data),
+      userId,
+    });
 
-  return await transactionRepository.getTransactions({
-    ...mapGetTransactionsInputToDBTransactionsParams(data),
-    userId,
-  });
-}
+    return transactionMapper.mapGetTransactionsToOutput(response);
+  }
 
-export async function getMonthlyExpensesByCategory(
-  userId: string,
-): Promise<ITransactionsForCategoryData[]> {
-  "use cache";
-  cacheTag(transactionsTag(userId));
-  cacheLife("minutes");
+  public async getMonthlyExpensesByCategory(
+    userId: string,
+  ): Promise<ITransactionsForCategoryData[]> {
+    const expenses =
+      await transactionRepository.getMonthlyExpensesByCategory(userId);
 
-  const expenses =
-    await transactionRepository.getMonthlyExpensesByCategory(userId);
+    return transactionMapper.mapMonthlyExpensesByCategoryToOutput(expenses);
+  }
 
-  const result: Record<string, Transaction[]> = {};
+  public async createTransaction(
+    formData: ICreateTransactionDTOInput,
+    userId: string,
+  ): Promise<ICreateTransactionDTOOutput> {
+    this.validateCreateTransactionFormData(formData);
 
-  expenses.forEach((transaction) => {
-    const category = transaction.category;
-    if (!result[category]) {
-      result[category] = [];
+    const transactionModel =
+      transactionMapper.mapCreateTransactionInputToDBTransaction(
+        formData,
+      ) as Omit<Transaction, "id">;
+
+    const response = await transactionRepository.createTransaction({
+      ...transactionModel,
+      userId,
+    });
+
+    return transactionMapper.mapCreateDBTransactionToOutput(response);
+  }
+
+  public async deleteRecurring(
+    id: string | null | undefined,
+    userId: string,
+  ): Promise<boolean> {
+    if (!id) {
+      const zodErrorResult = validationService.createCustomZodIssueResult(
+        "id",
+        "ID is required for delete",
+      );
+      throwValidationError(zodErrorResult);
     }
-    result[category].push(transaction);
-  });
 
-  return Object.entries(result).map(([category, transactions]) => ({
-    category: category as TransactionUICategory,
-    transactions,
-  }));
-}
+    const idStr = id as string;
 
-export async function createTransaction(
-  formData: ICreateTransactionDTOInput,
-  userId: string,
-): Promise<Transaction> {
-  validateCreateTransactionFormData(formData);
-
-  const transactionModel = mapCreateTransactionInputToDBTransaction(
-    formData,
-  ) as Omit<Transaction, "id">;
-
-  const response = await transactionRepository.createTransaction({
-    ...transactionModel,
-    userId,
-  });
-
-  return response;
-}
-
-export async function deleteRecurring(
-  id: string | null | undefined,
-  userId: string,
-): Promise<boolean> {
-  if (!id) {
-    const zodErrorResult = validationService.createCustomZodIssueResult(
-      "id",
-      "ID is required for delete",
-    );
-    throwValidationError(zodErrorResult);
-  }
-
-  const idStr = id as string;
-
-  const deleted = await transactionRepository.deleteIfOwnedRecurring(
-    idStr,
-    userId,
-  );
-
-  if (!deleted) {
-    const zodErrorResult = validationService.createCustomZodIssueResult(
-      "id",
-      "Transaction not found, not recurring",
-    );
-    throwValidationError(zodErrorResult);
-  }
-
-  return deleted;
-}
-
-export async function getTransactionsForCategory(
-  data: Partial<IGetTransactionsParams> | undefined,
-  userId: string,
-): Promise<ITransactionsForCategoryData[]> {
-  const { categories, transactionsCount } =
-    mapGetTransactionsForCategoryInputToParams(data!);
-
-  if (!categories || categories.length === 0) {
-    return [];
-  }
-
-  if (transactionsCount <= 0) {
-    const zodErrorResult = validationService.createCustomZodIssueResult(
-      "transactionsCount",
-      "Transactions count must be greater than zero",
-    );
-    throwValidationError(zodErrorResult);
-  }
-
-  const categoryPromises = categories.map(async (category) => {
-    const response = await getTransactions(
-      { category, transactionsCount } as Partial<IGetTransactionsParams>,
+    const deleted = await transactionRepository.deleteIfOwnedRecurring(
+      idStr,
       userId,
     );
-    return {
-      category,
-      transactions: response.transactions,
-    } as ITransactionsForCategoryData;
-  });
 
-  return await Promise.all(categoryPromises);
+    if (!deleted) {
+      const zodErrorResult = validationService.createCustomZodIssueResult(
+        "id",
+        "Transaction not found, not recurring",
+      );
+      throwValidationError(zodErrorResult);
+    }
+
+    return deleted;
+  }
+
+  public async getTransactionsForCategory(
+    data: Partial<IGetTransactionsParams> | undefined,
+    userId: string,
+  ): Promise<ITransactionsForCategoryData[]> {
+    const { categories, transactionsCount } =
+      transactionMapper.mapGetTransactionsForCategoryInputToParams(data!);
+
+    if (!categories || categories.length === 0) {
+      return [];
+    }
+
+    if (transactionsCount <= 0) {
+      const zodErrorResult = validationService.createCustomZodIssueResult(
+        "transactionsCount",
+        "Transactions count must be greater than zero",
+      );
+      throwValidationError(zodErrorResult);
+    }
+
+    const categoryPromises = categories.map(async (category) => {
+      const response = await this.getTransactions(
+        { category, transactionsCount } as Partial<IGetTransactionsParams>,
+        userId,
+      );
+      return {
+        category: category as TransactionUICategory,
+        transactions: response.transactions,
+      } as ITransactionsForCategoryData;
+    });
+
+    const items = await Promise.all(categoryPromises);
+    return transactionMapper.mapGetTransactionsForCategoryToOutput(items);
+  }
+
+  private validateCreateTransactionFormData(
+    formData: ICreateTransactionDTOInput,
+  ): void {
+    const validationData = {
+      transactionType: formData.get("transactionType") as
+        | TransactionType
+        | undefined,
+      category: formData.get("category") as TransactionUICategory | undefined,
+      recipientOrSender: formData.get("recipientOrSender")?.toString() || "",
+      amount: formData.get("amount")?.toString() || "",
+      date: formData.get("date")?.toString() || "",
+    };
+
+    const validationResult =
+      validationService.validateCreateTransactionSchema(validationData);
+
+    throwValidationError(validationResult);
+  }
 }
 
-function validateCreateTransactionFormData(
-  formData: ICreateTransactionDTOInput,
-): void {
-  const validationData = {
-    transactionType: formData.get("transactionType") as
-      | TransactionType
-      | undefined,
-    category: formData.get("category") as TransactionUICategory | undefined,
-    recipientOrSender: formData.get("recipientOrSender")?.toString() || "",
-    amount: formData.get("amount")?.toString() || "",
-    date: formData.get("date")?.toString() || "",
-  };
-
-  const validationResult =
-    validationService.validateCreateTransactionSchema(validationData);
-
-  throwValidationError(validationResult);
-}
+const transactionDbService = new TransactionDbService();
+export default transactionDbService;

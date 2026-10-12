@@ -8,7 +8,7 @@ import type {
 } from "@/shared/services/types";
 
 export class TransactionRepository extends BaseRepository<"transaction"> {
-  constructor() {
+  public constructor() {
     super(prisma.transaction);
   }
 
@@ -105,7 +105,7 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
     return expenses as Transaction[];
   }
 
-  async getRecent(limit = 10, userId: string): Promise<Transaction[]> {
+  public async getRecent(limit = 10, userId: string): Promise<Transaction[]> {
     return this.findMany({
       where: { userId },
       orderBy: { date: "desc" },
@@ -123,7 +123,7 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
     });
   }
 
-  async getByCategory(
+  public async getByCategory(
     category: string,
     userId: string,
   ): Promise<Transaction[]> {

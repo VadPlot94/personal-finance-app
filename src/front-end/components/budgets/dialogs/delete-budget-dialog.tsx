@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { deleteBudgetServerAction } from "@/back-end/server-actions/budget-actions";
+import { deleteBudgetSRF } from "@/back-end/server-actions/budget-actions";
 import type { IDeleteBudgetDialogProps } from "@/front-end/components/budgets/types";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
 
@@ -11,7 +11,7 @@ export function DeleteBudgetDialog({
   setDialogOpen,
 }: IDeleteBudgetDialogProps) {
   const handleBudgetDelete = async (): Promise<void> => {
-    const response = await deleteBudgetServerAction(budget?.id);
+    const response = await deleteBudgetSRF(budget?.id);
     if (response?.success) {
       toast.success("Success", {
         description: response.message || "OK",

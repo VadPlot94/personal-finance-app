@@ -6,8 +6,6 @@ import { CustomError } from "@/back-end/common/errors";
 import { authEnv } from "@/back-end/config/auth-env";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { setTestAppData } from "@/back-end/prisma/seed";
-import { validationObjectWrapper } from "@/back-end/server-actions/common";
-import type { ServerActionResult } from "@/back-end/server-actions/types";
 import { auth } from "@/lib/auth";
 import validationService from "@/shared/services/validation.service";
 
@@ -28,6 +26,74 @@ class AuthService {
       return await this.authorizeUser(validCredentials);
     }
     return null;
+  }
+
+  public getValidCredentials(
+    credentials: Record<string, unknown> | undefined,
+    schema: "signin" | "register",
+  ): { email: string; password: string; name?: string } | null {
+    const email =
+      typeof credentials?.email === "string"
+        ? credentials.email.trim()
+        : undefined;
+    const password =
+      typeof credentials?.password === "string"
+        ? credentials.password
+        : undefined;
+    const name =
+      typeof credentials?.name === "string" ? credentials.name : undefined;
+
+    if (!email || !password) {
+      return null;
+    }
+
+    // Validate credentials using validation service
+    const validationResult = validationService.validateAuthSchema(
+      { email, password, name },
+      schema,
+    );
+
+    if (!validationResult.success) {
+      return null;
+    }
+
+    return { email, password, name };
+  }
+
+  public async getSessionOrRedirectToLoginPage() {
+    const session = await this.getAppSession();
+
+    if (!session?.user?.id) {
+      redirect("/login");
+    }
+
+    return session;
+  }
+
+  /**
+   * Returns the current authenticated session.
+   * Throws `CustomError("Unauthorized")` if the user is not authenticated.
+   * Use `session.user.id` to obtain the current user's id for user-scoped
+   * operations (get/update/delete) to restrict access to the user's data.
+   * @returns {Session} session object containing user information
+   * @throws {CustomError} when the user is not authenticated
+   */
+  public async getAuthenticatedSession(): Promise<Session> {
+    const session = await this.getAppSession();
+
+    if (!session?.user?.id) {
+      throw new CustomError("Unauthorized");
+    }
+
+    return session;
+  }
+
+  public isAdminUser(
+    email: string | undefined,
+    password: string | undefined,
+  ): boolean {
+    const { email: adminEmail, password: adminPassword } = authEnv;
+    return email === adminEmail && password === adminPassword;
   }
 
   private async authorizeUser(validCredentials: {
@@ -105,91 +171,8 @@ class AuthService {
     };
   }
 
-  public getValidCredentials(
-    credentials: Record<string, unknown> | undefined,
-    schema: "signin" | "register",
-  ): { email: string; password: string; name?: string } | null {
-    const email =
-      typeof credentials?.email === "string"
-        ? credentials.email.trim()
-        : undefined;
-    const password =
-      typeof credentials?.password === "string"
-        ? credentials.password
-        : undefined;
-    const name =
-      typeof credentials?.name === "string" ? credentials.name : undefined;
-
-    if (!email || !password) {
-      return null;
-    }
-
-    // Validate credentials using validation service
-    const validationResult = validationService.validateAuthSchema(
-      { email, password, name },
-      schema,
-    );
-
-    if (!validationResult.success) {
-      return null;
-    }
-
-    return { email, password, name };
-  }
-
-  public async getSessionOrRedirectToLoginPage() {
-    const session = await this.getAppSession();
-
-    if (!session?.user?.id) {
-      redirect("/login");
-    }
-
-    return session;
-  }
-
-  /**
-   * Returns the current authenticated session.
-   * Throws `CustomError("Unauthorized")` if the user is not authenticated.
-   * Use `session.user.id` to obtain the current user's id for user-scoped
-   * operations (get/update/delete) to restrict access to the user's data.
-   * @returns {Session} session object containing user information
-   * @throws {CustomError} when the user is not authenticated
-   */
-  public async getAuthenticatedSession(): Promise<Session> {
-    const session = await this.getAppSession();
-
-    if (!session?.user?.id) {
-      throw new CustomError("Unauthorized");
-    }
-
-    return session;
-  }
-
   private async getAppSession() {
     return auth();
-  }
-
-  /**
-   * Authorization method called when the user logs in (not register).
-   * Wraps with validationObjectWrapper (requireAuth: false) for error logging.
-   * @returns ServerActionResult with user data if valid, otherwise null data
-   */
-  public async autorizeUser(
-    credentials: Partial<Record<"email" | "password", unknown>> | undefined,
-  ): Promise<ServerActionResult<Partial<User> | null>> {
-    return validationObjectWrapper<Partial<User> | null>(
-      "get",
-      async () => this.authUser("signin", credentials),
-      { requireAuth: false },
-    );
-  }
-
-  public isAdminUser(
-    email: string | undefined,
-    password: string | undefined,
-  ): boolean {
-    const { email: adminEmail, password: adminPassword } = authEnv;
-    return email === adminEmail && password === adminPassword;
   }
 }
 

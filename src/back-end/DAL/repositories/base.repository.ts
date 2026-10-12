@@ -6,12 +6,12 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   // biome-ignore lint/suspicious/noExplicitAny: Prisma delegate typing on generic BaseRepository
   protected model: any; // Key point: any here keeps generic Prisma delegates workable
 
-  constructor(model: PrismaClient[ModelName]) {
+  public constructor(model: PrismaClient[ModelName]) {
     this.model = model;
   }
 
   // ====================== CREATE ======================
-  async create<T extends Prisma.Args<PrismaClient[ModelName], "create">>(
+  public async create<T extends Prisma.Args<PrismaClient[ModelName], "create">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "create">> {
     return this.model.create(args) as Promise<
@@ -45,7 +45,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   }
 
   // ====================== FIND ======================
-  async findUnique<
+  public async findUnique<
     T extends Prisma.Args<PrismaClient[ModelName], "findUnique">,
   >(
     args: T,
@@ -53,34 +53,36 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
     return this.model.findUnique(args);
   }
 
-  async findFirst<T extends Prisma.Args<PrismaClient[ModelName], "findFirst">>(
+  public async findFirst<
+    T extends Prisma.Args<PrismaClient[ModelName], "findFirst">,
+  >(
     args?: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "findFirst"> | null> {
     return this.model.findFirst(args);
   }
 
-  async findMany<T extends Prisma.Args<PrismaClient[ModelName], "findMany">>(
-    args?: T,
-  ): Promise<Prisma.Result<PrismaClient[ModelName], T, "findMany">> {
+  public async findMany<
+    T extends Prisma.Args<PrismaClient[ModelName], "findMany">,
+  >(args?: T): Promise<Prisma.Result<PrismaClient[ModelName], T, "findMany">> {
     return this.model.findMany(args);
   }
 
   // ====================== UPDATE ======================
-  async update<T extends Prisma.Args<PrismaClient[ModelName], "update">>(
+  public async update<T extends Prisma.Args<PrismaClient[ModelName], "update">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "update">> {
     return this.model.update(args);
   }
 
   // ====================== DELETE ======================
-  async delete<T extends Prisma.Args<PrismaClient[ModelName], "delete">>(
+  public async delete<T extends Prisma.Args<PrismaClient[ModelName], "delete">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "delete">> {
     return this.model.delete(args);
   }
 
   // ====================== UPDATE OWNED ======================
-  async updateOwned(args: {
+  public async updateOwned(args: {
     where: Record<string, unknown>;
     data: unknown;
     select?: Record<string, boolean>;
@@ -99,20 +101,22 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
   }
 
   // ====================== DELETE OWNED ======================
-  async deleteOwned(args: { where: Record<string, unknown> }): Promise<number> {
+  public async deleteOwned(args: {
+    where: Record<string, unknown>;
+  }): Promise<number> {
     const result = await this.model.deleteMany({ where: args.where });
     return result?.count ?? 0;
   }
 
   // ====================== UPSERT ======================
-  async upsert<T extends Prisma.Args<PrismaClient[ModelName], "upsert">>(
+  public async upsert<T extends Prisma.Args<PrismaClient[ModelName], "upsert">>(
     args: T,
   ): Promise<Prisma.Result<PrismaClient[ModelName], T, "upsert">> {
     return this.model.upsert(args);
   }
 
   // ====================== COUNT ======================
-  async count<T extends Prisma.Args<PrismaClient[ModelName], "count">>(
+  public async count<T extends Prisma.Args<PrismaClient[ModelName], "count">>(
     args?: T,
   ): Promise<number> {
     return this.model.count(args) as Promise<number>;
@@ -122,7 +126,7 @@ export abstract class BaseRepository<ModelName extends keyof PrismaClient> {
    * Ensure that an object belongs to a specific user.
    * Uses the model's id and userId fields by default.
    */
-  async ensureDataOwnership(
+  public async ensureDataOwnership(
     id: string | null | undefined,
     userId: string,
     options?: {

@@ -20,6 +20,12 @@
       "recommended": true,
       "style": {
         "noNonNullAssertion": "off",
+        "useConsistentMemberAccessibility": {
+          "level": "error",
+          "options": {
+            "accessibility": "explicit"
+          }
+        },
         "useNamingConvention": {
           "level": "error",
           "options": {
@@ -49,6 +55,7 @@
         "noImgElement": "off"
       },
       "suspicious": {
+        "noConsole": "error",
         "noUnknownAtRules": "off"
       }
     },
@@ -63,5 +70,55 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/shared/services/logger.service.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/back-end/server-actions/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": {
+              "level": "error",
+              "options": {
+                "strictCase": false,
+                "conventions": [
+                  {
+                    "selector": {
+                      "kind": "interface"
+                    },
+                    "match": "I(.+)",
+                    "formats": ["PascalCase"]
+                  },
+                  {
+                    "selector": {
+                      "kind": "function",
+                      "scope": "global"
+                    },
+                    "match": "(.+)SRF",
+                    "formats": ["camelCase"]
+                  },
+                  {
+                    "selector": {
+                      "kind": "any"
+                    },
+                    "match": ".+"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

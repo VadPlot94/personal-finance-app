@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { registerUserServerAction } from "@/back-end/server-actions/auth-actions";
+import { registerUserSRF } from "@/back-end/server-actions/auth-actions";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import type { ILoginFormProps } from "@/front-end/components/login/types";
@@ -188,7 +188,7 @@ export default function LoginForm({
     event.preventDefault();
     setRegisterErrors(null);
 
-    const response = await registerUserServerAction({
+    const response = await registerUserSRF({
       email: formRegisterData?.email || "",
       password: formRegisterData?.password || "",
       name: formRegisterData?.name || "",

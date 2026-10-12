@@ -4,7 +4,7 @@ import { BaseRepository } from "@/back-end/DAL/repositories/base.repository";
 import prisma from "@/back-end/prisma/prisma-client";
 
 export class PotRepository extends BaseRepository<"pot"> {
-  constructor() {
+  public constructor() {
     super(prisma.pot);
   }
 
@@ -19,7 +19,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Get all pots (sorted by name)
    */
-  async getAll(userId: string): Promise<Pot[]> {
+  public async getAll(userId: string): Promise<Pot[]> {
     return this.findMany({
       where: { userId },
       orderBy: { name: "asc" },
@@ -38,7 +38,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Get pot by name
    */
-  async getByName(name: string, userId: string): Promise<Pot | null> {
+  public async getByName(name: string, userId: string): Promise<Pot | null> {
     return this.findFirst({
       where: { name, userId },
     });
@@ -68,7 +68,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Create a new pot
    */
-  async createPot(
+  public async createPot(
     data: {
       name: string;
       target: number;
@@ -93,7 +93,11 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Update the current amount in a pot (add/withdraw)
    */
-  async addToPot(id: string, amount: number, userId: string): Promise<Pot> {
+  public async addToPot(
+    id: string,
+    amount: number,
+    userId: string,
+  ): Promise<Pot> {
     return this.updateOwned({
       where: { id, userId },
       data: {
@@ -107,7 +111,7 @@ export class PotRepository extends BaseRepository<"pot"> {
   /**
    * Get progress for all pots (how much remains until the target)
    */
-  async getProgress(userId: string): Promise<
+  public async getProgress(userId: string): Promise<
     Array<{
       name: string;
       target: number;

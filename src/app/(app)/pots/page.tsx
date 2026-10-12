@@ -1,15 +1,15 @@
-import { ensureSessionServerAction } from "@/back-end/server-actions/auth-actions";
-import { getBalanceServerAction } from "@/back-end/server-actions/balance-actions";
-import { getAllPotsServerAction } from "@/back-end/server-actions/pot-actions";
+import { ensureSessionSRF } from "@/back-end/server-actions/auth-actions";
+import { getBalanceSRF } from "@/back-end/server-actions/balance-actions";
+import { getAllPotsSRF } from "@/back-end/server-actions/pot-actions";
 import Pots from "@/front-end/components/pots/pots";
 import potService from "@/shared/services/pot.service";
 
 export default async function PotsPage() {
-  await ensureSessionServerAction();
+  await ensureSessionSRF();
 
   const [potsResult, balanceResult] = await Promise.all([
-    getAllPotsServerAction(),
-    getBalanceServerAction(),
+    getAllPotsSRF(),
+    getBalanceSRF(),
   ]);
   const pots = potsResult.data ?? [];
   const balance = balanceResult.data;

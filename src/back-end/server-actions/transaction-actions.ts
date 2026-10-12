@@ -1,91 +1,35 @@
 "use server";
 import "server-only";
 
-import { updateTag } from "next/cache";
-import type { Session } from "next-auth";
-import { balanceTag, transactionsTag } from "@/back-end/DAL/cache/cache-tags";
-import { updateBalanceForTransaction } from "@/back-end/DAL/db-services/balance-db.service";
-import {
-  createTransaction,
-  deleteRecurring,
-  getMonthlyExpensesByCategory,
-  getTransactions,
-  getTransactionsForCategory,
-} from "@/back-end/DAL/db-services/transaction-db.service";
-import type { ICreateTransactionDTOOutput } from "@/back-end/dto-models/transaction-dto.model";
-import { validationObjectWrapper } from "@/back-end/server-actions/common";
-import type { ServerActionResult } from "@/back-end/server-actions/types";
+import transactionController from "@/back-end/controllers/transaction-controller";
 import type {
   IGetTransactionForCategoryParams,
   IGetTransactionsParams,
-  ITransactionDataResponse,
-  ITransactionsForCategoryData,
 } from "@/shared/services/types";
 
-export async function createTransactionServerAction(
+export async function createTransactionSRF(
   _prevState: { success: boolean } | null,
   formData: FormData,
-): Promise<ServerActionResult<ICreateTransactionDTOOutput>> {
-  return await validationObjectWrapper<ICreateTransactionDTOOutput>(
-    "create",
-    async (session?: Session) => {
-      const userId = session?.user?.id!;
-      const transaction = await createTransaction(formData, userId);
-      await updateBalanceForTransaction(userId, transaction.amount);
-      syncChanges(userId);
-      return { id: transaction.id };
-    },
-  );
+) {
+  return transactionController.createTransaction(_prevState, formData);
 }
 
-export async function getTransactionsServerAction(
+export async function getTransactionsSRF(
   data?: Partial<IGetTransactionsParams>,
-): Promise<ServerActionResult<ITransactionDataResponse>> {
-  return await validationObjectWrapper<ITransactionDataResponse>(
-    "get",
-    async (session?: Session) => {
-      return await getTransactions(data, session?.user?.id!);
-    },
-  );
+) {
+  return transactionController.getTransactions(data);
 }
 
-export async function getTransactionsMonthlyExpensesByCategoryServerAction(): Promise<
-  ServerActionResult<ITransactionsForCategoryData[]>
-> {
-  return await validationObjectWrapper<ITransactionsForCategoryData[]>(
-    "get",
-    async (session?: Session) => {
-      return await getMonthlyExpensesByCategory(session?.user?.id!);
-    },
-  );
+export async function getTransactionsMonthlyExpensesByCategorySRF() {
+  return transactionController.getTransactionsMonthlyExpensesByCategory();
 }
 
-export async function getTransactionsForCategoryServerAction(
+export async function getTransactionsForCategorySRF(
   data?: Partial<IGetTransactionForCategoryParams>,
-): Promise<ServerActionResult<ITransactionsForCategoryData[]>> {
-  return await validationObjectWrapper<ITransactionsForCategoryData[]>(
-    "get",
-    async (session?: Session) => {
-      return await getTransactionsForCategory(data, session?.user?.id!);
-    },
-  );
+) {
+  return transactionController.getTransactionsForCategory(data);
 }
 
-export async function deleteRecurringServerAction(
-  id: string,
-): Promise<ServerActionResult> {
-  return await validationObjectWrapper<boolean>(
-    "delete",
-    async (session?: Session) => {
-      const userId = session?.user?.id!;
-      const result = await deleteRecurring(id, userId);
-      syncChanges(userId);
-      return result;
-    },
-  );
-}
-
-function syncChanges(userId: string) {
-  updateTag(transactionsTag(userId));
-  updateTag(balanceTag(userId));
+export async function deleteRecurringSRF(id: string) {
+  return transactionController.deleteRecurring(id);
 }

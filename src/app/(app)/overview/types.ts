@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import type { IBalanceDTOOutput } from "@/back-end/dto-models/balance-dto.model";
 
 export interface IOverviewLayoutProps {
   transactions: ReactNode;
@@ -12,5 +11,10 @@ export interface IOverviewLayoutProps {
 }
 
 export interface IOverviewBalanceCardsProps {
-  balance?: IBalanceDTOOutput;
+  balance?: {
+    id: string;
+    current: number;
+    income: number;
+    expenses: number;
+  };
 }

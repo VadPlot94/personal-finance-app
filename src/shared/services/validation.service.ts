@@ -15,80 +15,9 @@ import type {
 } from "@/shared/services/types";
 
 class ValidationService {
-  private getCommonCashNumberSchema(
-    minValue: number | undefined,
-  ): z.ZodType<string> {
-    return z
-      .string()
-      .trim()
-      .refine((val) => val !== "", { message: "" })
-      .pipe(
-        z
-          .string()
-          .regex(/^[1-9]\d*$/, {
-            message: "Please enter valid cash (only digits, no leading zero)",
-          })
-          .refine(
-            (val) => {
-              const num = Number(val);
-              return !Number.isNaN(num);
-            },
-            { message: "Value must be a valid number" },
-          )
-          .refine(
-            (val) => {
-              return Number(val) >= (minValue || 0);
-            },
-            { message: `Value can not be less then total: ${minValue || 0}` },
-          ),
-      );
-  }
-
-  private getCommonNameSchema(excludedNames?: string[]): z.ZodType<string> {
-    return z
-      .string()
-      .trim()
-      .refine((val) => val !== "", { message: "" })
-      .pipe(
-        z
-          .string()
-          .min(3, {
-            message: "The value must be at least 3 characters long",
-          })
-          .max(constants.MaxPotNameCharacters, {
-            message: `The value is too long (max. ${constants.MaxPotNameCharacters} characters)`,
-          })
-          .regex(/^[a-zA-Z0-9\s\-_]+$/, {
-            message:
-              "Only letters, numbers, spaces, hyphens and underscores are allowed",
-          })
-          .refine((val) => !excludedNames?.includes(val), {
-            message: "Such value already exist",
-          }),
-      );
-  }
-
   private addBudgetSchema = z.object({
     maximum: this.getCommonCashNumberSchema(0),
   });
-
-  private getPotNameSchema(potNames: string[]): z.ZodType<string> {
-    return this.getCommonNameSchema(potNames);
-  }
-
-  private getTotalSchema(
-    target: number,
-    oldTotal: number,
-    currentBalance: number,
-  ) {
-    return this.getCommonCashNumberSchema(0)
-      .refine((val) => Number(val) + oldTotal <= currentBalance, {
-        message: `Value cannot exceed 'Available Balance' (${currentBalance} $)`,
-      })
-      .refine((val) => Number(val) + oldTotal <= target, {
-        message: `Value cannot exceed 'Target'/'Total' (${target} $)`,
-      });
-  }
 
   private registerFormSchema = z.object({
     email: z.string().email("Invalid email address"),
@@ -313,6 +242,77 @@ class ValidationService {
 
     const result = schema.safeParse(mockValue ?? "");
     return result as z.ZodSafeParseError<T>;
+  }
+
+  private getCommonCashNumberSchema(
+    minValue: number | undefined,
+  ): z.ZodType<string> {
+    return z
+      .string()
+      .trim()
+      .refine((val) => val !== "", { message: "" })
+      .pipe(
+        z
+          .string()
+          .regex(/^[1-9]\d*$/, {
+            message: "Please enter valid cash (only digits, no leading zero)",
+          })
+          .refine(
+            (val) => {
+              const num = Number(val);
+              return !Number.isNaN(num);
+            },
+            { message: "Value must be a valid number" },
+          )
+          .refine(
+            (val) => {
+              return Number(val) >= (minValue || 0);
+            },
+            { message: `Value can not be less then total: ${minValue || 0}` },
+          ),
+      );
+  }
+
+  private getCommonNameSchema(excludedNames?: string[]): z.ZodType<string> {
+    return z
+      .string()
+      .trim()
+      .refine((val) => val !== "", { message: "" })
+      .pipe(
+        z
+          .string()
+          .min(3, {
+            message: "The value must be at least 3 characters long",
+          })
+          .max(constants.MaxPotNameCharacters, {
+            message: `The value is too long (max. ${constants.MaxPotNameCharacters} characters)`,
+          })
+          .regex(/^[a-zA-Z0-9\s\-_]+$/, {
+            message:
+              "Only letters, numbers, spaces, hyphens and underscores are allowed",
+          })
+          .refine((val) => !excludedNames?.includes(val), {
+            message: "Such value already exist",
+          }),
+      );
+  }
+
+  private getPotNameSchema(potNames: string[]): z.ZodType<string> {
+    return this.getCommonNameSchema(potNames);
+  }
+
+  private getTotalSchema(
+    target: number,
+    oldTotal: number,
+    currentBalance: number,
+  ) {
+    return this.getCommonCashNumberSchema(0)
+      .refine((val) => Number(val) + oldTotal <= currentBalance, {
+        message: `Value cannot exceed 'Available Balance' (${currentBalance} $)`,
+      })
+      .refine((val) => Number(val) + oldTotal <= target, {
+        message: `Value cannot exceed 'Target'/'Total' (${target} $)`,
+      });
   }
 
   private logZodErrors(error: z.ZodError, context: string) {

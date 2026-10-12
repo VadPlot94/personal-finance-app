@@ -1,59 +1,61 @@
 import "server-only";
 import type { Balance } from "@prisma/client";
-import { cacheLife, cacheTag } from "next/cache";
-import { balanceTag } from "@/back-end/DAL/cache/cache-tags";
 import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
+import type { IBalanceDTOOutput } from "@/back-end/dto-model-types/balance-dto-model.type";
+import balanceMapper from "@/back-end/mappers/balance-mapper";
 import prisma from "@/back-end/prisma/prisma-client";
 
-export async function getBalance(userId: string): Promise<Balance> {
-  "use cache";
-  cacheTag(balanceTag(userId));
-  cacheLife("minutes");
+class BalanceDbService {
+  public async getBalance(userId: string): Promise<IBalanceDTOOutput> {
+    const currentBalance = await balanceRepository.getCurrent(userId);
+    if (currentBalance) {
+      return balanceMapper.mapBalanceToOutput(currentBalance);
+    }
 
-  const currentBalance = await balanceRepository.getCurrent(userId);
-  if (currentBalance) {
-    return currentBalance;
+    const recalculated = await this.recalculateBalance(userId);
+    return balanceMapper.mapBalanceToOutput(recalculated);
   }
 
-  return await recalculateBalance(userId);
+  public async recalculateBalance(userId: string): Promise<Balance> {
+    const incomeResult = await prisma.transaction.aggregate({
+      where: { userId, amount: { gt: 0 } },
+      _sum: { amount: true },
+    });
+
+    const expensesResult = await prisma.transaction.aggregate({
+      where: { userId, amount: { lt: 0 } },
+      _sum: { amount: true },
+    });
+
+    const income = incomeResult._sum.amount ?? 0;
+    const expenses = Math.abs(expensesResult._sum.amount ?? 0);
+    const current = income - expenses;
+
+    return await balanceRepository.upsertBalance({
+      userId,
+      current,
+      income,
+      expenses,
+    });
+  }
+
+  public async updateIncomeBalance(userId: string): Promise<Balance> {
+    return await this.recalculateBalance(userId);
+  }
+
+  public async updateExpensesBalance(userId: string): Promise<Balance> {
+    return await this.recalculateBalance(userId);
+  }
+
+  public async updateBalanceForTransaction(
+    userId: string,
+    amount: number,
+  ): Promise<Balance> {
+    return amount >= 0
+      ? await this.updateIncomeBalance(userId)
+      : await this.updateExpensesBalance(userId);
+  }
 }
 
-export async function recalculateBalance(userId: string): Promise<Balance> {
-  const incomeResult = await prisma.transaction.aggregate({
-    where: { userId, amount: { gt: 0 } },
-    _sum: { amount: true },
-  });
-
-  const expensesResult = await prisma.transaction.aggregate({
-    where: { userId, amount: { lt: 0 } },
-    _sum: { amount: true },
-  });
-
-  const income = incomeResult._sum.amount ?? 0;
-  const expenses = Math.abs(expensesResult._sum.amount ?? 0);
-  const current = income - expenses;
-
-  return await balanceRepository.upsertBalance({
-    userId,
-    current,
-    income,
-    expenses,
-  });
-}
-
-export async function updateIncomeBalance(userId: string): Promise<Balance> {
-  return await recalculateBalance(userId);
-}
-
-export async function updateExpensesBalance(userId: string): Promise<Balance> {
-  return await recalculateBalance(userId);
-}
-
-export async function updateBalanceForTransaction(
-  userId: string,
-  amount: number,
-): Promise<Balance> {
-  return amount >= 0
-    ? await updateIncomeBalance(userId)
-    : await updateExpensesBalance(userId);
-}
+const balanceDbService = new BalanceDbService();
+export default balanceDbService;

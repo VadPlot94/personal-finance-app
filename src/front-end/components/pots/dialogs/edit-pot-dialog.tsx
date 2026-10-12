@@ -10,8 +10,8 @@ import {
 } from "react";
 import { toast } from "sonner";
 import {
-  createPotServerAction,
-  editPotServerAction,
+  createPotSRF,
+  editPotSRF,
 } from "@/back-end/server-actions/pot-actions";
 import { PotsContext } from "@/front-end/components/pots/pots";
 import type { IEditPotDialogProps } from "@/front-end/components/pots/types";
@@ -44,7 +44,7 @@ export function EditPotDialog({
   setDialogOpen,
 }: IEditPotDialogProps) {
   const serverActionPotFn = useMemo(
-    () => (pot?.id ? editPotServerAction : createPotServerAction),
+    () => (pot?.id ? editPotSRF : createPotSRF),
     [pot?.id],
   );
   const [formResultState, formAction, isPending] = useActionState(

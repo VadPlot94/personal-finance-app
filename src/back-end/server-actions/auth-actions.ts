@@ -3,46 +3,26 @@ import "server-only";
 
 import type { User } from "@prisma/client";
 import type { Session } from "next-auth";
-import authService from "@/back-end/DAL/db-services/auth.service";
-import { validationObjectWrapper } from "@/back-end/server-actions/common";
-import type { ServerActionResult } from "@/back-end/server-actions/types";
+import authController from "@/back-end/controllers/auth-controller";
+import type { ValidationResponse } from "@/back-end/controllers/types";
 
-export async function registerUserServerAction(
+export async function registerUserSRF(
   credentials: unknown,
-): Promise<ServerActionResult<Partial<User> | null>> {
-  return await validationObjectWrapper<Partial<User> | null>(
-    "create",
-    async () =>
-      authService.authUser(
-        "register",
-        credentials as unknown as
-          | Partial<Record<"name" | "email" | "password", unknown>>
-          | undefined,
-      ),
-    { requireAuth: false },
-  );
+): Promise<ValidationResponse<Partial<User> | null>> {
+  return authController.registerUser(credentials);
 }
 
 /** RSC helper: redirects to /login when unauthenticated. */
-export async function ensureSessionServerAction(): Promise<Session> {
-  return authService.getSessionOrRedirectToLoginPage();
+export async function ensureSessionSRF(): Promise<Session> {
+  return authController.ensureSession();
 }
 
 /** RSC helper for login page: returns session if authenticated, otherwise null. */
-export async function getOptionalSessionServerAction(): Promise<Session | null> {
-  try {
-    return await authService.getAuthenticatedSession();
-  } catch {
-    return null;
-  }
+export async function getOptionalSessionSRF(): Promise<Session | null> {
+  return authController.getOptionalSession();
 }
 
 /** True when the current session user was persisted as admin (User.isAdmin). */
-export async function isAdminSessionServerAction(): Promise<boolean> {
-  try {
-    const session = await authService.getAuthenticatedSession();
-    return Boolean(session.user?.isAdmin);
-  } catch {
-    return false;
-  }
+export async function isAdminSessionSRF(): Promise<boolean> {
+  return authController.isAdminSession();
 }
