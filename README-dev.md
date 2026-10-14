@@ -71,6 +71,19 @@ Exception: `?category=` is only a deep-link from Budgets (`TransactionsTile` →
 
 ---
 
+## Testing
+
+Unit and component tests use **Vitest** + **React Testing Library**.
+
+- Config: [`vitest.config.mts`](vitest.config.mts), setup: [`vitest.setup.ts`](vitest.setup.ts)
+- Test files: `tests/<file-under-test>.tests.ts(x)` next to the module (see `.cursor/rules/unit-tests.mdc`)
+- Run watch: `npm run test`
+- Run once: `npm run test:run`
+
+Async Server Components are not covered by Vitest (use e2e later if needed). Controllers/DAL integration tests are out of scope for this setup.
+
+---
+
 ## Debug
 
 Front-end debugging:
@@ -103,7 +116,7 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 ## Todo / Roadmap
 
 - sourcemap front debug problem
-- tests
+- tests — unit + component (Vitest + RTL) started; e2e / Playwright later
 - translations
 - calculate balance in right way
 - add route handlers (only if a public HTTP API is needed — not for transaction table filters; those stay on Server Actions)

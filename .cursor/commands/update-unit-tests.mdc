@@ -1,0 +1,121 @@
+# Update Unit Tests
+
+**Sole place** for create / update / change / delete of unit/component tests (Vitest + RTL). Conventions (layout, F.I.R.S.T., mocks): [`.cursor/rules/unit-tests.mdc`](../rules/unit-tests.mdc).
+
+## When to run (user intent)
+
+Treat these (and close paraphrases, RU/EN) as intent to use this command:
+
+- `/update-unit-tests`
+- “добавь тесты” / “напиши тесты” / “создай тесты” / “покрой тестами”
+- “update tests” / “add tests” / “write tests” / “create unit tests”
+- “тестами новую фичу” / “tests for this feature” / “cover this with tests”
+- “обнови тесты под новую логику” / “fix broken tests” / “update tests for the new behavior”
+- “не хватает тестов” / “missing tests” / “test coverage for …”
+- “удали тесты” / “remove tests” / “delete obsolete tests”
+
+If the user only asks to **run** tests (`npm run test:run`, “прогони тесты”) — run and report; do **not** create/edit/delete test files.
+
+## Mandatory gate — ask before any write
+
+**Do not** create, change, or delete any test file until the user answers both:
+
+1. **Scope** — what to cover? Offer and wait:
+   - **all** relevant gaps in the project / feature area
+   - **current diff** only (changed files)
+   - **specific** module(s) / component(s) / service(s) they name
+2. **Approval** — explicit go-ahead to start create/update/delete under that scope (e.g. “да, делай”, “go”, “approved”).
+
+If scope or approval is missing or ambiguous — ask and **stop**. No edits yet.
+
+The user may always limit work to a subset (one component, one service, current diff) — never assume “everything”.
+
+## Goal (after approval)
+
+1. Add tests for new functionality when missing or thin (within approved scope).
+2. Update existing tests for new logic when needed.
+3. Create new test files/cases where gaps remain.
+4. Delete obsolete tests only if in scope and approved.
+5. Verify with `npm run test:run`.
+
+## Workflow
+
+Copy and track:
+
+```
+Update Unit Tests:
+- [ ] Step 0: Ask scope + approval (stop until answered)
+- [ ] Step 1: Map modules → existing tests
+- [ ] Step 2: Update stale tests for new logic
+- [ ] Step 3: Add missing tests (new files / cases)
+- [ ] Step 4: Delete obsolete (only if approved)
+- [ ] Step 5: npm run test:run
+- [ ] Step 6: Report
+```
+
+### Step 0 — Scope + approval
+
+Ask clearly, then wait. Example:
+
+> Scope for tests: (a) all gaps for this feature, (b) current git diff only, or (c) specific paths/components you name?  
+> Reply with scope + confirm I should start create/update/delete.
+
+### Step 1 — Map coverage
+
+1. For each in-scope module, find `tests/<file>.tests.ts(x)` per [unit-tests.mdc](../rules/unit-tests.mdc).
+2. Note missing / outdated / missing behaviors.
+
+### Step 2 — Update existing tests
+
+1. Align with current public API and behavior.
+2. Fix assertions for intentional logic changes.
+3. Remove obsolete cases that no longer apply (within scope).
+4. Public API only; AAA + F.I.R.S.T.
+
+### Step 3 — Create new tests
+
+1. Add `tests/` + `<name>.tests.ts(x)` when none exist.
+2. Happy path, edges, invalid input, errors.
+3. One logical condition per `it` when practical.
+4. Shared mocks → `src/{front-end|back-end|shared}/lib/test-utils/` as needed.
+5. Synthetic data only — never real credentials/secrets/env.
+
+### Step 4 — Delete
+
+Only if the user approved deletion and the file/case is obsolete and in scope.
+
+### Step 5 — Verify
+
+Run: `npm run test:run`
+
+On failure: fix tests or report product bugs. Do not weaken assertions just to go green.
+
+### Step 6 — Report
+
+```markdown
+# Update Unit Tests
+
+## Scope (approved)
+- …
+
+## Updated
+- …
+
+## Created
+- …
+
+## Deleted
+- …
+
+## test:run
+- pass | fail (summary)
+
+## Gaps left (if any)
+- …
+```
+
+## Rules
+
+- Follow [`.cursor/rules/unit-tests.mdc`](../rules/unit-tests.mdc).
+- May edit test files and `lib/test-utils` mocks after gate; avoid drive-by production refactors.
+- Do not invent a new test stack; use Vitest + RTL already in the project.

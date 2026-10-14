@@ -1,0 +1,103 @@
+---
+description: Unit and component testing conventions (Vitest + RTL, layout, F.I.R.S.T.)
+alwaysApply: true
+---
+
+# Testing Conventions
+
+Living rules for unit/component tests. Prefer matching the user’s style; if a preference conflicts with a hard constraint (security, correctness, Next.js/App Router), prioritize the constraint and note the trade-off.
+
+## Create / update / change / delete
+
+Rules for creating, updating, changing, or deleting unit/component tests: [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc).
+
+## Layout and naming
+
+- Place tests in a `tests/` folder **next to** the file under test (same directory level as that service/component/module). All tests for that level live inside `tests/`.
+- Test file name: `<name-of-file-under-test>.tests.ts` or `.tests.tsx`.
+- **One** test file per module under test (do not split one service/component across multiple test files).
+- Example: `src/front-end/services/finance.service.ts` → `src/front-end/services/tests/finance.service.tests.ts`
+- Example: `src/front-end/components/tile-header/tile-header.tsx` → `src/front-end/components/tile-header/tests/tile-header.tests.tsx`
+
+## Structure
+
+- Top-level `describe` = name of the service / class / component under test.
+- Nested `describe` blocks = each public method (or distinct behavior chunk if there are no methods).
+- Group tests with `describe` by method or behavior.
+- Prefer **one assertion / one condition per test** (one logical outcome per `it`).
+- Use **Arrange → Act → Assert**, and mark each phase with comments (`// Arrange`, `// Act`, `// Assert`). When setup and call are one expression, use `// Arrange & Act`.
+- Never call `private` / `protected` members directly — test only through the public API.
+
+```ts
+it("returns 0 when current is NaN", () => {
+  // Arrange & Act
+  const result = financeService.calculateProgressPercentage(
+    Number.NaN,
+    100,
+  );
+
+  // Assert
+  expect(result).toBe(0);
+});
+
+it("formats positive amounts with a plus sign", () => {
+  // Arrange
+  const amount = 12.5;
+
+  // Act
+  const result = transactionService.getTransactionAmount(amount);
+
+  // Assert
+  expect(result).toBe("+$12.50");
+});
+```
+
+
+## F.I.R.S.T.
+
+- **Fast** — milliseconds; no slow I/O that blocks regular local runs.
+- **Independent** — each test runs alone; order must not matter; no shared mutable state between tests.
+- **Repeatable** — same result every run; no dependence on clock, network, or machine environment.
+- **Self-validating** — clear pass/fail via assertions; no manual log or visual checks.
+- **Thorough** — happy path plus edges, invalid input, errors/exceptions (not only the ideal case).
+
+(Classic literature sometimes uses **Timely** for T; in this project prefer **Thorough** coverage as above.)
+
+## Mocks and data
+
+- Mock external services; **never** make real API / network / DB calls in unit/component tests.
+- Shared mocks/stubs used by multiple test files live under the matching layer:
+  - `src/front-end/lib/test-utils/`
+  - `src/back-end/lib/test-utils/`
+  - `src/shared/lib/test-utils/` (for shared-module tests)
+- Shared util names are free-form (not required to match `*.tests.ts`), e.g. `logger.service.mock.ts`, `fetch.mock.ts`, `db.stub.ts`, `component-name.mock.ts`.
+- Example: `src/shared/lib/test-utils/logger.service.mock.ts` for:
+
+```ts
+vi.mock("@/shared/services/logger.service", () => ({
+  default: {
+    logError: vi.fn(),
+    logInfo: vi.fn(),
+    logWarn: vi.fn(),
+  },
+}));
+```
+
+- **Never** use real credentials, admin accounts, secrets, `.env` values, or production-like sensitive data. Use synthetic fixture data only.
+
+```ts
+// ✅ GOOD — fake credentials
+validationService.validateSignInSchema({
+  email: "user@example.com",
+  password: "secret",
+});
+
+// ❌ BAD — real login / admin / secret material
+```
+
+## Stack and commands
+
+- Runner: Vitest; components: React Testing Library. See [readme-dev.md](../../readme-dev.md) Testing section.
+- Agents / CI / one-shot: `npm run test:run`
+- Local watch (humans): `npm run test`
+- Do **not** use `npm run test` in automated agent or CI flows — Vitest watch does not exit.

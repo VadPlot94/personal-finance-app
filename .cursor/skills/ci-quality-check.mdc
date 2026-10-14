@@ -21,7 +21,7 @@ CI Quality Check:
 - [ ] Step 0: Scope (git status + diff)
 - [ ] Step 1: npm run format-and-fix
 - [ ] Step 2: npm run build
-- [ ] Step 3: npm run test (if available)
+- [ ] Step 3: npm run test:run (if available)
 - [ ] Step 4: reviewer + tester agents
 - [ ] Step 5: Verdict report
 ```
@@ -46,9 +46,10 @@ Same fail-fast rule as lint.
 
 ### Step 3 — Test (if available)
 
-1. Check `package.json` → `scripts.test`.
-2. If present: run `npm run test`. Fail-fast on non-zero exit.
-3. If missing: record `tests skipped: none configured` and continue.
+1. Prefer `package.json` → `scripts["test:run"]` (one-shot Vitest). Fallback: `scripts.test` only if it is non-watch / exits on its own.
+2. If present: run `npm run test:run` (or the non-watch fallback). Fail-fast on non-zero exit.
+3. Do **not** use `npm run test` here — Vitest watch mode hangs in CI/agent runs.
+4. If neither one-shot script exists: record `tests skipped: none configured` and continue.
 
 ### Step 4 — Agents
 
@@ -66,7 +67,7 @@ Pass each agent:
 
 **Reviewer:** findings only (Critical / Suggestion / Nice to have). No source edits.
 
-**Tester:** report coverage gaps or needed tests. If no test script/framework: report skip — do **not** invent a full test stack unless the user asked for that separately.
+**Tester:** report only (gaps / failures). Tests are **run** in Step 3. Create / update / change / delete: [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc).
 
 ### Step 5 — Verdict
 

@@ -102,6 +102,8 @@ Open <http://localhost:3000> in your browser.
 | `npm run lint` | Run Biome lint checks |
 | `npm run format-and-fix` | Format code with Biome and lint checks |
 | `npm run format` | Light Format version - only code formatting (without for ex: import sorting) |
+| `npm run test` | Run Vitest in watch mode |
+| `npm run test:run` | Run Vitest once (CI / one-shot) |
 | `npm run prisma:generate` | Generate Prisma client |
 | `npm run prisma:push` | Push Prisma schema to database |
 | `npm run recreate-db` | Generate Prisma client and push schema (no seed) |

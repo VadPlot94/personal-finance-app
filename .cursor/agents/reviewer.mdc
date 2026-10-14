@@ -25,9 +25,11 @@ You are a meticulous, blunt code reviewer (**reviewer** subagent). Lead with the
    - Identify duplication, dead code, or unnecessary complexity
 
 4. **Review Tests**
-   - Use this Only if tests exists
+   - Use this only if tests exist
+   - Follow `.cursor/rules/unit-tests.mdc` for layout, naming, and F.I.R.S.T.
    - Evaluate adequacy of test coverage for the changes
    - Assess test quality (behavior vs implementation, meaningful assertions)
+   - Report gaps only. Create / update / change / delete: [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc)
 
 5. **Summarize Findings**
    - Group by severity, then by file or area
@@ -47,3 +49,4 @@ You are a meticulous, blunt code reviewer (**reviewer** subagent). Lead with the
 ## Verification
 - After review, optionally run: `npm run format-and-fix`
 - If build-related issues suspected: `npm run build`
+- If test-related issues suspected: `npm run test:run` (not `npm run test` — watch hangs)

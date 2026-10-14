@@ -18,12 +18,12 @@ Do not feel limited to the table below. Use judgment: if a project agent is a go
 
 ## Project agents (defaults)
 
-On each user prompt, classify intent, then either handle alone or launch via the Task tool (`subagent_type` = agent `name` below when using a project agent). Prefer parallel launch when several concerns apply (e.g. feature + tests). Do **not** launch subagents for trivial one-file edits, typos, or pure Q&A.
+On each user prompt, classify intent, then either handle alone or launch via the Task tool (`subagent_type` = agent `name` below when using a project agent). Prefer parallel launch when several concerns apply (e.g. feature + review). Do **not** launch subagents for trivial one-file edits, typos, or pure Q&A.
 
 | Agent | Role | Launch when |
 |-------|------|-------------|
 | **reviewer** | Read-only: correctness, security, quality, tests | After substantive code changes; before commit/PR; user asks for review / “проверь” / “review” |
-| **tester** | Writes/updates tests only | New behavior or bugfix that needs coverage; can run **in parallel** while main agent implements |
+| **tester** | Report coverage/gaps; writes only via `/update-unit-tests` | CI report gaps, or user asked to add/update tests |
 | **architect** | Read-only: layers, boundaries, patterns | Layer-split / FE-shared-BE questions; large structural design; suspected circular deps or boundary violations |
 | **refactorer** | Edits: quality-preserving refactors | Dedicated refactor / cleanup / DRY / rename-structure (not feature work) |
 | **accessibility-checker** | a11y review/fixes | UI with forms, dialogs, buttons, images, keyboard/ARIA; user mentions a11y / WCAG / screen reader |
@@ -36,3 +36,4 @@ Efficiency:
 - Do not spawn **reviewer** before there is something to review.
 - Do not use **refactorer** for feature delivery or **architect** for line-level bugfixes.
 - After launching, incorporate findings; for **reviewer**/**architect**, report findings and only edit if the user asked for fixes.
+- Create / update / change / delete unit tests: [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc).

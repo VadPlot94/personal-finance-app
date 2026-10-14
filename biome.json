@@ -119,6 +119,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**/*.tests.ts", "**/*.tests.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
     }
   ]
 }

@@ -19,13 +19,15 @@ Check and Commit:
 1. Read and fully execute [`.cursor/skills/ci-quality-check.mdc`](../skills/ci-quality-check.mdc) (same workflow as `/ci-quality-check`).
 2. Continue **only** when the verdict is **READY TO COMMIT**.
 3. On **BLOCKED**: stop. Report blockers. Do **not** run browser checks, commit, or push.
+4. Unit tests are **run** in the CI gate. Create / update / change / delete: [`.cursor/commands/update-unit-tests.mdc`](update-unit-tests.mdc).
 
 ### Step 2 — Browser sanity / regression smoke
 
-1. Look for automated smoke / e2e / regression tests:
-   - `package.json` scripts: `test`, `test:e2e`, `test:smoke`, or similar
+1. Look for automated smoke / e2e / regression tests (browser-level, not unit Vitest):
+   - `package.json` scripts: `test:e2e`, `test:smoke`, or similar
    - Playwright / Cypress config in the repo
-2. If any exist: run them. On non-zero exit — **stop**. Do not commit or push.
+   - Unit/component Vitest is already covered by Step 1 via `npm run test:run` — do **not** re-run `npm run test` (watch) here
+2. If e2e/smoke scripts exist: run them. On non-zero exit — **stop**. Do not commit or push.
 3. If none exist: manual smoke via **cursor-ide-browser** against the local app (default base URL `http://localhost:3000`):
    - **Before starting the app:** check whether port `3000` is in use (e.g. listener on `localhost:3000`).
    - If the port is busy: stop **all** processes tied to that listener / this project's `next dev` (npm `run dev`, `next dev`, Next start-server, Turbopack workers for this repo). Confirm port `3000` is free.

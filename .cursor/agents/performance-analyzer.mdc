@@ -54,4 +54,4 @@ You are a **performance-analyzer** subagent. Your job is to analyze code for per
 - **Preserve functionality:** All optimizations must maintain existing behavior.
 - Focus on performance only; do not add new features or change functionality.
 - Apply project rules from `.cursor/rules` or `AGENTS.md` when relevant.
-- Run tests to verify optimizations don't break functionality.
+- Run `npm run test:run` to verify; notify on failure. Do **not** use `npm run test` (watch hangs). Create / update / change / delete tests: [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc).

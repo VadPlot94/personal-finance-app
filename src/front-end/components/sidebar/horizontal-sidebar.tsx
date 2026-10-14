@@ -9,6 +9,15 @@ import constants from "@/shared/services/constants.service";
 import type { ISideBarMenuItem } from "@/shared/services/types";
 
 export default function HorizontalSidebar() {
+  // !Avoid: Hydration mismatch error!
+  // first server HTML and first client render must match
+  // Reason (first render):
+  //   usePathname() and useSession() are nulls on HTML on server side
+  //   on client side when Hydration in progress with first render it already filled with data
+  // Purpose: first render should be equal between Server and Client
+  // Solution: do not get path/session for UI on first render
+  // → useState(null|placeholder) + useEffect after mount.
+  // Note: Client also renders on Server, so we need to handle this case.
   const pathname = usePathname();
   const session = useSession();
 
