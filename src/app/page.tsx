@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CreateAccountLink from "@/front-end/components/create-account-link";
 import SignInButton from "@/front-end/components/sign-in-button/sign-in-button";
+import constants from "@/shared/services/constants.service";
 
 export default function HomePage() {
   return (
@@ -13,7 +14,7 @@ export default function HomePage() {
             <div className="flex gap-4">
               <SignInButton className="px-4" />
               <Link
-                href="/overview"
+                href={constants.AppRoutes.overview}
                 className="rounded-lg bg-black px-4 py-2 text-white hover:bg-slate-800"
               >
                 Get Started
@@ -155,7 +156,7 @@ export default function HomePage() {
             smarter. Start your journey to financial freedom today.
           </p>
           <Link
-            href="/login"
+            href={constants.AppRoutes.login}
             className="inline-block rounded-lg bg-black px-8 py-3 font-semibold text-white hover:bg-slate-800"
           >
             Create Free Account
@@ -178,22 +179,34 @@ export default function HomePage() {
               <h4 className="font-semibold text-slate-900">Features</h4>
               <ul className="mt-2 space-y-1 text-slate-600">
                 <li>
-                  <a href="/transactions" className="hover:text-slate-900">
+                  <a
+                    href={constants.AppRoutes.transactions}
+                    className="hover:text-slate-900"
+                  >
                     Transactions
                   </a>
                 </li>
                 <li>
-                  <a href="/budgets" className="hover:text-slate-900">
+                  <a
+                    href={constants.AppRoutes.budgets}
+                    className="hover:text-slate-900"
+                  >
                     Budgets
                   </a>
                 </li>
                 <li>
-                  <a href="/pots" className="hover:text-slate-900">
+                  <a
+                    href={constants.AppRoutes.pots}
+                    className="hover:text-slate-900"
+                  >
                     Savings Pots
                   </a>
                 </li>
                 <li>
-                  <a href="/recurring" className="hover:text-slate-900">
+                  <a
+                    href={constants.AppRoutes.recurring}
+                    className="hover:text-slate-900"
+                  >
                     Recurring Bills
                   </a>
                 </li>

@@ -7,6 +7,13 @@ export interface IBudgetsProps {
   isLoading?: boolean;
 }
 
+export interface IBudgetsItemProps {
+  budget: Budget;
+  transactionsByCategoryList?: ITransactionsForCategoryData[];
+  onEditBudget: (budget: Budget) => void;
+  onDeleteBudget: (budget: Budget) => void;
+}
+
 export interface IBudgetsTileProps {
   transactionsByCategoryList: ITransactionsForCategoryData[] | undefined;
   budgets: Budget[] | undefined;

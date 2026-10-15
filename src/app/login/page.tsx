@@ -3,11 +3,12 @@ import { Suspense } from "react";
 import type { ILoginPageProps } from "@/app/login/types";
 import authController from "@/back-end/controllers/auth-controller";
 import LoginForm from "@/front-end/components/login/login-form";
+import constants from "@/shared/services/constants.service";
 
 async function LoginRedirectIfAuthenticated() {
   const session = await authController.getOptionalSession();
   if (session?.user?.id) {
-    redirect("/overview");
+    redirect(constants.AppRoutes.overview);
   }
   return null;
 }

@@ -1,12 +1,13 @@
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
+import constants from "@/shared/services/constants.service";
 
 export default function TransactionsTileSkeleton() {
   return (
     <ItemCard className="animate-pulse">
       <TileHeader
         title="Transactions"
-        href="/transactions"
+        href={constants.AppRoutes.transactions}
         linkLabel="View All"
       />
 

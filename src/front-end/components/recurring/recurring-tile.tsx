@@ -33,7 +33,7 @@ export default function RecurringTile({
     <ItemCard className="h-full">
       <TileHeader
         title="Recurring Bills"
-        href="/recurring"
+        href={constants.AppRoutes.recurring}
         linkLabel="See details"
       />
       <EmptyContentWrapper

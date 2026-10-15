@@ -11,6 +11,8 @@ import type { ILoginFormProps } from "@/front-end/components/login/types";
 import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
+import { orEmptyStr } from "@/lib/utils";
+import constants from "@/shared/services/constants.service";
 import type {
   IRegisterFormData,
   IRegisterValidationData,
@@ -37,8 +39,8 @@ function getSignInFormData(
 ): ISignInFormData | null {
   return data
     ? {
-        email: data.email || "",
-        password: data.password || "",
+        email: orEmptyStr(data.email),
+        password: orEmptyStr(data.password),
       }
     : null;
 }
@@ -49,9 +51,9 @@ function getRegisterFormData(
 ): IRegisterFormData | null {
   return data
     ? {
-        email: data.email || "",
-        password: data.password || "",
-        name: data.name || "",
+        email: orEmptyStr(data.email),
+        password: orEmptyStr(data.password),
+        name: orEmptyStr(data.name),
       }
     : null;
 }
@@ -75,30 +77,26 @@ function isRegisterFormValid(
   );
 }
 
-function getSignInFormErrors(
+function validateSignInForm(
   formData: ISignInFormData,
 ): Partial<Record<keyof ISignInValidationData, string>> | null {
   const result = validationService.validateAuthSchema(formData, "signin");
-
-  if (result.success) {
-    return null;
-  }
-  return validationService.createErrorsWithPath<Partial<ISignInValidationData>>(
-    result,
-  );
+  return result.success
+    ? null
+    : validationService.createErrorsWithPath<Partial<ISignInValidationData>>(
+        result,
+      );
 }
 
-function getRegisterFormErrors(
+function validateRegisterForm(
   formData: IRegisterFormData,
 ): Partial<Record<keyof IRegisterValidationData, string>> | null {
   const result = validationService.validateAuthSchema(formData, "register");
-
-  if (result.success) {
-    return null;
-  }
-  return validationService.createErrorsWithPath<
-    Partial<IRegisterValidationData>
-  >(result);
+  return result.success
+    ? null
+    : validationService.createErrorsWithPath<Partial<IRegisterValidationData>>(
+        result,
+      );
 }
 
 export default function LoginForm({
@@ -114,14 +112,14 @@ export default function LoginForm({
   // Redirect to overview if already logged in
   useEffect(() => {
     if (session?.user?.id) {
-      router.push("/overview");
+      router.push(constants.AppRoutes.overview);
     }
   }, [session?.user?.id, router]);
 
   const handleOAuthSignIn = (provider: "google" | "github") => {
     signIn(provider, {
       redirect: true,
-      redirectTo: "/overview",
+      redirectTo: constants.AppRoutes.overview,
     });
   };
 
@@ -142,13 +140,13 @@ export default function LoginForm({
 
   useEffect(() => {
     if (formSignInData) {
-      setSignInErrors(getSignInFormErrors(formSignInData));
+      setSignInErrors(validateSignInForm(formSignInData));
     }
   }, [formSignInData]);
 
   useEffect(() => {
     if (formRegisterData) {
-      setRegisterErrors(getRegisterFormErrors(formRegisterData));
+      setRegisterErrors(validateRegisterForm(formRegisterData));
     }
   }, [formRegisterData]);
 
@@ -164,7 +162,7 @@ export default function LoginForm({
       return;
     }
 
-    router.push("/overview");
+    router.push(constants.AppRoutes.overview);
   };
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -174,8 +172,8 @@ export default function LoginForm({
 
     const result = await signIn("credentials", {
       redirect: false,
-      email: formSignInData?.email || "",
-      password: formSignInData?.password || "",
+      email: orEmptyStr(formSignInData?.email),
+      password: orEmptyStr(formSignInData?.password),
     });
 
     setIsSigningIn(false);
@@ -185,7 +183,7 @@ export default function LoginForm({
       return;
     }
 
-    router.push("/overview");
+    router.push(constants.AppRoutes.overview);
   };
 
   const handleRegisterSubmit = async (
@@ -195,16 +193,16 @@ export default function LoginForm({
     setRegisterErrors(null);
 
     const response = await registerUserSRF({
-      email: formRegisterData?.email || "",
-      password: formRegisterData?.password || "",
-      name: formRegisterData?.name || "",
+      email: orEmptyStr(formRegisterData?.email),
+      password: orEmptyStr(formRegisterData?.password),
+      name: orEmptyStr(formRegisterData?.name),
     });
 
     if (response.success) {
       toast.success("Account created successfully");
       await handleAutoLogin(
-        formRegisterData?.email || "",
-        formRegisterData?.password || "",
+        orEmptyStr(formRegisterData?.email),
+        orEmptyStr(formRegisterData?.password),
       );
       setFormRegisterStateData(getRegisterFormData(null));
     } else {
@@ -284,7 +282,7 @@ export default function LoginForm({
                     id="signin-email"
                     type="email"
                     className="border-gray-300"
-                    value={formSignInData?.email || ""}
+                    value={orEmptyStr(formSignInData?.email)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormSignInStateData(
                         getSignInFormData({
@@ -308,7 +306,7 @@ export default function LoginForm({
                     id="signin-password"
                     type="password"
                     className="border-gray-300"
-                    value={formSignInData?.password || ""}
+                    value={orEmptyStr(formSignInData?.password)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormSignInStateData(
                         getSignInFormData({
@@ -375,7 +373,7 @@ export default function LoginForm({
                     id="register-name"
                     type="text"
                     className="border-gray-300"
-                    value={formRegisterData?.name || ""}
+                    value={orEmptyStr(formRegisterData?.name)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormRegisterStateData(
                         getRegisterFormData({
@@ -399,7 +397,7 @@ export default function LoginForm({
                     id="register-email"
                     type="email"
                     className="border-gray-300"
-                    value={formRegisterData?.email || ""}
+                    value={orEmptyStr(formRegisterData?.email)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormRegisterStateData(
                         getRegisterFormData({
@@ -425,7 +423,7 @@ export default function LoginForm({
                     id="register-password"
                     type="password"
                     className="border-gray-300"
-                    value={formRegisterData?.password || ""}
+                    value={orEmptyStr(formRegisterData?.password)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormRegisterStateData(
                         getRegisterFormData({

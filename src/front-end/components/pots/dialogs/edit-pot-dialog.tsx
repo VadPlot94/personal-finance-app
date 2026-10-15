@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { toast } from "sonner";
 import {
   createPotSRF,
   editPotSRF,
@@ -32,7 +31,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
+import { handleDialogFormActionResult } from "@/front-end/lib/form-action-result";
 import financeService from "@/front-end/services/finance.service";
+import { orEmptyStr } from "@/lib/utils";
 import constants, { Theme } from "@/shared/services/constants.service";
 import type { ICreatePotFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
@@ -42,11 +43,12 @@ function setFormPotData(
 ): ICreatePotFormData | null {
   return pot
     ? {
-        id: pot?.id || "",
-        potName:
-          (pot as Pot)?.name || (pot as ICreatePotFormData)?.potName || "",
-        target: pot?.target?.toString() || "",
-        theme: (pot?.theme || "") as Theme,
+        id: orEmptyStr(pot?.id),
+        potName: orEmptyStr(
+          (pot as Pot)?.name || (pot as ICreatePotFormData)?.potName,
+        ),
+        target: orEmptyStr(pot?.target?.toString()),
+        theme: orEmptyStr(pot?.theme) as Theme,
       }
     : null;
 }
@@ -63,7 +65,7 @@ function isFormValid(
   );
 }
 
-function getCreatePotFormErrors(
+function validateForm(
   formPotData: ICreatePotFormData,
   potNames: string[],
   potTotal?: number,
@@ -74,12 +76,11 @@ function getCreatePotFormErrors(
     potTotal,
   );
 
-  if (result.success) {
-    return null;
-  }
-  return validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
-    result,
-  );
+  return result.success
+    ? null
+    : validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
+        result,
+      );
 }
 
 function getOtherPotNames(pots: Pot[], pot?: Pot): string[] {
@@ -128,34 +129,19 @@ export function EditPotDialog({
 
   useEffect(() => {
     if (formPotData) {
-      setFormErrors(
-        getCreatePotFormErrors(formPotData, potNames, pot?.total),
-      );
+      setFormErrors(validateForm(formPotData, potNames, pot?.total));
     }
   }, [formPotData]);
 
   useEffect(() => {
     // This trigger even with first component mount when formResultState = null
     // Need to call handleOpenChange only when formResultState != null
-    if (!formResultState) {
-      return;
-    }
-    const isFormSavedSuccess = formResultState.success && !isPending;
-
-    if (isFormSavedSuccess) {
-      toast.success("Success", {
-        description: formResultState.message || "OK",
-      });
-    } else {
-      if (formResultState.zodErrors) {
-        setFormErrors(formResultState.zodErrors);
-      } else {
-        toast.error("Error", {
-          description: formResultState.error || "ERROR",
-        });
-      }
-    }
-    handleOpenChange(!isFormSavedSuccess);
+    handleDialogFormActionResult(
+      formResultState,
+      isPending,
+      handleOpenChange,
+      setFormErrors,
+    );
   }, [formResultState]);
 
   const handlePotNameInputChange = (value: string): void => {

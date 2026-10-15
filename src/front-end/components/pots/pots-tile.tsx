@@ -4,6 +4,7 @@ import ItemCard from "@/front-end/components/item-card/item-card";
 import type { IPotsTileProps } from "@/front-end/components/pots/types";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
 import { cn } from "@/lib/utils";
+import constants from "@/shared/services/constants.service";
 import potService from "@/shared/services/pot.service";
 
 function buildTilePots(pots: Pot[]): (Pot | null)[] {
@@ -19,7 +20,11 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
 
   return (
     <ItemCard>
-      <TileHeader title="Pots" href="/pots" linkLabel="See details" />
+      <TileHeader
+        title="Pots"
+        href={constants.AppRoutes.pots}
+        linkLabel="See details"
+      />
       <div
         className={cn(
           "flex flex-row justify-between h-full gap-5",

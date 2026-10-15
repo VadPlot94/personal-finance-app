@@ -6,12 +6,14 @@ import TileHeader from "@/front-end/components/tile-header/tile-header";
 import type { ITransactionsTileProps } from "@/front-end/components/transactions/types";
 import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
-import { TransactionUICategory } from "@/shared/services/constants.service";
+import constants, {
+  TransactionUICategory,
+} from "@/shared/services/constants.service";
 
 function buildTransactionsHref(category?: TransactionUICategory): string {
   const categoryQueryParam =
     category === TransactionUICategory.AllTransactions ? null : category;
-  return `/transactions${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`;
+  return `${constants.AppRoutes.transactions}${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`;
 }
 
 export default function TransactionsTile({

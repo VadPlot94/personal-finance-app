@@ -78,36 +78,46 @@ class ConstantsService {
   public readonly DefaultUserAvatarIconUrl =
     "assets/images/avatars/dummy-avatar.jpg";
 
+  public readonly AppRoutes = {
+    home: "/",
+    login: "/login",
+    overview: "/overview",
+    transactions: "/transactions",
+    budgets: "/budgets",
+    pots: "/pots",
+    recurring: "/recurring",
+  } as const;
+
   public readonly SideBarMenuItemsConfig = [
     {
-      href: "/overview",
+      href: this.AppRoutes.overview,
       iconUrl: "assets/images/icon-nav-overview.svg",
       title: "Overview",
     },
     {
-      href: "/transactions",
+      href: this.AppRoutes.transactions,
       iconUrl: "assets/images/icon-nav-transactions.svg",
       title: "Transactions",
     },
     {
-      href: "/budgets",
+      href: this.AppRoutes.budgets,
       iconUrl: "assets/images/icon-nav-budgets.svg",
       title: "Budgets",
     },
     {
-      href: "/pots",
+      href: this.AppRoutes.pots,
       iconUrl: "assets/images/icon-nav-pots.svg",
       title: "Pots",
     },
     {
-      href: "/recurring",
+      href: this.AppRoutes.recurring,
       iconUrl: "assets/images/icon-nav-recurring-bills.svg",
       title: "Recurring Bills",
     },
   ];
 
   public SignOutMenuItemConfig = {
-    href: "/",
+    href: this.AppRoutes.home,
     iconUrl: "assets/images/icon-logout.svg",
     title: "Sign Out",
   };

@@ -7,6 +7,7 @@ import { authEnv } from "@/back-end/config/auth-env";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { setTestAppData } from "@/back-end/prisma/seed";
 import { auth } from "@/lib/auth";
+import constants from "@/shared/services/constants.service";
 import validationService from "@/shared/services/validation.service";
 
 class AuthService {
@@ -64,7 +65,7 @@ class AuthService {
     const session = await this.getAppSession();
 
     if (!session?.user?.id) {
-      redirect("/login");
+      redirect(constants.AppRoutes.login);
     }
 
     return session;

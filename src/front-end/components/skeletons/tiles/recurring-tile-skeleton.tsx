@@ -1,12 +1,13 @@
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
+import constants from "@/shared/services/constants.service";
 
 export default function RecurringTileSkeleton() {
   return (
     <ItemCard className="animate-pulse">
       <TileHeader
         title="Recurring Bills"
-        href="/recurring"
+        href={constants.AppRoutes.recurring}
         linkLabel="See details"
       />
 

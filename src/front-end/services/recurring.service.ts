@@ -311,18 +311,10 @@ class RecurringService {
     const realToday = now; // in production: current date
     // const realToday = new Date("2026-03-12"); // for tests
 
-    const nextReferenceDate = this.createReferenceDate(
-      realToday,
-      year,
-      month,
-    );
+    const nextReferenceDate = this.createReferenceDate(realToday, year, month);
 
     // Step 4: all recurring bills for the month
-    const monthBills = this.getRecurringBillsInMonth(
-      transactions,
-      year,
-      month,
-    );
+    const monthBills = this.getRecurringBillsInMonth(transactions, year, month);
 
     if (!monthBills.length) {
       return {

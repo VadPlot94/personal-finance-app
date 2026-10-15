@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
 import { createTransactionSRF } from "@/back-end/server-actions/transaction-actions";
 import type {
   ICreateTransactionDialogProps,
@@ -24,7 +23,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
+import { handleDialogFormActionResult } from "@/front-end/lib/form-action-result";
 import financeService from "@/front-end/services/finance.service";
+import { orEmptyStr } from "@/lib/utils";
 import constants, {
   TransactionType,
   TransactionUICategory,
@@ -40,7 +41,7 @@ function setFormTransactionData(
         transactionType: transactionFormData?.transactionType,
         recipientOrSender: transactionFormData?.recipientOrSender,
         category: transactionFormData?.category,
-        amount: transactionFormData?.amount || "",
+        amount: orEmptyStr(transactionFormData?.amount),
         date: transactionFormData?.date,
       } as ICreateTransactionFormData)
     : null;
@@ -62,25 +63,24 @@ function isFormValid(
   );
 }
 
-function getCreateTransactionFormErrors(
+function validateForm(
   formTransactionData: ICreateTransactionFormData,
 ): Partial<Record<keyof ICreateTransactionValidationData, string>> | null {
   const validationData: ICreateTransactionValidationData = {
     transactionType: formTransactionData.transactionType,
     category: formTransactionData.category,
     recipientOrSender: formTransactionData.recipientOrSender,
-    amount: formTransactionData.amount?.toString() || "",
+    amount: orEmptyStr(formTransactionData.amount?.toString()),
     date: formTransactionData.date,
   };
 
   const result =
     validationService.validateCreateTransactionSchema(validationData);
-  if (result.success) {
-    return null;
-  }
-  return validationService.createErrorsWithPath<ICreateTransactionValidationData>(
-    result,
-  );
+  return result.success
+    ? null
+    : validationService.createErrorsWithPath<ICreateTransactionValidationData>(
+        result,
+      );
 }
 
 export function CreateTransactionDialog({
@@ -109,28 +109,14 @@ export function CreateTransactionDialog({
 
   useEffect(() => {
     if (formTransactionData) {
-      setFormErrors(getCreateTransactionFormErrors(formTransactionData));
+      setFormErrors(validateForm(formTransactionData));
     }
   }, [formTransactionData]);
 
   useEffect(() => {
     // This trigger even with first component mount when formResultState = null
     // Need to call handleOpenChange only when formResultState != null
-    if (!formResultState) {
-      return;
-    }
-    const isFormSavedSuccess = formResultState.success && !isPending;
-
-    if (isFormSavedSuccess) {
-      toast.success("Success", {
-        description: formResultState.message || "OK",
-      });
-    } else {
-      toast.error("Error", {
-        description: formResultState.error || "ERROR",
-      });
-    }
-    handleOpenChange(!isFormSavedSuccess);
+    handleDialogFormActionResult(formResultState, isPending, handleOpenChange);
   }, [formResultState]);
 
   const handleTransactionTypeChange = (value: TransactionType): void => {

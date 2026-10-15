@@ -4,6 +4,7 @@ import BudgetDonutChart from "@/front-end/components/budgets/budget-donut-chart"
 import type { IBudgetsTileProps } from "@/front-end/components/budgets/types";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
+import constants from "@/shared/services/constants.service";
 
 export default function BudgetsTile({
   budgets = [],
@@ -11,7 +12,11 @@ export default function BudgetsTile({
 }: IBudgetsTileProps) {
   return (
     <ItemCard>
-      <TileHeader title="Budgets" href="/budgets" linkLabel="View All" />
+      <TileHeader
+        title="Budgets"
+        href={constants.AppRoutes.budgets}
+        linkLabel="View All"
+      />
       <div className="flex flex-row justify-center items-center h-full gap-5">
         <BudgetDonutChart
           budgets={budgets}

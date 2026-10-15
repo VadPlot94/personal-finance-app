@@ -9,7 +9,6 @@ import {
   useState,
 } from "react";
 import { useUpdateEffect } from "react-use";
-import { toast } from "sonner";
 import {
   addBudgetSRF,
   editBudgetSRF,
@@ -33,7 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
+import { handleDialogFormActionResult } from "@/front-end/lib/form-action-result";
 import financeService from "@/front-end/services/finance.service";
+import { orEmptyStr } from "@/lib/utils";
 import {
   Theme,
   TransactionUICategory,
@@ -46,13 +47,13 @@ function setFormBudgetData(
 ): IAddBudgetFormData | null {
   return budget
     ? {
-        id: budget?.id || "",
-        budgetCategory:
+        id: orEmptyStr(budget?.id),
+        budgetCategory: orEmptyStr(
           (budget as Budget)?.category ||
-          (budget as IAddBudgetFormData)?.budgetCategory ||
-          "",
-        maximum: budget?.maximum?.toString() || "",
-        theme: (budget?.theme || "") as Theme,
+            (budget as IAddBudgetFormData)?.budgetCategory,
+        ),
+        maximum: orEmptyStr(budget?.maximum?.toString()),
+        theme: orEmptyStr(budget?.theme) as Theme,
       }
     : null;
 }
@@ -69,22 +70,18 @@ function isFormValid(
   );
 }
 
-function getAddBudgetFormErrors(
+function validateForm(
   formBudgetData: IAddBudgetFormData,
 ): Partial<Record<keyof IAddBudgetFormData, string>> | null {
   const result = validationService.validateAddBudgetSchema(formBudgetData);
-  if (result.success) {
-    return null;
-  }
-  return validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
-    result,
-  );
+  return result.success
+    ? null
+    : validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
+        result,
+      );
 }
 
-function getBusyBudgets(
-  budgets: Budget[],
-  budget?: Budget | null,
-): Budget[] {
+function getBusyBudgets(budgets: Budget[], budget?: Budget | null): Budget[] {
   return budget?.id
     ? budgets.filter((p) => p.category !== budget?.category)
     : budgets;
@@ -139,7 +136,7 @@ export function EditBudgetDialog({
 
   useEffect(() => {
     if (formBudgetData) {
-      setFormErrors(getAddBudgetFormErrors(formBudgetData));
+      setFormErrors(validateForm(formBudgetData));
     }
   }, [formBudgetData]);
 
@@ -147,25 +144,12 @@ export function EditBudgetDialog({
     // useEffect run on component mount too - not only on update - first mount formResultState = null - we do not need this case
     // Need to call handleOpenChange only when formResultState != null
     // Then we use useUpdateEffect to run only on update - not on first mount
-    if (!formResultState) {
-      return;
-    }
-    const isFormSavedSuccess = formResultState.success && !isPending;
-
-    if (isFormSavedSuccess) {
-      toast.success("Success", {
-        description: formResultState.message || "OK",
-      });
-    } else {
-      if (formResultState.zodErrors) {
-        setFormErrors(formResultState.zodErrors);
-      } else {
-        toast.error("Error", {
-          description: formResultState.error || "ERROR",
-        });
-      }
-    }
-    handleOpenChange(!isFormSavedSuccess);
+    handleDialogFormActionResult(
+      formResultState,
+      isPending,
+      handleOpenChange,
+      setFormErrors,
+    );
   }, [formResultState]);
 
   const handleBudgetCategoryInputChange = (

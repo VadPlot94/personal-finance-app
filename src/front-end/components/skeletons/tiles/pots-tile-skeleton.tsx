@@ -1,10 +1,15 @@
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
+import constants from "@/shared/services/constants.service";
 
 export default function PotsTileSkeleton() {
   return (
     <ItemCard className="animate-pulse">
-      <TileHeader title="Pots" href="/pots" linkLabel="See details" />
+      <TileHeader
+        title="Pots"
+        href={constants.AppRoutes.pots}
+        linkLabel="See details"
+      />
 
       <div className="flex h-full flex-row justify-between gap-5 max-sm:flex-col">
         <div className="flex w-full items-center gap-3 rounded-lg bg-app-background p-4 shadow-sm">
