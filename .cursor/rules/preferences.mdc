@@ -9,7 +9,7 @@ Living **user project preferences** — follow them by default. Prefer matching 
 
 Current preferences:
 
-- One TSX file, one exported component: a `.tsx` UI module has exactly one exported function that returns JSX. Do not export multiple components from the same file. Non-UI modules (`types.ts`, services, utils) are exempt; local non-exported helpers inside the file are allowed.
+- One TSX file, one component: a `.tsx` UI module has exactly **one** function that returns JSX — the **default export** (name matches the file; see naming-convention-preferences). Do **not** add extra local/named React components in the same file (`FooView`, `FooInner`, `FooWithPath`, etc.), even if they are not exported. Allowed in that file: non-JSX helpers (plain functions/constants), hooks usage inside the single component, and co-located `types.ts`. Non-UI modules (`types.ts`, services, utils) are exempt. If a second UI component is truly needed, put it in its own folder/file under `components/`.
 - Do not add re-export / barrel pass-through modules (`export … from "…"` that only forward another module). Import from the module that defines the symbol (e.g. `@/shared/services/types`, `@/back-end/common/errors`). Exception: UI kit barrels that re-export components defined in the same file (shadcn pattern) are fine.
 - Treat `src/front-end/components/ui/*` (shadcn) as installed external third-party components. Do not modify, refactor, rename, or “clean up” them without the user’s explicit request or approval.
 - Prefer array methods (`forEach`, `map`, `filter`, `reduce`, etc.) over `for...of` / classic `for` when iterating collections. Do not rewrite `forEach`/`map` into `for...of` for lint.

@@ -28,14 +28,16 @@ Check and Commit:
    - Playwright / Cypress config in the repo
    - Unit/component Vitest is already covered by Step 1 via `npm run test:run` — do **not** re-run `npm run test` (watch) here
 2. If e2e/smoke scripts exist: run them. On non-zero exit — **stop**. Do not commit or push.
-3. If none exist: manual smoke via **cursor-ide-browser** against the local app (default base URL `http://localhost:3000`):
-   - **Before starting the app:** check whether port `3000` is in use (e.g. listener on `localhost:3000`).
-   - If the port is busy: stop **all** processes tied to that listener / this project's `next dev` (npm `run dev`, `next dev`, Next start-server, Turbopack workers for this repo). Confirm port `3000` is free.
-   - Start a **fresh** `npm run dev` (or equivalent) in a separate background process dedicated to this smoke run. Wait until Ready / `Local: http://localhost:3000` before opening the browser.
-   - Visit core routes: `/login`, `/overview`, `/transactions`, `/budgets`, `/pots`, `/recurring`.
+3. If none exist: manual smoke via **cursor-ide-browser** against the local app:
+   - Prefer an already-running healthy `next dev` for this repo if you can reach it (usually `http://localhost:3000`).
+   - **If port `3000` is busy** with something you should not kill, or `next` offers / binds another port: **start on that other port and smoke there** (e.g. `http://localhost:3001`). Read the actual `Local:` URL from the Ready banner — do not assume `3000`.
+   - If you start a server for this smoke run: note its **PID** (and port). When smoke finishes (pass or fail), **always kill that process** you started (`taskkill /PID <pid> /F` on Windows, or equivalent). Do **not** leave orphan `next dev` processes. Do **not** kill a pre-existing server you did not start unless the user asked — **except** when that process is clearly hung/orphan and blocking smoke (see navigation timeout below).
+   - If Next exits with `Another next dev server is already running` and refuses a second instance: reuse the existing server’s URL for smoke, or (only if reuse is impossible) free that PID, start fresh, then kill what you started when done.
+   - **Navigation / page-load timeout (~20s) — mandatory:** If browser navigate or page load against the local app takes **more than ~20 seconds** with no usable page, treat that as abnormal — something is wrong (stuck/hung server, bad port, dead process, browser lock, etc.). Do **not** keep waiting/hanging for a minute+. Immediately investigate: list listeners on localhost ports commonly used by this app (at least `3000`/`3001`), check `next` / `npm run dev` PIDs, and read recent next/dev terminal or log output if available. If a hung/orphan `next` you (or a prior agent) started is the cause — kill it and restart on a free port (or reuse a healthy existing server per the port rules above). Prefer starting on another port and smoking there if `3000` is busy with something you should not kill; always kill processes **you** started when smoke ends. Report the root cause briefly when navigation hangs.
+   - Visit core routes on the chosen base URL: `/login`, `/overview`, `/transactions`, `/budgets`, `/pots`, `/recurring`.
    - Per route pass criteria: page loads; no Next.js error overlay / obvious crash; main content visible (snapshot or screenshot).
    - Auth-gated pages: redirect to login is OK when unauthenticated. Do **not** invent credentials. If a session already exists, verify the authenticated page renders.
-4. On any hard failure (crash, overlay, 500, blank broken page): **stop**. Report broken routes. Do not commit or push.
+4. On any hard failure (crash, overlay, 500, blank broken page): **stop**. Report broken routes. Do not commit or push. (Still kill any smoke server you started.)
 
 ### Step 3 — Commit
 

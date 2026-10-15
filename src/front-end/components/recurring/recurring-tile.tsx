@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import { RecurringSummaryItem } from "@/front-end/components/recurring/dialogs/recurring-summary-item";
@@ -9,21 +9,30 @@ import TileHeader from "@/front-end/components/tile-header/tile-header";
 import recurringService from "@/front-end/services/recurring.service";
 import constants from "@/shared/services/constants.service";
 
+const emptyStats = {
+  referenceMonthName: "—",
+  totalBills: "0.00",
+  paidCount: 0,
+  paidAmount: "0.00",
+  upcomingCount: 0,
+  upcomingAmount: "0.00",
+  dueSoonCount: 0,
+  dueSoonAmount: "0.00",
+};
+
 export default function RecurringTile({
   recurringTransactions = [],
 }: IRecurringTileProps) {
+  // Avoid hydration mismatch: new Date() during render can differ SSR vs client.
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+  }, []);
+
   const stats = useMemo(() => {
-    if (!recurringTransactions?.length) {
-      return {
-        referenceMonthName: "—",
-        totalBills: "0.00",
-        paidCount: 0,
-        paidAmount: "0.00",
-        upcomingCount: 0,
-        upcomingAmount: "0.00",
-        dueSoonCount: 0,
-        dueSoonAmount: "0.00",
-      };
+    if (!now || !recurringTransactions?.length) {
+      return emptyStats;
     }
 
     // Step 1: latest date
@@ -32,14 +41,8 @@ export default function RecurringTile({
     );
     if (!latestDate) {
       return {
+        ...emptyStats,
         referenceMonthName: "No recurring bills",
-        totalBills: "0.00",
-        paidCount: 0,
-        paidAmount: "0.00",
-        upcomingCount: 0,
-        upcomingAmount: "0.00",
-        dueSoonCount: 0,
-        dueSoonAmount: "0.00",
       };
     }
 
@@ -51,7 +54,7 @@ export default function RecurringTile({
     } = recurringService.getForecastMonthAndName(latestDate);
 
     // Step 3: referenceDate (carry over current day/time)
-    const realToday = new Date(); // in production: current date
+    const realToday = now; // in production: current date
     // const realToday = new Date("2026-03-12"); // for tests
 
     const referenceDate = recurringService.createReferenceDate(
@@ -69,14 +72,8 @@ export default function RecurringTile({
 
     if (!monthBills.length) {
       return {
+        ...emptyStats,
         referenceMonthName,
-        totalBills: "0.00",
-        paidCount: 0,
-        paidAmount: "0.00",
-        upcomingCount: 0,
-        upcomingAmount: "0.00",
-        dueSoonCount: 0,
-        dueSoonAmount: "0.00",
       };
     }
 
@@ -99,7 +96,7 @@ export default function RecurringTile({
       dueSoonCount: billStats.dueSoonCount,
       dueSoonAmount: Math.abs(billStats.dueSoonAmount).toFixed(2),
     };
-  }, [recurringTransactions]);
+  }, [recurringTransactions, now /* realToday */]);
 
   return (
     <ItemCard className="h-full">

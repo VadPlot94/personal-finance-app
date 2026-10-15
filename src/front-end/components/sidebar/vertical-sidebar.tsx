@@ -8,16 +8,30 @@ import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 
 export default function VerticalSidebar() {
+  // !Avoid: Hydration mismatch error!
+  // first server HTML and first client render must match
+  // Reason (first render):
+  //   usePathname() and useSession() are nulls on HTML on server side
+  //   on client side when Hydration in progress with first render it already filled with data
+  // Purpose: first render should be equal between Server and Client
+  // Solution: do not get path/session for UI on first render
+  // → useState(null|placeholder) + useEffect after mount.
+  // Note: Client also renders on Server, so we need to handle this case.
   const pathname = usePathname();
   const session = useSession();
 
   const [isMenuOpened, toggleMenu] = useState(false);
   const [sessionUserData, setSessionUserData] = useState<User | null>(null);
+  const [activePath, setActivePath] = useState<string | null>(null);
 
   const menuItemWidth = isMenuOpened ? "w-40" : "w-fit";
   const transition = "transition-all duration-500 ease-in-out";
   const menuTransition = "transition-all duration-400 ease-in-out delay-500";
   const opacityTransition = "transition-opacity duration-300";
+
+  useEffect(() => {
+    setActivePath(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     setSessionUserData(session?.data?.user as User);
@@ -110,7 +124,7 @@ export default function VerticalSidebar() {
                   className={`flex flex-col justify-center items-center
                   p-3 rounded-tr-md rounded-br-md cursor-pointer w-full
                   ${
-                    pathname === item.href
+                    activePath === item.href
                       ? "bg-white text-black"
                       : "hover:bg-gray-800"
                   }
@@ -190,7 +204,9 @@ export default function VerticalSidebar() {
         <button
           type="button"
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
-          onClick={() => handleSignOutClick()}
+          onClick={() => {
+            void handleSignOutClick();
+          }}
           title={constants.SignOutMenuItemConfig.title}
         >
           <div

@@ -8,6 +8,24 @@ import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 import type { ISideBarMenuItem } from "@/shared/services/types";
 
+function getAccountMenuItem(sessionUserData?: User): ISideBarMenuItem {
+  const { image, name } = sessionUserData || {};
+  return {
+    href: "*",
+    iconUrl: image || constants.DefaultUserAvatarIconUrl,
+    title: name?.split?.(" ")?.[0] || "User",
+    isAccount: true,
+  };
+}
+
+function buildSideBarItems(sessionUserData?: User): ISideBarMenuItem[] {
+  return [
+    getAccountMenuItem(sessionUserData),
+    ...constants.SideBarMenuItemsConfig,
+    constants.SignOutMenuItemConfig,
+  ];
+}
+
 export default function HorizontalSidebar() {
   // !Avoid: Hydration mismatch error!
   // first server HTML and first client render must match
@@ -20,31 +38,19 @@ export default function HorizontalSidebar() {
   // Note: Client also renders on Server, so we need to handle this case.
   const pathname = usePathname();
   const session = useSession();
-
-  const getAccountMenuItem = (sessionUserData?: User): ISideBarMenuItem => {
-    const { image, name } = sessionUserData || {};
-    return {
-      href: "*",
-      iconUrl: image || constants.DefaultUserAvatarIconUrl,
-      title: name?.split?.(" ")?.[0] || "User",
-      isAccount: true,
-    };
-  };
-
-  const [sideBarItems, setSideBarItems] = useState<ISideBarMenuItem[]>([
-    getAccountMenuItem(session?.data?.user),
-    ...constants.SideBarMenuItemsConfig,
-    constants.SignOutMenuItemConfig,
-  ]);
+  const [activePath, setActivePath] = useState<string | null>(null);
+  const [sideBarItems, setSideBarItems] = useState<ISideBarMenuItem[]>(() =>
+    buildSideBarItems(),
+  );
 
   const opacityTransition = "transition-opacity duration-300";
 
   useEffect(() => {
-    setSideBarItems([
-      getAccountMenuItem(session?.data?.user),
-      ...constants.SideBarMenuItemsConfig,
-      constants.SignOutMenuItemConfig,
-    ]);
+    setActivePath(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
+    setSideBarItems(buildSideBarItems(session?.data?.user));
   }, [session?.status, session?.data?.user]);
 
   return (
@@ -60,7 +66,7 @@ export default function HorizontalSidebar() {
                   `flex flex-col justify-center items-center gap-3
                   p-3 rounded-tl-md rounded-tr-md transition cursor-pointer min-w-5 w-full
                   ${
-                    pathname === item.href
+                    activePath === item.href
                       ? "bg-white text-black border-b-4 border-b-green-500"
                       : "hover:bg-gray-800"
                   }

@@ -5,8 +5,8 @@ alwaysApply: true
 
 # Code comments
 
-- **User comments are sacred:** Never delete comments the user wrote (or that were already in the file from the user / prior work). You **may** modify, rephrase, translate, or relocate them so they stay accurate with the code. Do **not** strip them “for cleanup.”
-- **When the agent may add comments:** Do **not** invent new comments from scratch without permission. Add a **new** comment only if the user explicitly asks. Improving an existing user comment (wording, English, accuracy) does not require a separate ask.
+- **User comments are sacred:** Never delete, rewrite, shorten, or replace comments the user wrote (or that were already in the file from the user / prior work). Do **not** “improve” or substitute them with an agent version. You may only **relocate** a user comment so it stays next to the code it documents, or **translate Russian → English** (keep the same meaning). Any other edit to a user comment requires an **explicit** user ask.
+- **When the agent may add comments:** Do **not** invent new comments from scratch without permission. Add a **new** comment only if the user explicitly asks.
 - **Exception:** Required lint suppressions (`biome-ignore` with a short reason on the line immediately above the diagnostic) are allowed when needed to pass the quality gate.
 - **Language:** English only. If any Russian comments are introduced or found, replace them with an English translation (that counts as modifying, not deleting).
 - **Purpose:** Explain *why* / non-obvious intent, constraints, or trade-offs — not *what* the next line does.
