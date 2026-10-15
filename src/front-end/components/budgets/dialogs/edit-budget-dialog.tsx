@@ -41,6 +41,34 @@ import {
 import type { IAddBudgetFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
+function setFormBudgetData(
+  budget?: Partial<IAddBudgetFormData> | Partial<Budget> | null | undefined,
+): IAddBudgetFormData | null {
+  return budget
+    ? {
+        id: budget?.id || "",
+        budgetCategory:
+          (budget as Budget)?.category ||
+          (budget as IAddBudgetFormData)?.budgetCategory ||
+          "",
+        maximum: budget?.maximum?.toString() || "",
+        theme: (budget?.theme || "") as Theme,
+      }
+    : null;
+}
+
+function isFormValid(
+  formErrors: Partial<Record<keyof IAddBudgetFormData, string>> | null,
+  formBudgetData: IAddBudgetFormData | null,
+) {
+  return (
+    !formErrors &&
+    formBudgetData?.budgetCategory &&
+    formBudgetData?.maximum &&
+    formBudgetData?.theme
+  );
+}
+
 export function EditBudgetDialog({
   children,
   budget,
@@ -63,20 +91,6 @@ export function EditBudgetDialog({
   const busyBudgetCategories = busyBudgets.map((p) => p.category);
   const busyBudgetThemes = busyBudgets.map((p) => p.theme);
 
-  const setFormBudgetData = (
-    budget?: Partial<IAddBudgetFormData> | Partial<Budget> | null | undefined,
-  ) =>
-    budget
-      ? {
-          id: budget?.id || "",
-          budgetCategory:
-            (budget as Budget)?.category ||
-            (budget as IAddBudgetFormData)?.budgetCategory ||
-            "",
-          maximum: budget?.maximum?.toString() || "",
-          theme: (budget?.theme || "") as Theme,
-        }
-      : null;
   const [formBudgetData, setFormData] = useState<IAddBudgetFormData | null>(
     () => setFormBudgetData(budget),
   );
@@ -140,15 +154,6 @@ export function EditBudgetDialog({
     }
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
-
-  const isFormValid = () => {
-    return (
-      !formErrors &&
-      formBudgetData?.budgetCategory &&
-      formBudgetData?.maximum &&
-      formBudgetData?.theme
-    );
-  };
 
   const handleBudgetCategoryInputChange = (
     value: TransactionUICategory,
@@ -309,7 +314,7 @@ export function EditBudgetDialog({
               <Button
                 type="submit"
                 className="w-full h-12 cursor-pointer"
-                disabled={isPending || !isFormValid()}
+                disabled={isPending || !isFormValid(formErrors, formBudgetData)}
               >
                 Save Changes
               </Button>

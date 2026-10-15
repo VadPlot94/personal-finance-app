@@ -37,6 +37,32 @@ import constants, { Theme } from "@/shared/services/constants.service";
 import type { ICreatePotFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
+function setFormPotData(
+  pot?: Partial<ICreatePotFormData> | Partial<Pot> | undefined,
+): ICreatePotFormData | null {
+  return pot
+    ? {
+        id: pot?.id || "",
+        potName:
+          (pot as Pot)?.name || (pot as ICreatePotFormData)?.potName || "",
+        target: pot?.target?.toString() || "",
+        theme: (pot?.theme || "") as Theme,
+      }
+    : null;
+}
+
+function isFormValid(
+  formErrors: Partial<Record<keyof ICreatePotFormData, string>> | null,
+  formPotData: ICreatePotFormData | null,
+) {
+  return (
+    !formErrors &&
+    formPotData?.potName &&
+    formPotData?.target &&
+    formPotData?.theme
+  );
+}
+
 export function EditPotDialog({
   children,
   pot,
@@ -57,18 +83,6 @@ export function EditPotDialog({
     pot?.id ? pots.filter((p) => p.name !== pot?.name) : pots
   ).map((p) => p.name);
 
-  const setFormPotData = (
-    pot?: Partial<ICreatePotFormData> | Partial<Pot> | undefined,
-  ) =>
-    pot
-      ? {
-          id: pot?.id || "",
-          potName:
-            (pot as Pot)?.name || (pot as ICreatePotFormData)?.potName || "",
-          target: pot?.target?.toString() || "",
-          theme: (pot?.theme || "") as Theme,
-        }
-      : null;
   const [formPotData, setFormData] = useState<ICreatePotFormData | null>(() =>
     setFormPotData(pot),
   );
@@ -136,15 +150,6 @@ export function EditPotDialog({
     }
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
-
-  const isFormValid = () => {
-    return (
-      !formErrors &&
-      formPotData?.potName &&
-      formPotData?.target &&
-      formPotData?.theme
-    );
-  };
 
   const handlePotNameInputChange = (value: string): void => {
     setFormData(setFormPotData({ ...formPotData, name: value }));
@@ -286,7 +291,7 @@ export function EditPotDialog({
               <Button
                 type="submit"
                 className="w-full h-12 cursor-pointer"
-                disabled={isPending || !isFormValid()}
+                disabled={isPending || !isFormValid(formErrors, formPotData)}
               >
                 Save Changes
               </Button>

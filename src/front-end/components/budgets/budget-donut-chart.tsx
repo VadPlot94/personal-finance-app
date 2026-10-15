@@ -1,18 +1,16 @@
 "use client";
 
+import type { Budget } from "@prisma/client";
 import { useEffect, useState } from "react";
 import type { IBudgetDonutChartProps } from "@/front-end/components/budgets/types";
 import constants from "@/shared/services/constants.service";
+import type { ITransactionsForCategoryData } from "@/shared/services/types";
 
-export default function BudgetDonutChart({
-  budgets,
-  size = constants.DefaultDonutChartSize,
-  holeRatio = 0.58,
-  transactionsByCategoryList,
-}: IBudgetDonutChartProps) {
-  const [donutSize, setDonutSize] = useState(constants.DefaultDonutChartSize);
-
-  const spentByCategory: Record<string, number> = Object.fromEntries(
+function buildSpentByCategory(
+  budgets: Budget[],
+  transactionsByCategoryList: ITransactionsForCategoryData[] | undefined,
+): Record<string, number> {
+  return Object.fromEntries(
     budgets.map((budget) => {
       const transactionsByCategory = transactionsByCategoryList?.find(
         ({ category }) => category === budget.category,
@@ -30,24 +28,25 @@ export default function BudgetDonutChart({
       return [budget.category, spent];
     }),
   );
+}
 
-  const totalSpent = Object.values(spentByCategory).reduce(
-    (sum, v) => sum + v,
-    0,
-  );
-  const totalAllMaximums = budgets.reduce(
-    (sum, { maximum }) => sum + maximum,
-    0,
-  );
-
-  const categoriesWithSpent = budgets
+function buildCategoriesWithSpent(
+  budgets: Budget[],
+  spentByCategory: Record<string, number>,
+) {
+  return budgets
     .map((budget) => ({
       ...budget,
       spent: spentByCategory[budget.category] || 0,
     }))
     .filter((item) => item.spent > 0)
     .sort((a, b) => b.spent - a.spent);
+}
 
+function buildGradient(
+  categoriesWithSpent: ReturnType<typeof buildCategoriesWithSpent>,
+  totalSpent: number,
+): string {
   let cumulativePercent = 0;
   const gradientStops = categoriesWithSpent.map((budget) => {
     const percent = totalSpent > 0 ? (budget.spent / totalSpent) * 100 : 0;
@@ -70,7 +69,37 @@ export default function BudgetDonutChart({
     gradientStops.push(`#e5e7eb ${startDeg}deg 360deg`);
   }
 
-  const gradient = `conic-gradient(${gradientStops.join(", ")})`;
+  return `conic-gradient(${gradientStops.join(", ")})`;
+}
+
+export default function BudgetDonutChart({
+  budgets,
+  size = constants.DefaultDonutChartSize,
+  holeRatio = 0.58,
+  transactionsByCategoryList,
+}: IBudgetDonutChartProps) {
+  const [donutSize, setDonutSize] = useState(constants.DefaultDonutChartSize);
+
+  const spentByCategory = buildSpentByCategory(
+    budgets,
+    transactionsByCategoryList,
+  );
+
+  const totalSpent = Object.values(spentByCategory).reduce(
+    (sum, v) => sum + v,
+    0,
+  );
+  const totalAllMaximums = budgets.reduce(
+    (sum, { maximum }) => sum + maximum,
+    0,
+  );
+
+  const categoriesWithSpent = buildCategoriesWithSpent(
+    budgets,
+    spentByCategory,
+  );
+
+  const gradient = buildGradient(categoriesWithSpent, totalSpent);
 
   useEffect(() => {
     const checkSize = () => {

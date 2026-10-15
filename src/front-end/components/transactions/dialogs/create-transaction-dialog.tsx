@@ -32,6 +32,36 @@ import constants, {
 import type { ICreateTransactionValidationData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
+function setFormTransactionData(
+  transactionFormData?: Partial<ICreateTransactionFormData> | undefined,
+): ICreateTransactionFormData | null {
+  return transactionFormData
+    ? ({
+        transactionType: transactionFormData?.transactionType,
+        recipientOrSender: transactionFormData?.recipientOrSender,
+        category: transactionFormData?.category,
+        amount: transactionFormData?.amount || "",
+        date: transactionFormData?.date,
+      } as ICreateTransactionFormData)
+    : null;
+}
+
+function isFormValid(
+  formErrors: Partial<
+    Record<keyof ICreateTransactionValidationData, string>
+  > | null,
+  formTransactionData: ICreateTransactionFormData | null,
+) {
+  return (
+    !formErrors &&
+    formTransactionData?.transactionType &&
+    formTransactionData?.category &&
+    formTransactionData?.recipientOrSender &&
+    formTransactionData?.amount &&
+    formTransactionData?.date
+  );
+}
+
 export function CreateTransactionDialog({
   isDialogOpen,
   setDialogOpen,
@@ -40,20 +70,6 @@ export function CreateTransactionDialog({
     createTransactionSRF,
     null,
   );
-
-  const setFormTransactionData = (
-    transactionFormData?: Partial<ICreateTransactionFormData> | undefined,
-  ): ICreateTransactionFormData | null => {
-    return transactionFormData
-      ? ({
-          transactionType: transactionFormData?.transactionType,
-          recipientOrSender: transactionFormData?.recipientOrSender,
-          category: transactionFormData?.category,
-          amount: transactionFormData?.amount || "",
-          date: transactionFormData?.date,
-        } as ICreateTransactionFormData)
-      : null;
-  };
 
   const [formTransactionData, setFormData] =
     useState<ICreateTransactionFormData | null>(null);
@@ -117,17 +133,6 @@ export function CreateTransactionDialog({
     }
     handleOpenChange(!isFormSavedSuccess);
   }, [formResultState]);
-
-  const isFormValid = () => {
-    return (
-      !formErrors &&
-      formTransactionData?.transactionType &&
-      formTransactionData?.category &&
-      formTransactionData?.recipientOrSender &&
-      formTransactionData?.amount &&
-      formTransactionData?.date
-    );
-  };
 
   const handleTransactionTypeChange = (value: TransactionType): void => {
     setFormData(
@@ -337,7 +342,9 @@ export function CreateTransactionDialog({
               <Button
                 type="submit"
                 className="w-full h-12 cursor-pointer"
-                disabled={isPending || !isFormValid()}
+                disabled={
+                  isPending || !isFormValid(formErrors, formTransactionData)
+                }
               >
                 Save Changes
               </Button>

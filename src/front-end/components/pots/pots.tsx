@@ -13,6 +13,21 @@ import constants from "@/shared/services/constants.service";
 
 export const PotsContext = createContext<Pot[]>([]);
 
+// Find nearest @container
+function findNearestContainer(element: HTMLElement): HTMLElement | null {
+  let current: HTMLElement | null = element;
+
+  while (current) {
+    const containerType =
+      getComputedStyle(current).getPropertyValue("container-type");
+    if (containerType && containerType !== "none") {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null; // fallback on grid
+}
+
 export default function Pots({
   pots = [],
   availableBalance = 0,
@@ -32,21 +47,6 @@ export default function Pots({
       easing: "easeInOut",
       stagger: 30,
     });
-
-    // Find nearest @container
-    const findNearestContainer = (element: HTMLElement): HTMLElement | null => {
-      let current: HTMLElement | null = element;
-
-      while (current) {
-        const containerType =
-          getComputedStyle(current).getPropertyValue("container-type");
-        if (containerType && containerType !== "none") {
-          return current;
-        }
-        current = current.parentElement;
-      }
-      return null; // fallback on grid
-    };
 
     const containerElement = findNearestContainer(grid) || grid;
 

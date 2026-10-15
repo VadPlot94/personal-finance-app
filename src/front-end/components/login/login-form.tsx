@@ -31,6 +31,50 @@ function resolveAuthMode(authMode?: string): AuthMode {
   return AuthMode.SignIn;
 }
 
+// Transform and set sign in form data
+function getSignInFormData(
+  data?: Partial<ISignInFormData> | null,
+): ISignInFormData | null {
+  return data
+    ? {
+        email: data.email || "",
+        password: data.password || "",
+      }
+    : null;
+}
+
+// Transform and set register form data
+function getRegisterFormData(
+  data?: Partial<IRegisterFormData> | null,
+): IRegisterFormData | null {
+  return data
+    ? {
+        email: data.email || "",
+        password: data.password || "",
+        name: data.name || "",
+      }
+    : null;
+}
+
+function isSignInFormValid(
+  signInErrors: Partial<Record<keyof ISignInValidationData, string>> | null,
+  formSignInData: ISignInFormData | null,
+) {
+  return !signInErrors && formSignInData?.email && formSignInData?.password;
+}
+
+function isRegisterFormValid(
+  registerErrors: Partial<Record<keyof IRegisterValidationData, string>> | null,
+  formRegisterData: IRegisterFormData | null,
+) {
+  return (
+    !registerErrors &&
+    formRegisterData?.name &&
+    formRegisterData?.email &&
+    formRegisterData?.password
+  );
+}
+
 export default function LoginForm({
   isLoading = false,
   authMode,
@@ -55,17 +99,6 @@ export default function LoginForm({
     });
   };
 
-  // Transform and set sign in form data
-  const getSignInFormData = (
-    data?: Partial<ISignInFormData> | null,
-  ): ISignInFormData | null =>
-    data
-      ? {
-          email: data.email || "",
-          password: data.password || "",
-        }
-      : null;
-
   // Sign In State
   const [formSignInData, setFormSignInStateData] =
     useState<ISignInFormData | null>(() => getSignInFormData(null));
@@ -73,18 +106,6 @@ export default function LoginForm({
     Record<keyof ISignInValidationData, string>
   > | null>(() => null);
   const [isSigningIn, setIsSigningIn] = useState(false);
-
-  // Transform and set register form data
-  const getRegisterFormData = (
-    data?: Partial<IRegisterFormData> | null,
-  ): IRegisterFormData | null =>
-    data
-      ? {
-          email: data.email || "",
-          password: data.password || "",
-          name: data.name || "",
-        }
-      : null;
 
   // Register State
   const [formRegisterData, setFormRegisterStateData] =
@@ -132,19 +153,6 @@ export default function LoginForm({
       validateRegisterForm(formRegisterData);
     }
   }, [formRegisterData]);
-
-  const isSignInFormValid = () => {
-    return !signInErrors && formSignInData?.email && formSignInData?.password;
-  };
-
-  const isRegisterFormValid = () => {
-    return (
-      !registerErrors &&
-      formRegisterData?.name &&
-      formRegisterData?.email &&
-      formRegisterData?.password
-    );
-  };
 
   const handleAutoLogin = async (email: string, password: string) => {
     const result = await signIn("credentials", {
@@ -320,7 +328,10 @@ export default function LoginForm({
                 <div className="flex flex-col gap-2">
                   <Button
                     type="submit"
-                    disabled={isSigningIn || !isSignInFormValid()}
+                    disabled={
+                      isSigningIn ||
+                      !isSignInFormValid(signInErrors, formSignInData)
+                    }
                     className="w-full h-12 cursor-pointer"
                   >
                     {isSigningIn ? "Signing in..." : "Sign in"}
@@ -434,7 +445,9 @@ export default function LoginForm({
                 <div className="flex flex-col gap-2">
                   <Button
                     type="submit"
-                    disabled={!isRegisterFormValid()}
+                    disabled={
+                      !isRegisterFormValid(registerErrors, formRegisterData)
+                    }
                     className="w-full h-12 cursor-pointer"
                   >
                     Create Account

@@ -1,5 +1,6 @@
 "use client";
 
+import type { Transaction } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
@@ -20,6 +21,77 @@ const emptyStats = {
   dueSoonAmount: "0.00",
 };
 
+function computeRecurringTileStats(
+  recurringTransactions: Transaction[] | undefined,
+  now: Date | null,
+) {
+  if (!now || !recurringTransactions?.length) {
+    return emptyStats;
+  }
+
+  // Step 1: latest date
+  const latestDate = recurringService.findLatestRecurringDate(
+    recurringTransactions,
+  );
+  if (!latestDate) {
+    return {
+      ...emptyStats,
+      referenceMonthName: "No recurring bills",
+    };
+  }
+
+  // Step 2: forecast month
+  const {
+    year,
+    month,
+    name: referenceMonthName,
+  } = recurringService.getForecastMonthAndName(latestDate);
+
+  // Step 3: referenceDate (carry over current day/time)
+  const realToday = now; // in production: current date
+  // const realToday = new Date("2026-03-12"); // for tests
+
+  const referenceDate = recurringService.createReferenceDate(
+    realToday,
+    year,
+    month,
+  );
+
+  // Step 4: all recurring bills for the month
+  const monthBills = recurringService.getRecurringBillsInMonth(
+    recurringTransactions,
+    year,
+    month,
+  );
+
+  if (!monthBills.length) {
+    return {
+      ...emptyStats,
+      referenceMonthName,
+    };
+  }
+
+  // Step 5: compute paid/upcoming/due soon — now via the service
+  const billStats = recurringService.calculateStatsFromBills(
+    monthBills,
+    referenceDate,
+    constants.RecurringDueSoonDays,
+  );
+
+  const totalBillsRaw = billStats.paidAmount + billStats.upcomingAmount;
+
+  return {
+    referenceMonthName,
+    totalBills: Math.abs(totalBillsRaw).toFixed(2),
+    paidCount: billStats.paidCount,
+    paidAmount: Math.abs(billStats.paidAmount).toFixed(2),
+    upcomingCount: billStats.upcomingCount,
+    upcomingAmount: Math.abs(billStats.upcomingAmount).toFixed(2),
+    dueSoonCount: billStats.dueSoonCount,
+    dueSoonAmount: Math.abs(billStats.dueSoonAmount).toFixed(2),
+  };
+}
+
 export default function RecurringTile({
   recurringTransactions = [],
 }: IRecurringTileProps) {
@@ -30,73 +102,10 @@ export default function RecurringTile({
     setNow(new Date());
   }, []);
 
-  const stats = useMemo(() => {
-    if (!now || !recurringTransactions?.length) {
-      return emptyStats;
-    }
-
-    // Step 1: latest date
-    const latestDate = recurringService.findLatestRecurringDate(
-      recurringTransactions,
-    );
-    if (!latestDate) {
-      return {
-        ...emptyStats,
-        referenceMonthName: "No recurring bills",
-      };
-    }
-
-    // Step 2: forecast month
-    const {
-      year,
-      month,
-      name: referenceMonthName,
-    } = recurringService.getForecastMonthAndName(latestDate);
-
-    // Step 3: referenceDate (carry over current day/time)
-    const realToday = now; // in production: current date
-    // const realToday = new Date("2026-03-12"); // for tests
-
-    const referenceDate = recurringService.createReferenceDate(
-      realToday,
-      year,
-      month,
-    );
-
-    // Step 4: all recurring bills for the month
-    const monthBills = recurringService.getRecurringBillsInMonth(
-      recurringTransactions,
-      year,
-      month,
-    );
-
-    if (!monthBills.length) {
-      return {
-        ...emptyStats,
-        referenceMonthName,
-      };
-    }
-
-    // Step 5: compute paid/upcoming/due soon — now via the service
-    const billStats = recurringService.calculateStatsFromBills(
-      monthBills,
-      referenceDate,
-      constants.RecurringDueSoonDays,
-    );
-
-    const totalBillsRaw = billStats.paidAmount + billStats.upcomingAmount;
-
-    return {
-      referenceMonthName,
-      totalBills: Math.abs(totalBillsRaw).toFixed(2),
-      paidCount: billStats.paidCount,
-      paidAmount: Math.abs(billStats.paidAmount).toFixed(2),
-      upcomingCount: billStats.upcomingCount,
-      upcomingAmount: Math.abs(billStats.upcomingAmount).toFixed(2),
-      dueSoonCount: billStats.dueSoonCount,
-      dueSoonAmount: Math.abs(billStats.dueSoonAmount).toFixed(2),
-    };
-  }, [recurringTransactions, now /* realToday */]);
+  const stats = useMemo(
+    () => computeRecurringTileStats(recurringTransactions, now),
+    [recurringTransactions, now /* realToday */],
+  );
 
   return (
     <ItemCard className="h-full">

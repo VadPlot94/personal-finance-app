@@ -17,6 +17,19 @@ import { Label } from "@/front-end/components/ui/label";
 import financeService from "@/front-end/services/finance.service";
 import validationService from "@/shared/services/validation.service";
 
+function getResultPotTotal(
+  newAmount: string,
+  total: number,
+  isWithdraw: boolean,
+): number {
+  const currentAmount = +newAmount || 0;
+  return isWithdraw ? total - currentAmount : total + currentAmount;
+}
+
+function isFormValid(validationError: string | null, newAmount: string) {
+  return !validationError && newAmount;
+}
+
 export function ChangeMoneyDialog({
   children,
   pot,
@@ -30,16 +43,11 @@ export function ChangeMoneyDialog({
   const [amountProgress, setAmountProgress] = useState(0);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const getResultPotTotal = (newAmount: string, total: number): number => {
-    const currentAmount = +newAmount || 0;
-    return isWithdraw ? total - currentAmount : total + currentAmount;
-  };
-
   useEffect(() => {
     setNewAmount("");
     setAmountProgress(0);
     setValidationError(null);
-    setResultTotal(getResultPotTotal(newAmount, pot.total));
+    setResultTotal(getResultPotTotal(newAmount, pot.total, isWithdraw));
   }, [isDialogOpen, pot.total]);
 
   const handleTotalInputChange = (val: string) => {
@@ -68,7 +76,7 @@ export function ChangeMoneyDialog({
       +newAmount,
       pot.target,
     );
-    const resultPotTotal = getResultPotTotal(newAmount, pot.total);
+    const resultPotTotal = getResultPotTotal(newAmount, pot.total, isWithdraw);
     setResultTotal(resultPotTotal);
     setAmountProgress(amountProgress);
     return;
@@ -97,10 +105,6 @@ export function ChangeMoneyDialog({
   };
 
   const totalValue = financeService.createCacheNumberFormat(newAmount);
-
-  const isFormValid = () => {
-    return !validationError && newAmount;
-  };
 
   const initialPotTotalProgress = financeService.calculateProgressPercentage(
     pot.total,
@@ -189,7 +193,7 @@ export function ChangeMoneyDialog({
             <Button
               onClick={() => handleConfirmButtonClick()}
               className="w-full h-12 cursor-pointer"
-              disabled={!isFormValid()}
+              disabled={!isFormValid(validationError, newAmount)}
             >
               {isWithdraw ? "Confirm Withdrawal" : "Confirm Addition"}
             </Button>

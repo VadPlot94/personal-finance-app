@@ -1,16 +1,21 @@
 "use client";
+import type { Pot } from "@prisma/client";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import type { IPotsTileProps } from "@/front-end/components/pots/types";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
 import { cn } from "@/lib/utils";
 import potService from "@/shared/services/pot.service";
 
+function buildTilePots(pots: Pot[]): (Pot | null)[] {
+  const filteredPots = [...pots].sort((a, b) => b.total - a.total).slice(0, 4);
+  return Array.from({ length: 4 }, (_, i) => filteredPots[i] || null);
+}
+
 export default function PotsTile({ pots = [] }: IPotsTileProps) {
   const totalSum = potService
     .getAllSavedPotsMoney(pots)
     .toLocaleString("en-US");
-  const filteredPots = [...pots].sort((a, b) => b.total - a.total).slice(0, 4);
-  const tilePots = Array.from({ length: 4 }, (_, i) => filteredPots[i] || null);
+  const tilePots = buildTilePots(pots);
 
   return (
     <ItemCard>
