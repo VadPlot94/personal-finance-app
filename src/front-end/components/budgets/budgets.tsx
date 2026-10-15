@@ -14,8 +14,36 @@ import TransactionsTile from "@/front-end/components/transactions/transactions-t
 import budgetService from "@/front-end/services/budget.service";
 import { cn } from "@/lib/utils";
 import type { TransactionUICategory } from "@/shared/services/constants.service";
+import type { ITransactionsForCategoryData } from "@/shared/services/types";
 
 export const BudgetsContext = createContext<Budget[]>([]);
+
+function getBudgetCardViewModel(
+  budget: Budget,
+  transactionsByCategoryList: ITransactionsForCategoryData[] | undefined,
+) {
+  const currentCategoryTransactionsData = transactionsByCategoryList?.find(
+    ({ category }) => category === budget?.category,
+  );
+  const { spent, remaining, percentBarProgress } =
+    budgetService.getBudgetPercentageData(
+      budget.maximum,
+      currentCategoryTransactionsData?.transactions,
+    );
+  const isOver = remaining < 0;
+  const isWarning = percentBarProgress >= 90 && percentBarProgress <= 100;
+  const latestTransactions =
+    currentCategoryTransactionsData?.transactions.slice(0, 3);
+
+  return {
+    spent,
+    remaining,
+    percentBarProgress,
+    isOver,
+    isWarning,
+    latestTransactions,
+  };
+}
 
 export default function Budgets({
   budgets = [],
@@ -66,18 +94,14 @@ export default function Budgets({
           </div>
           <div className="flex flex-col justify-between gap-5">
             {budgets?.map((budget) => {
-              const currentCategoryTransactionsData =
-                transactionsByCategoryList?.find(
-                  ({ category }) => category === budget?.category,
-                );
-              const { spent, remaining, percentBarProgress } =
-                budgetService.getBudgetPercentageData(
-                  budget.maximum,
-                  currentCategoryTransactionsData?.transactions,
-                );
-              const isOver = remaining < 0;
-              const isWarning =
-                percentBarProgress >= 90 && percentBarProgress <= 100;
+              const {
+                spent,
+                remaining,
+                percentBarProgress,
+                isOver,
+                isWarning,
+                latestTransactions,
+              } = getBudgetCardViewModel(budget, transactionsByCategoryList);
               return (
                 <ItemCard key={budget.id}>
                   <div className="flex flex-col gap-3 justify-between">
@@ -178,10 +202,7 @@ export default function Budgets({
                     )}
                     <div className="mt-1 mb-3">
                       <TransactionsTile
-                        transactions={currentCategoryTransactionsData?.transactions.slice(
-                          0,
-                          3,
-                        )}
+                        transactions={latestTransactions}
                         isBudgetTile={true}
                         category={budget?.category as TransactionUICategory}
                       />

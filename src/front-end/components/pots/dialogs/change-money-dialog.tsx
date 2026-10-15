@@ -1,5 +1,6 @@
 "use client";
 
+import type { Pot } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { setPotTotalSRF } from "@/back-end/server-actions/pot-actions";
@@ -30,6 +31,47 @@ function isFormValid(validationError: string | null, newAmount: string) {
   return !validationError && newAmount;
 }
 
+function computeAmountInputResult(
+  val: string,
+  pot: Pot,
+  availableBalance: number,
+  isWithdraw: boolean,
+) {
+  const newAmount = val?.replaceAll(" ", "");
+  const targetValidationAmount = isWithdraw ? pot.total : pot.target;
+  const oldTotal = isWithdraw ? 0 : pot.total;
+  if (newAmount !== "") {
+    const result = validationService.validateTotal(
+      newAmount,
+      targetValidationAmount,
+      oldTotal,
+      availableBalance,
+    );
+
+    if (!result.success) {
+      return {
+        newAmount,
+        validationError: result.error.issues[0].message,
+        amountProgress: 0,
+        resultTotal: pot.total,
+      };
+    }
+  }
+
+  const amountProgress = financeService.calculateProgressPercentage(
+    +newAmount,
+    pot.target,
+  );
+  const resultTotal = getResultPotTotal(newAmount, pot.total, isWithdraw);
+
+  return {
+    newAmount,
+    validationError: null as string | null,
+    amountProgress,
+    resultTotal,
+  };
+}
+
 export function ChangeMoneyDialog({
   children,
   pot,
@@ -51,35 +93,16 @@ export function ChangeMoneyDialog({
   }, [isDialogOpen, pot.total]);
 
   const handleTotalInputChange = (val: string) => {
-    const newAmount = val?.replaceAll(" ", "");
-    setNewAmount(newAmount);
-    const targetValidationAmount = isWithdraw ? pot.total : pot.target;
-    const oldTotal = isWithdraw ? 0 : pot.total;
-    if (newAmount !== "") {
-      const result = validationService.validateTotal(
-        newAmount,
-        targetValidationAmount,
-        oldTotal,
-        availableBalance,
-      );
-
-      if (!result.success) {
-        setValidationError(result.error.issues[0].message);
-        setAmountProgress(0);
-        setResultTotal(pot.total);
-        return;
-      }
-    }
-    setValidationError(null);
-
-    const amountProgress = financeService.calculateProgressPercentage(
-      +newAmount,
-      pot.target,
+    const result = computeAmountInputResult(
+      val,
+      pot,
+      availableBalance,
+      isWithdraw,
     );
-    const resultPotTotal = getResultPotTotal(newAmount, pot.total, isWithdraw);
-    setResultTotal(resultPotTotal);
-    setAmountProgress(amountProgress);
-    return;
+    setNewAmount(result.newAmount);
+    setValidationError(result.validationError);
+    setAmountProgress(result.amountProgress);
+    setResultTotal(result.resultTotal);
   };
 
   const handleConfirmButtonClick = async () => {

@@ -63,6 +63,31 @@ function isFormValid(
   );
 }
 
+function getCreatePotFormErrors(
+  formPotData: ICreatePotFormData,
+  potNames: string[],
+  potTotal?: number,
+): Partial<Record<keyof ICreatePotFormData, string>> | null {
+  const result = validationService.validateCreatePotSchema(
+    formPotData,
+    potNames,
+    potTotal,
+  );
+
+  if (result.success) {
+    return null;
+  }
+  return validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
+    result,
+  );
+}
+
+function getOtherPotNames(pots: Pot[], pot?: Pot): string[] {
+  return (pot?.id ? pots.filter((p) => p.name !== pot?.name) : pots).map(
+    (p) => p.name,
+  );
+}
+
 export function EditPotDialog({
   children,
   pot,
@@ -79,9 +104,7 @@ export function EditPotDialog({
   );
 
   const pots = useContext<Pot[]>(PotsContext);
-  const potNames = (
-    pot?.id ? pots.filter((p) => p.name !== pot?.name) : pots
-  ).map((p) => p.name);
+  const potNames = getOtherPotNames(pots, pot);
 
   const [formPotData, setFormData] = useState<ICreatePotFormData | null>(() =>
     setFormPotData(pot),
@@ -90,24 +113,6 @@ export function EditPotDialog({
   const [formErrors, setFormErrors] = useState<Partial<
     Record<keyof ICreatePotFormData, string>
   > | null>(null);
-
-  const validateForm = (formPotData: ICreatePotFormData) => {
-    const result = validationService.validateCreatePotSchema(
-      formPotData,
-      potNames,
-      pot?.total,
-    );
-
-    if (result.success) {
-      setFormErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
-        result,
-      );
-    setFormErrors(errors);
-  };
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
@@ -123,7 +128,9 @@ export function EditPotDialog({
 
   useEffect(() => {
     if (formPotData) {
-      validateForm(formPotData);
+      setFormErrors(
+        getCreatePotFormErrors(formPotData, potNames, pot?.total),
+      );
     }
   }, [formPotData]);
 

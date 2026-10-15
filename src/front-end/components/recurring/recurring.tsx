@@ -12,17 +12,6 @@ import recurringService from "@/front-end/services/recurring.service";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 
-const emptyStats = {
-  referenceMonthName: "—",
-  totalBills: "0.00",
-  paidCount: 0,
-  paidAmount: "0.00",
-  upcomingCount: 0,
-  upcomingAmount: "0.00",
-  dueSoonCount: 0,
-  dueSoonAmount: "0.00",
-};
-
 export default function Recurring({
   recurringTransactions = [],
   paginationData,
@@ -42,90 +31,18 @@ export default function Recurring({
     constants.TransactionRecordsPerPage,
   );
 
-  const { stats, referenceDate } = useMemo(() => {
-    if (!now || !recurringTransactions?.length) {
-      return { stats: emptyStats, referenceDate: null as Date | null };
-    }
+  const { stats, referenceDate } = useMemo(
+    () =>
+      recurringService.computeRecurringStats(
+        recurringTransactions,
+        now,
+        constants.RecurringDueSoonDays,
+      ),
+    [recurringTransactions, now /* realToday */],
+  );
 
-    // Step 1: latest date
-    const latestDate = recurringService.findLatestRecurringDate(
-      recurringTransactions,
-    );
-    if (!latestDate) {
-      return {
-        stats: {
-          ...emptyStats,
-          referenceMonthName: "No recurring bills",
-        },
-        referenceDate: null as Date | null,
-      };
-    }
-
-    // Step 2: forecast month
-    const {
-      year,
-      month,
-      name: referenceMonthName,
-    } = recurringService.getForecastMonthAndName(latestDate);
-
-    // Step 3: referenceDate (carry over current day/time)
-    const realToday = now; // in production: current date
-    // const realToday = new Date("2026-03-12"); // for tests
-
-    const nextReferenceDate = recurringService.createReferenceDate(
-      realToday,
-      year,
-      month,
-    );
-
-    // Step 4: all recurring bills for the month
-    const monthBills = recurringService.getRecurringBillsInMonth(
-      recurringTransactions,
-      year,
-      month,
-    );
-
-    if (!monthBills.length) {
-      return {
-        stats: {
-          ...emptyStats,
-          referenceMonthName,
-        },
-        referenceDate: nextReferenceDate,
-      };
-    }
-
-    // Step 5: compute paid/upcoming/due soon — now via the service
-    const billStats = recurringService.calculateStatsFromBills(
-      monthBills,
-      nextReferenceDate,
-      constants.RecurringDueSoonDays,
-    );
-
-    const totalBillsRaw = billStats.paidAmount + billStats.upcomingAmount;
-
-    return {
-      stats: {
-        referenceMonthName,
-        totalBills: Math.abs(totalBillsRaw).toFixed(2),
-        paidCount: billStats.paidCount,
-        paidAmount: Math.abs(billStats.paidAmount).toFixed(2),
-        upcomingCount: billStats.upcomingCount,
-        upcomingAmount: Math.abs(billStats.upcomingAmount).toFixed(2),
-        dueSoonCount: billStats.dueSoonCount,
-        dueSoonAmount: Math.abs(billStats.dueSoonAmount).toFixed(2),
-      },
-      referenceDate: nextReferenceDate,
-    };
-  }, [recurringTransactions, now /* realToday */]);
-
-  const referenceDateLabel = referenceDate
-    ? referenceDate.toLocaleString("en-US", {
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-      })
-    : "—";
+  const referenceDateLabel =
+    recurringService.formatReferenceDateLabel(referenceDate);
 
   return (
     <>

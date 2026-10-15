@@ -28,6 +28,20 @@ import {
 } from "@/shared/services/constants.service";
 import type { IGetTransactionsParams } from "@/shared/services/types";
 
+function shouldSkipSearchRequest(
+  searchVal: string,
+  searchDBValue: string,
+  transactionsItems: Transaction[],
+  newSearchValue: string,
+): boolean {
+  return (
+    transactionService.isNoTransactionsSearchFound(
+      searchVal,
+      transactionsItems,
+    ) && newSearchValue.includes(searchDBValue)
+  );
+}
+
 export default function TransactionsTableLayout({
   transactions = [],
   paginationData,
@@ -78,11 +92,12 @@ export default function TransactionsTableLayout({
     // we will still get not found result
     // Eventually, no sense to do request to DB with such search
     if (
-      transactionService.isNoTransactionsSearchFound(
+      shouldSkipSearchRequest(
         searchVal,
+        searchDBValue,
         transactionsItems,
-      ) &&
-      newSearchValue.includes(searchDBValue)
+        newSearchValue,
+      )
     ) {
       return;
     }

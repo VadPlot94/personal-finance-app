@@ -75,6 +75,32 @@ function isRegisterFormValid(
   );
 }
 
+function getSignInFormErrors(
+  formData: ISignInFormData,
+): Partial<Record<keyof ISignInValidationData, string>> | null {
+  const result = validationService.validateAuthSchema(formData, "signin");
+
+  if (result.success) {
+    return null;
+  }
+  return validationService.createErrorsWithPath<Partial<ISignInValidationData>>(
+    result,
+  );
+}
+
+function getRegisterFormErrors(
+  formData: IRegisterFormData,
+): Partial<Record<keyof IRegisterValidationData, string>> | null {
+  const result = validationService.validateAuthSchema(formData, "register");
+
+  if (result.success) {
+    return null;
+  }
+  return validationService.createErrorsWithPath<
+    Partial<IRegisterValidationData>
+  >(result);
+}
+
 export default function LoginForm({
   isLoading = false,
   authMode,
@@ -114,43 +140,15 @@ export default function LoginForm({
     Record<keyof IRegisterValidationData, string>
   > | null>(() => null);
 
-  const validateSignInForm = (formData: ISignInFormData) => {
-    const result = validationService.validateAuthSchema(formData, "signin");
-
-    if (result.success) {
-      setSignInErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<Partial<ISignInValidationData>>(
-        result,
-      );
-    setSignInErrors(errors);
-  };
-
-  const validateRegisterForm = (formData: IRegisterFormData) => {
-    const result = validationService.validateAuthSchema(formData, "register");
-
-    if (result.success) {
-      setRegisterErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<Partial<IRegisterValidationData>>(
-        result,
-      );
-    setRegisterErrors(errors);
-  };
-
   useEffect(() => {
     if (formSignInData) {
-      validateSignInForm(formSignInData);
+      setSignInErrors(getSignInFormErrors(formSignInData));
     }
   }, [formSignInData]);
 
   useEffect(() => {
     if (formRegisterData) {
-      validateRegisterForm(formRegisterData);
+      setRegisterErrors(getRegisterFormErrors(formRegisterData));
     }
   }, [formRegisterData]);
 

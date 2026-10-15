@@ -69,6 +69,35 @@ function isFormValid(
   );
 }
 
+function getAddBudgetFormErrors(
+  formBudgetData: IAddBudgetFormData,
+): Partial<Record<keyof IAddBudgetFormData, string>> | null {
+  const result = validationService.validateAddBudgetSchema(formBudgetData);
+  if (result.success) {
+    return null;
+  }
+  return validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
+    result,
+  );
+}
+
+function getBusyBudgets(
+  budgets: Budget[],
+  budget?: Budget | null,
+): Budget[] {
+  return budget?.id
+    ? budgets.filter((p) => p.category !== budget?.category)
+    : budgets;
+}
+
+function getBusyBudgetCategories(budgets: Budget[], budget?: Budget | null) {
+  return getBusyBudgets(budgets, budget).map((p) => p.category);
+}
+
+function getBusyBudgetThemes(budgets: Budget[], budget?: Budget | null) {
+  return getBusyBudgets(budgets, budget).map((p) => p.theme);
+}
+
 export function EditBudgetDialog({
   children,
   budget,
@@ -85,11 +114,8 @@ export function EditBudgetDialog({
   );
 
   const budgets = useContext<Budget[]>(BudgetsContext);
-  const busyBudgets = budget?.id
-    ? budgets.filter((p) => p.category !== budget?.category)
-    : budgets;
-  const busyBudgetCategories = busyBudgets.map((p) => p.category);
-  const busyBudgetThemes = busyBudgets.map((p) => p.theme);
+  const busyBudgetCategories = getBusyBudgetCategories(budgets, budget);
+  const busyBudgetThemes = getBusyBudgetThemes(budgets, budget);
 
   const [formBudgetData, setFormData] = useState<IAddBudgetFormData | null>(
     () => setFormBudgetData(budget),
@@ -98,19 +124,6 @@ export function EditBudgetDialog({
   const [formErrors, setFormErrors] = useState<Partial<
     Record<keyof IAddBudgetFormData, string>
   > | null>(null);
-
-  const validateForm = (formBudgetData: IAddBudgetFormData) => {
-    const result = validationService.validateAddBudgetSchema(formBudgetData);
-    if (result.success) {
-      setFormErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
-        result,
-      );
-    setFormErrors(errors);
-  };
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
@@ -126,7 +139,7 @@ export function EditBudgetDialog({
 
   useEffect(() => {
     if (formBudgetData) {
-      validateForm(formBudgetData);
+      setFormErrors(getAddBudgetFormErrors(formBudgetData));
     }
   }, [formBudgetData]);
 

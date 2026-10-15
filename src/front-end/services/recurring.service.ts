@@ -6,6 +6,33 @@ export enum RecurringStatus {
   Upcoming = "Upcoming",
 }
 
+export interface IRecurringFormattedStats {
+  referenceMonthName: string;
+  totalBills: string;
+  paidCount: number;
+  paidAmount: string;
+  upcomingCount: number;
+  upcomingAmount: string;
+  dueSoonCount: number;
+  dueSoonAmount: string;
+}
+
+export interface IRecurringStatsResult {
+  stats: IRecurringFormattedStats;
+  referenceDate: Date | null;
+}
+
+const emptyRecurringStats: IRecurringFormattedStats = {
+  referenceMonthName: "—",
+  totalBills: "0.00",
+  paidCount: 0,
+  paidAmount: "0.00",
+  upcomingCount: 0,
+  upcomingAmount: "0.00",
+  dueSoonCount: 0,
+  dueSoonAmount: "0.00",
+};
+
 /**
  * Service for handling recurring bills calculations and projections.
  */
@@ -247,6 +274,98 @@ class RecurringService {
         return acc;
       }, {}),
     );
+  }
+
+  public computeRecurringStats(
+    transactions: Transaction[] | undefined,
+    now: Date | null,
+    dueSoonDays: number = 7,
+  ): IRecurringStatsResult {
+    if (!now || !transactions?.length) {
+      return {
+        stats: { ...emptyRecurringStats },
+        referenceDate: null,
+      };
+    }
+
+    // Step 1: latest date
+    const latestDate = this.findLatestRecurringDate(transactions);
+    if (!latestDate) {
+      return {
+        stats: {
+          ...emptyRecurringStats,
+          referenceMonthName: "No recurring bills",
+        },
+        referenceDate: null,
+      };
+    }
+
+    // Step 2: forecast month
+    const {
+      year,
+      month,
+      name: referenceMonthName,
+    } = this.getForecastMonthAndName(latestDate);
+
+    // Step 3: referenceDate (carry over current day/time)
+    const realToday = now; // in production: current date
+    // const realToday = new Date("2026-03-12"); // for tests
+
+    const nextReferenceDate = this.createReferenceDate(
+      realToday,
+      year,
+      month,
+    );
+
+    // Step 4: all recurring bills for the month
+    const monthBills = this.getRecurringBillsInMonth(
+      transactions,
+      year,
+      month,
+    );
+
+    if (!monthBills.length) {
+      return {
+        stats: {
+          ...emptyRecurringStats,
+          referenceMonthName,
+        },
+        referenceDate: nextReferenceDate,
+      };
+    }
+
+    // Step 5: compute paid/upcoming/due soon — now via the service
+    const billStats = this.calculateStatsFromBills(
+      monthBills,
+      nextReferenceDate,
+      dueSoonDays,
+    );
+
+    const totalBillsRaw = billStats.paidAmount + billStats.upcomingAmount;
+
+    return {
+      stats: {
+        referenceMonthName,
+        totalBills: Math.abs(totalBillsRaw).toFixed(2),
+        paidCount: billStats.paidCount,
+        paidAmount: Math.abs(billStats.paidAmount).toFixed(2),
+        upcomingCount: billStats.upcomingCount,
+        upcomingAmount: Math.abs(billStats.upcomingAmount).toFixed(2),
+        dueSoonCount: billStats.dueSoonCount,
+        dueSoonAmount: Math.abs(billStats.dueSoonAmount).toFixed(2),
+      },
+      referenceDate: nextReferenceDate,
+    };
+  }
+
+  public formatReferenceDateLabel(referenceDate: Date | null): string {
+    return referenceDate
+      ? referenceDate.toLocaleString("en-US", {
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+        })
+      : "—";
   }
 }
 

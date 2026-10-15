@@ -8,13 +8,17 @@ import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
 import { TransactionUICategory } from "@/shared/services/constants.service";
 
+function buildTransactionsHref(category?: TransactionUICategory): string {
+  const categoryQueryParam =
+    category === TransactionUICategory.AllTransactions ? null : category;
+  return `/transactions${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`;
+}
+
 export default function TransactionsTile({
   transactions = [],
   isBudgetTile = false,
   category,
 }: ITransactionsTileProps) {
-  const categoryQueryParam =
-    category === TransactionUICategory.AllTransactions ? null : category;
   return (
     <ItemCard
       className={cn(
@@ -23,7 +27,7 @@ export default function TransactionsTile({
     >
       <TileHeader
         title={isBudgetTile ? "Latest Spending" : "Transactions"}
-        href={`/transactions${categoryQueryParam ? `?category=${encodeURIComponent(categoryQueryParam)}` : ""}`}
+        href={buildTransactionsHref(category)}
         linkLabel={isBudgetTile ? "See all" : "View All"}
       />
       <EmptyContentWrapper

@@ -62,6 +62,27 @@ function isFormValid(
   );
 }
 
+function getCreateTransactionFormErrors(
+  formTransactionData: ICreateTransactionFormData,
+): Partial<Record<keyof ICreateTransactionValidationData, string>> | null {
+  const validationData: ICreateTransactionValidationData = {
+    transactionType: formTransactionData.transactionType,
+    category: formTransactionData.category,
+    recipientOrSender: formTransactionData.recipientOrSender,
+    amount: formTransactionData.amount?.toString() || "",
+    date: formTransactionData.date,
+  };
+
+  const result =
+    validationService.validateCreateTransactionSchema(validationData);
+  if (result.success) {
+    return null;
+  }
+  return validationService.createErrorsWithPath<ICreateTransactionValidationData>(
+    result,
+  );
+}
+
 export function CreateTransactionDialog({
   isDialogOpen,
   setDialogOpen,
@@ -78,28 +99,6 @@ export function CreateTransactionDialog({
     Record<keyof ICreateTransactionValidationData, string>
   > | null>(null);
 
-  const validateForm = (formTransactionData: ICreateTransactionFormData) => {
-    const validationData: ICreateTransactionValidationData = {
-      transactionType: formTransactionData.transactionType,
-      category: formTransactionData.category,
-      recipientOrSender: formTransactionData.recipientOrSender,
-      amount: formTransactionData.amount?.toString() || "",
-      date: formTransactionData.date,
-    };
-
-    const result =
-      validationService.validateCreateTransactionSchema(validationData);
-    if (result.success) {
-      setFormErrors(null);
-      return;
-    }
-    const errors =
-      validationService.createErrorsWithPath<ICreateTransactionValidationData>(
-        result,
-      );
-    setFormErrors(errors);
-  };
-
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       setFormData(setFormTransactionData());
@@ -110,7 +109,7 @@ export function CreateTransactionDialog({
 
   useEffect(() => {
     if (formTransactionData) {
-      validateForm(formTransactionData);
+      setFormErrors(getCreateTransactionFormErrors(formTransactionData));
     }
   }, [formTransactionData]);
 
