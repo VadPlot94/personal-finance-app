@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import type { ITransactionsPageProps } from "@/app/(app)/transactions/types";
 import transactionController from "@/back-end/controllers/transaction-controller";
 import Transactions from "@/front-end/components/transactions/transactions";
 import constants, {
@@ -8,11 +7,12 @@ import constants, {
 
 export default async function TransactionsPage({
   searchParams,
-}: ITransactionsPageProps) {
+}: PageProps<typeof constants.AppRoutes.transactions>) {
   const params = await searchParams;
+  const categoryParam = params.category;
   const category = (
-    params?.category
-      ? decodeURIComponent(params?.category)
+    typeof categoryParam === "string"
+      ? decodeURIComponent(categoryParam)
       : TransactionUICategory.AllTransactions
   ) as TransactionUICategory;
   if (!Object.values(TransactionUICategory).includes(category)) {

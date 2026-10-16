@@ -1,13 +1,11 @@
 import "@/app/globals.css";
 import { Suspense } from "react";
-import type {
-  IOverviewBalanceCardsProps,
-  IOverviewLayoutProps,
-} from "@/app/(app)/overview/types";
+import type { IOverviewBalanceCardsProps } from "@/app/(app)/overview/types";
 import balanceController from "@/back-end/controllers/balance-controller";
 import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
 import TestAppErrorButton from "@/front-end/components/test/test-app-error-button/test-app-error-button";
 import { cn } from "@/lib/utils";
+import type constants from "@/shared/services/constants.service";
 
 export default function OverviewLayout({
   transactions,
@@ -16,7 +14,7 @@ export default function OverviewLayout({
   budgets,
   notfound,
   throwerror,
-}: IOverviewLayoutProps) {
+}: LayoutProps<typeof constants.AppRoutes.overview>) {
   return (
     <>
       <div className="h-15 flex items-center justify-between gap-4 font-bold text-3xl">
