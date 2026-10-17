@@ -3,6 +3,7 @@
 import type { User } from "@prisma/client";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
@@ -19,6 +20,7 @@ export default function VerticalSidebar() {
   // Note: Client also renders on Server, so we need to handle this case.
   const pathname = usePathname();
   const session = useSession();
+  const t = useTranslations();
 
   const [isMenuOpened, toggleMenu] = useState(false);
   const [sessionUserData, setSessionUserData] = useState<User | null>(null);
@@ -43,6 +45,15 @@ export default function VerticalSidebar() {
       redirect: true,
     });
   };
+
+  const financeLabel = t("i18n.Navigation.Finance");
+  const userLabel = sessionUserData?.name || t("i18n.Navigation.User");
+  const menuToggleLabel = t(
+    isMenuOpened
+      ? "i18n.Navigation.MinimizeMenu"
+      : "i18n.Navigation.MaximizeMenu",
+  );
+  const signOutLabel = t("i18n.Navigation.SignOut");
 
   return (
     <div
@@ -69,8 +80,8 @@ export default function VerticalSidebar() {
                   isMenuOpened ? "opacity-100" : "opacity-0 h-0",
                 )}
                 src="assets/images/logo-large.svg"
-                alt="Finance"
-                title="Finance"
+                alt={financeLabel}
+                title={financeLabel}
               />
               <img
                 className={cn(
@@ -79,8 +90,8 @@ export default function VerticalSidebar() {
                   isMenuOpened ? "opacity-0 h-0" : "opacity-100",
                 )}
                 src="assets/images/logo-small.svg"
-                alt="Finance"
-                title="Finance"
+                alt={financeLabel}
+                title={financeLabel}
               />
               <div
                 className={cn(
@@ -97,8 +108,8 @@ export default function VerticalSidebar() {
                   src={
                     sessionUserData?.image || constants.DefaultUserAvatarIconUrl
                   }
-                  alt={sessionUserData?.name || ""}
-                  title={sessionUserData?.name || ""}
+                  alt={userLabel}
+                  title={userLabel}
                 />
                 <div
                   className={cn(
@@ -109,19 +120,21 @@ export default function VerticalSidebar() {
                       : "opacity-0 -translate-x-20 max-w-0",
                   )}
                 >
-                  {sessionUserData?.name || "User"}
+                  {userLabel}
                 </div>
               </div>
             </div>
           </div>
           <div className="flex flex-col">
             <nav className="flex flex-col gap-3">
-              {constants.SideBarMenuItemsConfig.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  title={item.title}
-                  className={`flex flex-col justify-center items-center
+              {constants.SideBarNavMenuItemsConfig.map((item) => {
+                const label = t(item.titleI18nKey);
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    title={label}
+                    className={`flex flex-col justify-center items-center
                   p-3 rounded-tr-md rounded-br-md cursor-pointer w-full
                   ${
                     activePath === item.href
@@ -129,33 +142,32 @@ export default function VerticalSidebar() {
                       : "hover:bg-gray-800"
                   }
                 `}
-                >
-                  <div
-                    className={cn(
-                      "flex flex-row",
-                      isMenuOpened ? "items-start justify-start gap-3" : "h-6",
-                      menuItemWidth,
-                    )}
                   >
-                    <img
-                      src={item.iconUrl}
-                      alt={item.title}
-                      className="h-5 w-5"
-                    />
-                    <span
+                    <div
                       className={cn(
-                        transition,
-                        "origin-left whitespace-nowrap",
+                        "flex flex-row",
                         isMenuOpened
-                          ? "opacity-100 translate-x-0 w-30"
-                          : "opacity-0 -translate-x-20 max-w-0",
+                          ? "items-start justify-start gap-3"
+                          : "h-6",
+                        menuItemWidth,
                       )}
                     >
-                      {item.title}
-                    </span>
-                  </div>
-                </a>
-              ))}
+                      <img src={item.iconUrl} alt={label} className="h-5 w-5" />
+                      <span
+                        className={cn(
+                          transition,
+                          "origin-left whitespace-nowrap",
+                          isMenuOpened
+                            ? "opacity-100 translate-x-0 w-30"
+                            : "opacity-0 -translate-x-20 max-w-0",
+                        )}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  </a>
+                );
+              })}
             </nav>
           </div>
         </div>
@@ -163,7 +175,7 @@ export default function VerticalSidebar() {
           type="button"
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => toggleMenu(!isMenuOpened)}
-          title={isMenuOpened ? "Minimize Menu" : "Maximize Menu"}
+          title={menuToggleLabel}
         >
           <div
             className={cn(
@@ -196,7 +208,7 @@ export default function VerticalSidebar() {
                     : "opacity-0 -translate-x-20 max-w-0",
                 )}
               >
-                Minimize Menu
+                {menuToggleLabel}
               </div>
             </div>
           </div>
@@ -207,7 +219,7 @@ export default function VerticalSidebar() {
           onClick={() => {
             void handleSignOutClick();
           }}
-          title={constants.SignOutMenuItemConfig.title}
+          title={signOutLabel}
         >
           <div
             className={cn(
@@ -236,7 +248,7 @@ export default function VerticalSidebar() {
                     : "opacity-0 -translate-x-20 max-w-0",
                 )}
               >
-                {constants.SignOutMenuItemConfig.title}
+                {t(constants.SignOutMenuItemConfig.titleI18nKey)}
               </div>
             </div>
           </div>

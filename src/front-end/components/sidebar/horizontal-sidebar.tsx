@@ -3,26 +3,41 @@
 import { usePathname } from "next/navigation";
 import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 import type { ISideBarMenuItem } from "@/shared/services/types";
 
-function getAccountMenuItem(sessionUserData?: User): ISideBarMenuItem {
+function getAccountMenuItem(
+  t: (key: string) => string,
+  sessionUserData?: User,
+): ISideBarMenuItem {
   const { image, name } = sessionUserData || {};
   return {
     href: "*",
     iconUrl: image || constants.DefaultUserAvatarIconUrl,
-    title: name?.split?.(" ")?.[0] || "User",
+    title: name?.split?.(" ")?.[0] || t("i18n.Navigation.User"),
     isAccount: true,
   };
 }
 
-function buildSideBarItems(sessionUserData?: User): ISideBarMenuItem[] {
+function buildSideBarItems(
+  t: (key: string) => string,
+  sessionUserData?: User,
+): ISideBarMenuItem[] {
   return [
-    getAccountMenuItem(sessionUserData),
-    ...constants.SideBarMenuItemsConfig,
-    constants.SignOutMenuItemConfig,
+    getAccountMenuItem(t, sessionUserData),
+    ...constants.SideBarNavMenuItemsConfig.map((item) => ({
+      href: item.href,
+      iconUrl: item.iconUrl,
+      title: t(item.titleI18nKey),
+    })),
+    {
+      href: constants.SignOutMenuItemConfig.href,
+      iconUrl: constants.SignOutMenuItemConfig.iconUrl,
+      title: t(constants.SignOutMenuItemConfig.titleI18nKey),
+    },
   ];
 }
 
@@ -38,9 +53,10 @@ export default function HorizontalSidebar() {
   // Note: Client also renders on Server, so we need to handle this case.
   const pathname = usePathname();
   const session = useSession();
+  const t = useTranslations();
   const [activePath, setActivePath] = useState<string | null>(null);
   const [sideBarItems, setSideBarItems] = useState<ISideBarMenuItem[]>(() =>
-    buildSideBarItems(),
+    buildSideBarItems(t),
   );
 
   const opacityTransition = "transition-opacity duration-300";
@@ -50,38 +66,38 @@ export default function HorizontalSidebar() {
   }, [pathname]);
 
   useEffect(() => {
-    setSideBarItems(buildSideBarItems(session?.data?.user));
-  }, [session?.status, session?.data?.user]);
+    setSideBarItems(buildSideBarItems(t, session?.data?.user));
+  }, [session?.status, session?.data?.user, t]);
 
   return (
     <div className="flex flex-col justify-end bg-black rounded-tl-lg rounded-tr-lg shadow-sm min-w-full">
       <div className="text-app-color h-full pt-2 px-3">
         <nav className="flex flex-row gap-1">
-          {sideBarItems.map((item) => {
+          {sideBarItems.map((sideBarItem) => {
             return (
               <a
-                key={item.href}
-                href={item.href}
+                key={sideBarItem.href}
+                href={sideBarItem.href}
                 className={cn(
                   `flex flex-col justify-center items-center gap-3
                   p-3 rounded-tl-md rounded-tr-md transition cursor-pointer min-w-5 w-full
                   ${
-                    activePath === item.href
+                    activePath === sideBarItem.href
                       ? "bg-white text-black border-b-4 border-b-green-500"
                       : "hover:bg-gray-800"
                   }
                 `,
                   "max-sm:gap-0",
-                  item.isAccount && "pointer-events-none cursor-default",
+                  sideBarItem.isAccount && "pointer-events-none cursor-default",
                 )}
               >
                 <img
-                  src={item.iconUrl}
-                  alt={item.title}
-                  title={item.title}
+                  src={sideBarItem.iconUrl}
+                  alt={sideBarItem.title}
+                  title={sideBarItem.title}
                   className={cn(
                     "h-5 w-5",
-                    item.isAccount &&
+                    sideBarItem.isAccount &&
                       "h-6 w-6 rounded-full object-cover ring-1 ring-gray-200",
                   )}
                 />
@@ -91,10 +107,10 @@ export default function HorizontalSidebar() {
                     opacityTransition,
                     "max-sm:opacity-0 max-sm:h-0",
                     "sm:opacity-100",
-                    item.isAccount && "truncate max-w-24",
+                    sideBarItem.isAccount && "truncate max-w-24",
                   )}
                 >
-                  {item.title}
+                  {sideBarItem.title}
                 </span>
               </a>
             );

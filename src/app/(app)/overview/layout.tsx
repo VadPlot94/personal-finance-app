@@ -1,13 +1,13 @@
 import "@/app/globals.css";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import type { IOverviewBalanceCardsProps } from "@/app/(app)/overview/types";
-import balanceController from "@/back-end/controllers/balance-controller";
-import { BalanceCard } from "@/front-end/components/balance-card/balance-card";
+import OverviewBalance from "@/back-end/components/overview-balance/overview-balance";
+import OverviewBalanceCards from "@/back-end/components/overview-balance-cards/overview-balance-cards";
 import TestAppErrorButton from "@/front-end/components/test/test-app-error-button/test-app-error-button";
 import { cn } from "@/lib/utils";
 import type constants from "@/shared/services/constants.service";
 
-export default function OverviewLayout({
+export default async function OverviewLayout({
   transactions,
   pots,
   recurring,
@@ -15,14 +15,16 @@ export default function OverviewLayout({
   notfound,
   throwerror,
 }: LayoutProps<typeof constants.AppRoutes.overview>) {
+  const t = await getTranslations();
+
   return (
     <>
       <div className="h-15 flex items-center justify-between gap-4 font-bold text-3xl">
-        <span>Overview</span>
+        <span>{t("i18n.PageOverview.Title")}</span>
         <TestAppErrorButton />
       </div>
-      <Suspense fallback={<OverviewBalanceCards />}>
-        <OverviewBalance />
+      <Suspense fallback={<OverviewBalanceCards t={t} />}>
+        <OverviewBalance t={t} />
       </Suspense>
       <div
         className={cn(
@@ -48,31 +50,5 @@ export default function OverviewLayout({
         )}
       </div>
     </>
-  );
-}
-
-async function OverviewBalance() {
-  const balanceResult = await balanceController.getBalance();
-  return <OverviewBalanceCards balance={balanceResult.data} />;
-}
-
-function OverviewBalanceCards({ balance }: IOverviewBalanceCardsProps) {
-  return (
-    <div
-      className={cn(
-        "grid grid-cols-3 gap-4",
-        "@max-containerQueryBreakpoint820/mainLayout:grid-cols-1",
-      )}
-    >
-      <BalanceCard
-        title="Current Balance"
-        amount={balance?.current}
-        bgColor="bg-black"
-        textTitleColor="text-white"
-        textAmountColor="text-white"
-      />
-      <BalanceCard title="Income" amount={balance?.income} />
-      <BalanceCard title="Expenses" amount={balance?.expenses} />
-    </div>
   );
 }

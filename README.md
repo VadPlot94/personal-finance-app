@@ -36,6 +36,7 @@ Track budgets, transactions, savings pots, and recurring bills with a clean and 
 - **Savings Pots**: Goal-based savings tracking
 - **Recurring Bills**: Manage subscriptions and recurring payments
 - **Responsive Design**: Excellent mobile and tablet experience
+- **i18n**: `next-intl` (cookie locale; English messages, more locales later)
 - **Dark/Light Mode** (planned)
 - **Data Validation**: Zod + Server Actions
 
@@ -44,9 +45,11 @@ Track budgets, transactions, savings pots, and recurring bills with a clean and 
 ## 📁 Project Structure
 
 - `src/app` — Next.js routes, layout, and pages
-- `src/front-end` — UI components, services, auth, and page features
-- `src/back-end` — Prisma schema, database services, server actions
-- `src/shared` — shared types and validation utilities
+- `src/front-end` — client UI (`"use client"`), services, auth, and page features
+- `src/back-end` — Prisma, DB services, server actions, and server components (`src/back-end/components`)
+- `src/shared` — shared types and validation utilities, i18n config
+- `src/app/i18n` — next-intl request config (server)
+- `messages/` — nested translation JSON catalogs
 - `src/types` — TypeScript declarations
 
 **Developer notes:** [README-dev.md](README-dev.md) (architecture decisions, backend map, debug, experiments, roadmap)
@@ -132,6 +135,7 @@ Open <http://localhost:3000> in your browser.
 - **Validation**: Zod
 - **UI** Shadcn/ui + custom components
 - **Notifications**: Sonner
+- **i18n**: next-intl
 - **Linting/Formatting**: Biome
 
 ---

@@ -77,7 +77,6 @@ class ConstantsService {
   public readonly NumberFractionDigits = 2;
   public readonly DefaultUserAvatarIconUrl =
     "assets/images/avatars/dummy-avatar.jpg";
-
   public readonly AppRoutes = {
     home: "/",
     login: "/login",
@@ -88,38 +87,38 @@ class ConstantsService {
     recurring: "/recurring",
   } as const;
 
-  public readonly SideBarMenuItemsConfig = [
+  public readonly SideBarNavMenuItemsConfig = [
     {
       href: this.AppRoutes.overview,
       iconUrl: "assets/images/icon-nav-overview.svg",
-      title: "Overview",
+      titleI18nKey: "i18n.Navigation.Overview",
     },
     {
       href: this.AppRoutes.transactions,
       iconUrl: "assets/images/icon-nav-transactions.svg",
-      title: "Transactions",
+      titleI18nKey: "i18n.Navigation.Transactions",
     },
     {
       href: this.AppRoutes.budgets,
       iconUrl: "assets/images/icon-nav-budgets.svg",
-      title: "Budgets",
+      titleI18nKey: "i18n.Navigation.Budgets",
     },
     {
       href: this.AppRoutes.pots,
       iconUrl: "assets/images/icon-nav-pots.svg",
-      title: "Pots",
+      titleI18nKey: "i18n.Navigation.Pots",
     },
     {
       href: this.AppRoutes.recurring,
       iconUrl: "assets/images/icon-nav-recurring-bills.svg",
-      title: "Recurring Bills",
+      titleI18nKey: "i18n.Navigation.Recurring",
     },
   ];
 
   public SignOutMenuItemConfig = {
     href: this.AppRoutes.home,
     iconUrl: "assets/images/icon-logout.svg",
-    title: "Sign Out",
+    titleI18nKey: "i18n.Navigation.SignOut",
   };
 }
 

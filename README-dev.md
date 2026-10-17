@@ -58,6 +58,7 @@ Exception: `?category=` is only a deep-link from Budgets (`TransactionsTile` →
 - `src/back-end/prisma/seed.ts` — `setTestAppData` helper; runs on first admin login, not via CLI
 - `src/back-end/DAL/db-services` — database services layer
 - `src/back-end/server-actions` — server actions for auth and data operations
+- `src/back-end/components` — React Server Components (no `"use client"`); client UI stays in `src/front-end/components`
 
 ---
 
@@ -113,9 +114,19 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 
 ---
 
+## i18n (next-intl)
+
+- Package: `next-intl` (cookie locale, no `/[locale]` URL prefix)
+- Shared config: [`src/shared/i18n/config.ts`](src/shared/i18n/config.ts) — locales, `defaultLocale`, cookie name
+- Request config (Next wiring, server-only): [`src/app/i18n/request.ts`](src/app/i18n/request.ts)
+- Messages: nested catalogs in [`messages/en.json`](messages/en.json)
+- Migrate UI strings gradually via `getTranslations` (RSC) / `useTranslations` (client)
+
+---
+
 ## Todo / Roadmap
 
 - tests — unit + component (Vitest + RTL) started; e2e / Playwright later
-- translations
+- translations — foundation done (`next-intl`); continue migrating UI / Zod / Auth strings
 - calculate balance in right way
 - add route handlers (only if a public HTTP API is needed — not for transaction table filters; those stay on Server Actions)
