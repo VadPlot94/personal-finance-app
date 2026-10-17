@@ -117,9 +117,12 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 ## i18n (next-intl)
 
 - Package: `next-intl` (cookie locale, no `/[locale]` URL prefix)
+- Locales: `en` (default), `ru`
 - Shared config: [`src/shared/i18n/config.ts`](src/shared/i18n/config.ts) — locales, `defaultLocale`, cookie name
 - Request config (Next wiring, server-only): [`src/app/i18n/request.ts`](src/app/i18n/request.ts)
-- Messages: nested catalogs in [`messages/en.json`](messages/en.json)
+- Messages: nested catalogs in [`messages/en.json`](messages/en.json), [`messages/ru.json`](messages/ru.json)
+- Switcher: header dropdown [`locale-switcher`](src/front-end/components/locale-switcher/locale-switcher.tsx) → [`setLocaleSRF`](src/back-end/server-actions/locale-actions.ts) writes cookie `locale`, then `router.refresh()`
+- `<html lang>`: root layout uses `defaultLocale` (avoids cookie read outside Suspense / `/_not-found` prerender); [`html-lang`](src/front-end/components/html-lang/html-lang.tsx) syncs `document.documentElement.lang` from `useLocale()` after hydrate
 - Migrate UI strings gradually via `getTranslations` (RSC) / `useTranslations` (client)
 
 ---

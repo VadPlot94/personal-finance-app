@@ -38,3 +38,20 @@ If Biome flags a restricted name (e.g. `Error`), keep the matching / suffix-corr
 ## Server actions (`SRF`)
 
 - Controllers (`src/back-end/controllers/`) and db-services do **not** use the `SRF` postfix; action files are thin `"use server"` wrappers that call controller methods.
+
+## Loop / callback iteration variables
+
+- Prefer **domain-meaningful** names over generic ones (`item`, `el`, `x`, `data`, `val`).
+- Name the variable after what it is in that collection (e.g. locale → `i18nLocale`, budget → `budget`).
+
+```ts
+// ✅ GOOD
+i18nConfig.locales.map((i18nLocale) => (
+  <DropdownMenuItem key={i18nLocale}>{i18nLocale.toUpperCase()}</DropdownMenuItem>
+));
+
+// ❌ BAD
+i18nConfig.locales.map((item) => (
+  <DropdownMenuItem key={item}>{item.toUpperCase()}</DropdownMenuItem>
+));
+```

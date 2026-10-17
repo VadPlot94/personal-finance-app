@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import OverviewBalance from "@/back-end/components/overview-balance/overview-balance";
 import OverviewBalanceCards from "@/back-end/components/overview-balance-cards/overview-balance-cards";
+import LocaleSwitcher from "@/front-end/components/locale-switcher/locale-switcher";
 import TestAppErrorButton from "@/front-end/components/test/test-app-error-button/test-app-error-button";
 import { cn } from "@/lib/utils";
 import type constants from "@/shared/services/constants.service";
@@ -21,7 +22,10 @@ export default async function OverviewLayout({
     <>
       <div className="h-15 flex items-center justify-between gap-4 font-bold text-3xl">
         <span>{t("i18n.PageOverview.Title")}</span>
-        <TestAppErrorButton />
+        <div className="flex flex-row items-center gap-3">
+          <LocaleSwitcher />
+          <TestAppErrorButton />
+        </div>
       </div>
       <Suspense fallback={<OverviewBalanceCards t={t} />}>
         <OverviewBalance t={t} />

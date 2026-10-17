@@ -36,7 +36,7 @@ Track budgets, transactions, savings pots, and recurring bills with a clean and 
 - **Savings Pots**: Goal-based savings tracking
 - **Recurring Bills**: Manage subscriptions and recurring payments
 - **Responsive Design**: Excellent mobile and tablet experience
-- **i18n**: `next-intl` (cookie locale; English messages, more locales later)
+- **i18n**: `next-intl` (cookie locale + header dropdown switcher)
 - **Dark/Light Mode** (planned)
 - **Data Validation**: Zod + Server Actions
 
