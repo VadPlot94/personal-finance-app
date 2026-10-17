@@ -48,16 +48,39 @@ Forbidden:
 - Conventional Commits prefixes (`feat:`, `fix:`, `chore:`, etc.) unless the user explicitly asks for them
 - Long multi-line messages unless necessary
 
-### 3. Mandatory confirmation
-Never run `git commit` immediately.
+### 3. Mandatory confirmation (message approval)
 
-First show the user:
+**Hard stop:** never run `git commit` in the same agent turn/response where the
+proposed message is first shown. Always end that turn with the proposal and wait.
 
-- The list of files that will be included
-- The proposed commit message in the exact format
-- A few alternative short descriptions for the commit
+When the user asks to commit (`commit`, `комитай`, `make a commit`, check-and-commit
+Step 3, etc.):
 
-Only after explicit confirmation (`yes`, `ok`, `commit`, etc.) run the commit.
+1. Run preparation (§1) on the **current** working tree (re-run if anything
+   changed since a prior proposal).
+2. In that reply show:
+   - The list of files that will be included
+   - The proposed commit message in the exact format
+   - A few alternative short descriptions
+   - A clear ask to approve **this** message (e.g. `Approve this message?`)
+3. **Stop.** Do not `git add` / `git commit` / `git push` yet.
+
+Only in a **later** user turn, after they approve the **exact** proposed text
+(or supply a replacement), run the commit.
+
+What counts as approval of the message:
+
+- Explicit OK on the proposed text: `yes`, `ok`, `апрув`, `approve`, `lgtm`,
+  `+1`, or choosing one of the listed alternatives by quoting/repeating it
+- Or the user pastes / writes the full commit message (or description + tags)
+  they want — normalize per §2, then commit that
+
+What does **not** count (show proposal again; do not commit):
+
+- Bare `commit` / `комитай` / `check and commit` / pipeline continue **without**
+  having approved a message shown in a prior turn for **this** same file set
+- Approval of an **old** proposal after new edits landed — re-show files + message
+- Ambiguous replies — ask again
 
 The user may provide their own description and optional extra `[tag]` prefixes.
 Normalize to `[branch_name] [tag] ... description` per §2 (branch first, no duplicates).
@@ -81,10 +104,10 @@ Show: `git log -1 --oneline`
 User:
 
 ```text
-make a commit: [migration] added form validation
+комитай
 ```
 
-Agent:
+Agent (turn 1 — proposal only, **no** `git commit`):
 
 ```text
 Current branch: feature/auth
@@ -94,13 +117,19 @@ Files:
 - src/lib/validation.ts
 
 Proposed message:
-[feature/auth] [migration] added form validation
+[feature/auth] [migration] add form validation
 
 Alternatives:
-- [feature/auth] [migration] add form validation
 - [feature/auth] [migration] validate login form input
+- [feature/auth] [ui] add form validation
 
-Commit?
+Approve this message?
 ```
 
-Only after the user confirms, create the commit.
+User (turn 2):
+
+```text
+ok
+```
+
+Agent (turn 2): run `git add` / `git commit` with the approved message.

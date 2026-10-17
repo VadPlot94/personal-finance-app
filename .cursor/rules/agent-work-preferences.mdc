@@ -9,3 +9,4 @@ alwaysApply: true
   - Bad: Auth error toast when Auth.js already shows `/api/auth/error`.
   - Bad: adding `NEXTAUTH_URL` / `AUTH_URL` to `.env` without being asked, when localhost Auth.js already works without them.
 - **Unit/component tests:** create / update / change / delete only via [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc). Running `npm run test:run` and reporting failures is OK elsewhere.
+- **Git commits:** follow [`.cursor/rules/git-commit.mdc`](git-commit.mdc) strictly. Never commit in the same turn as the first message proposal. Bare `комитай` / `commit` is a request to **prepare** the proposal, not approval of the message — wait for explicit approve of the shown text (or a user-supplied message).
