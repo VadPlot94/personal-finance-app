@@ -125,7 +125,6 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 
 ## Todo / Roadmap
 
-- tests — unit + component (Vitest + RTL) started; e2e / Playwright later
-- translations — foundation done (`next-intl`); continue migrating UI / Zod / Auth strings
 - calculate balance in right way
 - add route handlers (only if a public HTTP API is needed — not for transaction table filters; those stay on Server Actions)
+- migrate to partial prefetching
