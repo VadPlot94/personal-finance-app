@@ -66,7 +66,7 @@ class TransactionDbService {
     if (!id) {
       const zodErrorResult = validationService.createCustomZodIssueResult(
         "id",
-        "ID is required for delete",
+        "i18n.Validation.IdRequiredForDelete",
       );
       throwValidationError(zodErrorResult);
     }
@@ -81,7 +81,7 @@ class TransactionDbService {
     if (!deleted) {
       const zodErrorResult = validationService.createCustomZodIssueResult(
         "id",
-        "Transaction not found, not recurring",
+        "i18n.Validation.TransactionNotFoundNotRecurring",
       );
       throwValidationError(zodErrorResult);
     }
@@ -103,7 +103,7 @@ class TransactionDbService {
     if (transactionsCount <= 0) {
       const zodErrorResult = validationService.createCustomZodIssueResult(
         "transactionsCount",
-        "Transactions count must be greater than zero",
+        "i18n.Validation.TransactionsCountMustBePositive",
       );
       throwValidationError(zodErrorResult);
     }

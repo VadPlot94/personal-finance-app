@@ -1,14 +1,17 @@
+import { getTranslations } from "next-intl/server";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
 import constants from "@/shared/services/constants.service";
 
-export default function PotsTileSkeleton() {
+export default async function PotsTileSkeleton() {
+  const t = await getTranslations();
+
   return (
     <ItemCard className="animate-pulse">
       <TileHeader
-        title="Pots"
+        title={t("i18n.PotsPage.Title")}
         href={constants.AppRoutes.pots}
-        linkLabel="See details"
+        linkLabel={t("i18n.Common.SeeDetails")}
       />
 
       <div className="flex h-full flex-row justify-between gap-5 max-sm:flex-col">

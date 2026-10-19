@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
@@ -21,6 +22,9 @@ export default function TransactionsTile({
   isBudgetTile = false,
   category,
 }: ITransactionsTileProps) {
+  const t = useTranslations();
+  const locale = useLocale();
+
   return (
     <ItemCard
       className={cn(
@@ -28,13 +32,19 @@ export default function TransactionsTile({
       )}
     >
       <TileHeader
-        title={isBudgetTile ? "Latest Spending" : "Transactions"}
+        title={
+          isBudgetTile
+            ? t("i18n.TransactionsPage.LatestSpending")
+            : t("i18n.TransactionsPage.Title")
+        }
         href={buildTransactionsHref(category)}
-        linkLabel={isBudgetTile ? "See all" : "View All"}
+        linkLabel={
+          isBudgetTile ? t("i18n.Common.SeeAll") : t("i18n.Common.ViewAll")
+        }
       />
       <EmptyContentWrapper
         hasItems={!!transactions?.length}
-        emptyTitle="No transactions are available."
+        emptyTitle={t("i18n.TransactionsPage.EmptyTitle")}
       >
         <div className="flex flex-row justify-between h-full gap-5">
           <div className="h-full flex-1 min-w-0">
@@ -64,7 +74,7 @@ export default function TransactionsTile({
                         {transactionService.getTransactionAmount(tx.amount)}
                       </span>
                       <span className="whitespace-nowrap text-app-color text-xs">
-                        {transactionService.getTransactionDate(tx.date)}
+                        {transactionService.getTransactionDate(tx.date, locale)}
                       </span>
                     </td>
                   </tr>

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Budget } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { createContext, useState } from "react";
 import BudgetDonutChart from "@/front-end/components/budgets/budget-donut-chart";
 import BudgetsItem from "@/front-end/components/budgets/budgets-item";
@@ -19,26 +20,24 @@ export default function Budgets({
   transactionsByCategoryList = [],
   isLoading = false,
 }: IBudgetsProps) {
+  const t = useTranslations();
   const [isAddBudgetDialogOpen, setAddBudgetDialogOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
   const [deletingBudget, setDeletingBudget] = useState<Budget | null>(null);
   return (
     <BudgetsContext value={budgets}>
       <PageHeader
-        name="Budgets"
-        buttonName="Add Budget"
+        name={t("i18n.BudgetsPage.Title")}
+        buttonName={t("i18n.BudgetsPage.AddBudget")}
         handleButtonClick={() => setAddBudgetDialogOpen(true)}
       />
       <EmptyContentWrapper
         hasItems={!!budgets?.length}
         isLoading={isLoading}
-        emptyTitle="No budgets are available."
-        emptyBody={
-          <>
-            Click <span className="font-semibold">'Add Budget'</span> button at
-            the corner of the page to create your first budget.
-          </>
-        }
+        emptyTitle={t("i18n.BudgetsPage.EmptyTitle")}
+        emptyBody={t.rich("i18n.BudgetsPage.EmptyBody", {
+          bold: (chunks) => <span className="font-semibold">{chunks}</span>,
+        })}
       >
         <div
           className={cn(

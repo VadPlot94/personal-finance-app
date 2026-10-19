@@ -1,6 +1,7 @@
 "use client";
 
 import type { Transaction } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { Select as SelectPrimitive } from "radix-ui";
 import { useState } from "react";
 import { useUpdateEffect } from "react-use";
@@ -26,6 +27,7 @@ import {
   SortBy,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
+import translationService from "@/shared/services/translation.service";
 import type { IGetTransactionsParams } from "@/shared/services/types";
 
 export default function TransactionsTableLayout({
@@ -35,6 +37,7 @@ export default function TransactionsTableLayout({
   isRecurringOnly,
   children,
 }: ITransactionsTableLayoutProps) {
+  const t = useTranslations();
   const [searchValue, setSearch] = useState("");
   const [searchDBValue, setDBSearch] = useState("");
   const [selectedSortByValue, setSortByValue] = useState<SortBy>(SortBy.Latest);
@@ -108,13 +111,16 @@ export default function TransactionsTableLayout({
       : await getAllTransactionsSRF(transactionParams);
     const { data: { paginationData, transactions } = {} } = response;
     if (!response?.success || !transactions) {
-      let error = response.error;
-      error =
+      const errorDescription =
         response?.success && !transactions?.length
-          ? "Error: No new transactions got"
-          : error;
-      toast.error("Error", {
-        description: error || "ERROR",
+          ? t("i18n.TransactionsPage.FetchError")
+          : translationService.translate(
+              t,
+              response.error,
+              "i18n.Common.UnknownError",
+            );
+      toast.error(t("i18n.Common.Error"), {
+        description: errorDescription,
       });
       return;
     }
@@ -143,6 +149,10 @@ export default function TransactionsTableLayout({
       transactionsItems,
     );
 
+  const searchLabel = isRecurringOnly
+    ? t("i18n.TransactionsPage.SearchBills")
+    : t("i18n.TransactionsPage.SearchTransaction");
+
   return (
     <>
       <div className="flex flex-col justify-start gap-6 h-full">
@@ -157,12 +167,8 @@ export default function TransactionsTableLayout({
               autoComplete="off"
               type="search"
               name="search"
-              placeholder={
-                isRecurringOnly ? "Search Bills" : "Search Transaction"
-              }
-              aria-label={
-                isRecurringOnly ? "Search Bills" : "Search Transaction"
-              }
+              placeholder={searchLabel}
+              aria-label={searchLabel}
               value={searchValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="h-10 pr-10 pl-4"
@@ -174,7 +180,7 @@ export default function TransactionsTableLayout({
             >
               <img
                 src="/assets/images/icon-search.svg"
-                alt="Search"
+                alt={t("i18n.Common.Search")}
                 className="h-5 w-5"
               />
             </button>
@@ -200,12 +206,14 @@ export default function TransactionsTableLayout({
                     "max-md:hidden",
                   )}
                 >
-                  <SelectValue placeholder="Sort By" />
+                  <SelectValue
+                    placeholder={t("i18n.TransactionsPage.SortBy")}
+                  />
                 </SelectTrigger>
 
                 {isRecurringOnly && (
                   <div className="text-app-color whitespace-nowrap text-sm w-fit md:hidden">
-                    Sort By
+                    {t("i18n.TransactionsPage.SortBy")}
                   </div>
                 )}
                 <SelectPrimitive.Trigger
@@ -218,7 +226,7 @@ export default function TransactionsTableLayout({
                     <img
                       className="size-6"
                       src="assets/images/icon-sort-mobile.svg"
-                      alt="Sort"
+                      alt={t("i18n.Common.Sort")}
                     />
                   </div>
                 </SelectPrimitive.Trigger>
@@ -231,7 +239,7 @@ export default function TransactionsTableLayout({
                       value={value}
                       className="cursor-pointer"
                     >
-                      <span>{value}</span>
+                      <span>{t(`i18n.Enums.SortBy.${name}`)}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -252,7 +260,11 @@ export default function TransactionsTableLayout({
                       "max-md:hidden",
                     )}
                   >
-                    <SelectValue placeholder="Transaction category" />
+                    <SelectValue
+                      placeholder={t(
+                        "i18n.TransactionsPage.CategoryPlaceholder",
+                      )}
+                    />
                   </SelectTrigger>
 
                   <SelectPrimitive.Trigger
@@ -264,7 +276,7 @@ export default function TransactionsTableLayout({
                     <img
                       className="size-6"
                       src="assets/images/icon-filter-mobile.svg"
-                      alt="Filter"
+                      alt={t("i18n.Common.Filter")}
                     />
                   </SelectPrimitive.Trigger>
 
@@ -276,7 +288,7 @@ export default function TransactionsTableLayout({
                           value={value}
                           className="cursor-pointer"
                         >
-                          <span>{value}</span>
+                          <span>{t(`i18n.Enums.Category.${name}`)}</span>
                         </SelectItem>
                       ),
                     )}
@@ -292,7 +304,9 @@ export default function TransactionsTableLayout({
               !(isNoTransactionsSearchFound || !transactionsItems.length)
             }
             emptyTitle={
-              isRecurringOnly ? "No Bills Found" : "No Transactions Found"
+              isRecurringOnly
+                ? t("i18n.TransactionsPage.NoBillsFound")
+                : t("i18n.TransactionsPage.NoTransactionsFound")
             }
           >
             {children?.(transactionsItems)}

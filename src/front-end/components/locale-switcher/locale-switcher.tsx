@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { setLocaleSRF } from "@/back-end/server-actions/locale-actions";
 import {
@@ -11,9 +11,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
-import { i18nConfig, type Locale } from "@/shared/i18n/config";
+import translationService, {
+  type Locale,
+} from "@/shared/services/translation.service";
+
+function getLocaleShortLabel(locale: string): string {
+  return locale.split("-")[0]?.toUpperCase() || locale.toUpperCase();
+}
 
 export default function LocaleSwitcher() {
+  const t = useTranslations();
   const locale = useLocale() as Locale;
   const router = useRouter();
 
@@ -24,8 +31,8 @@ export default function LocaleSwitcher() {
 
     const success = await setLocaleSRF(nextLocale);
     if (!success) {
-      toast.error("Error", {
-        description: "Failed to change language",
+      toast.error(t("i18n.Common.Error"), {
+        description: t("i18n.Locale.ChangeFailed"),
       });
       return;
     }
@@ -40,19 +47,21 @@ export default function LocaleSwitcher() {
       onValueChange={(value: Locale) => handleLocaleChange(value)}
     >
       <SelectTrigger
-        aria-label="Language"
+        aria-label={t("i18n.Locale.Language")}
         className="border-gray-300 w-fit cursor-pointer justify-start gap-1 px-2.5"
       >
-        <SelectValue placeholder={i18nConfig.defaultLocale.toUpperCase()} />
+        <SelectValue
+          placeholder={getLocaleShortLabel(translationService.DefaultLocale)}
+        />
       </SelectTrigger>
       <SelectContent align="end">
-        {i18nConfig.locales.map((i18nLocale) => (
+        {translationService.Locales.map((i18nLocale) => (
           <SelectItem
             key={i18nLocale}
             value={i18nLocale}
             className="cursor-pointer"
           >
-            <span>{i18nLocale.toUpperCase()}</span>
+            <span>{getLocaleShortLabel(i18nLocale)}</span>
           </SelectItem>
         ))}
       </SelectContent>

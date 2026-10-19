@@ -1,11 +1,13 @@
 "use client";
 
 import type { Budget } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { BudgetsMenu } from "@/front-end/components/budgets/budgets-menu";
 import type { IBudgetsItemProps } from "@/front-end/components/budgets/types";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import TransactionsTile from "@/front-end/components/transactions/transactions-tile";
 import budgetService from "@/front-end/services/budget.service";
+import transactionService from "@/front-end/services/transaction.service";
 import type { TransactionUICategory } from "@/shared/services/constants.service";
 import type { ITransactionsForCategoryData } from "@/shared/services/types";
 
@@ -42,6 +44,7 @@ export default function BudgetsItem({
   onEditBudget,
   onDeleteBudget,
 }: IBudgetsItemProps) {
+  const t = useTranslations();
   const {
     spent,
     remaining,
@@ -50,6 +53,8 @@ export default function BudgetsItem({
     isWarning,
     latestTransactions,
   } = getBudgetCardViewModel(budget, transactionsByCategoryList);
+
+  const categoryLabel = transactionService.getCategoryLabel(budget.category, t);
 
   return (
     <ItemCard>
@@ -60,7 +65,7 @@ export default function BudgetsItem({
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: budget.theme || "grey" }}
             ></div>
-            <div className="font-bold text-xl">{budget.category}</div>
+            <div className="font-bold text-xl">{categoryLabel}</div>
           </div>
           <div className="cursor-pointer">
             <BudgetsMenu
@@ -71,13 +76,15 @@ export default function BudgetsItem({
               <img
                 className="w-5 h-5"
                 src="assets/images/icon-ellipsis.svg"
-                alt="Actions"
+                alt={t("i18n.Common.Actions")}
               />
             </BudgetsMenu>
           </div>
         </div>
         <div className="text-app-color">
-          Maximum of ${budget.maximum.toFixed(2)}
+          {t("i18n.BudgetsPage.MaximumOf", {
+            amount: `$${budget.maximum.toFixed(2)}`,
+          })}
         </div>
         <div
           className="p-1 w-full rounded-sm bg-app-background overflow-hidden h-9 border-2 border-transparent transition-all duration-300"
@@ -106,7 +113,9 @@ export default function BudgetsItem({
               style={{ backgroundColor: budget.theme || "grey" }}
             ></div>
             <div className="flex flex-col justify-between min-w-0 max-w-25 h-12 text-xs overflow-hidden">
-              <div className="text-app-color truncate font-semibold">Spent</div>
+              <div className="text-app-color truncate font-semibold">
+                {t("i18n.BudgetsPage.Spent")}
+              </div>
               <div className={`font-bold ${!budget && "text-app-color"}`}>
                 ${spent || "0.0"}
               </div>
@@ -116,7 +125,7 @@ export default function BudgetsItem({
             <div className="h-full min-w-1 w-1 rounded bg-app-background"></div>
             <div className="flex flex-col justify-between min-w-0 max-w-25 h-12 text-xs overflow-hidden">
               <div className="text-app-color truncate font-semibold">
-                Remaining
+                {t("i18n.BudgetsPage.Remaining")}
               </div>
               <div className={`font-bold ${!budget && "text-app-color"}`}>
                 ${remaining || "0.0"}
@@ -127,14 +136,22 @@ export default function BudgetsItem({
         {isOver && (
           <div className="mt-1 text-sm font-medium text-red-600 bg-red-50 px-3 py-2 rounded-md flex items-center gap-2">
             <span>⚠️</span>
-            <span>Over budget by ${Math.abs(remaining).toFixed(2)}</span>
+            <span>
+              {t("i18n.BudgetsPage.OverBudgetBy", {
+                amount: `$${Math.abs(remaining).toFixed(2)}`,
+              })}
+            </span>
           </div>
         )}
 
         {isWarning && !isOver && (
           <div className="mt-1 text-sm font-medium text-amber-700 bg-amber-50 px-3 py-2 rounded-md flex items-center gap-2">
             <span>⚠️</span>
-            <span>Budget almost used ({percentBarProgress.toFixed(0)}%)</span>
+            <span>
+              {t("i18n.BudgetsPage.AlmostUsed", {
+                percent: percentBarProgress.toFixed(0),
+              })}
+            </span>
           </div>
         )}
         <div className="mt-1 mb-3">

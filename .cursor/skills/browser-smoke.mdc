@@ -1,0 +1,67 @@
+---
+name: browser-smoke
+description: >-
+  Browser smoke playbook: basic (navigate, error buttons, open/close dialogs)
+  vs extended (CRUD, text input, empty/failed requests). Use when running
+  /check-and-commit Step 2, /browser-smoke, or manual dialog/CRUD regression
+  against the local app.
+disable-model-invocation: true
+---
+
+# Browser Smoke
+
+Playbook for **what** to exercise in the browser. Pipeline order, hard stops, and commit/push gates live in [`.cursor/commands/check-and-commit.mdc`](../commands/check-and-commit.mdc) — follow that command and **this** skill together when used from check-and-commit.
+
+Do **not** create a git commit from this skill alone.
+
+## Tiers
+
+| Tier | When | Scope |
+|------|------|--------|
+| **Basic smoke** | **Always** after CI READY TO COMMIT in check-and-commit | Navigate pages; click error triggers; open dialogs/menus and **close** them; click non-mutating controls. **No** create, edit, delete, typing into fields, or empty/failed-request emulation. |
+| **Extended smoke** | **Only** after explicit user approval (check-and-commit Step 2b) | Basic + create → edit → delete (own `smoke-*` data only) + text input (valid/invalid) + toasts + empty-state / failed-request emulation |
+
+After basic smoke passes (in check-and-commit): **always ask** whether to run extended smoke, then **end the turn** and wait. Do not start extended smoke or the commit proposal in that same turn.
+
+## Shared setup
+
+1. Prefer automated e2e/smoke scripts if the repo has them (`test:e2e`, `test:smoke`, Playwright / Cypress). If present and they fail → **stop**.
+2. Otherwise manual smoke via **cursor-ide-browser** against local `next dev`:
+   - Prefer a healthy existing server; read the real `Local:` URL/port from the Ready banner.
+   - If you start a server: note PID/port; when smoke finishes (pass or fail), **kill that process**. Do not leave orphans. Do not kill a pre-existing server you did not start unless hung/orphan and blocking smoke.
+   - If Next refuses a second instance: reuse existing URL, or free PID only if reuse impossible, then kill what you started when done.
+3. Navigation / page-load hang **>~20s** → investigate ports/PIDs/logs; do not wait a minute+. Prefer another free port if `3000` must not be killed.
+4. Auth: redirect to login is OK when unauthenticated. Do **not** invent credentials. No session → skip session-only clicks; note `basic smoke: limited (no session)`.
+5. Do **not** re-run Vitest watch (`npm run test`) here — unit tests belong to CI.
+
+## Basic smoke
+
+When a session exists (or as far as possible without auth):
+
+- Visit core routes: `/login`, `/overview`, `/transactions`, `/budgets`, `/pots`, `/recurring`. Pass: page loads; no hard crash / blank broken page; main content visible.
+- **Overview tile navigation:** click each “See all” / “See details” / “View All” → expected destination (not URL-bar only).
+- **Error buttons:** click “Trigger error” / “Trigger global error” (or equivalents); confirm error UI; recover (Try again / navigate away).
+- **Dialogs / menus:** open primary create/edit/delete/Add Money/etc. dialogs and menus, then **Close / Cancel / Escape / Go Back** without submitting.
+- **Other non-mutating clicks:** pagination next/prev/page numbers; open/close filter/sort comboboxes without destructive commits; sidebar/nav spot-check.
+- **Hard forbid in basic:** typing into inputs; Save/submit that creates or updates; confirming Delete; create → edit → delete; empty-search / failed-request emulation that needs text entry or request mocking.
+
+On basic hard failure: **stop**. Kill any smoke server you started. (In check-and-commit: no extended ask, commit, or push.)
+
+## Extended smoke (approval only)
+
+Run only after explicit user approval (see phrases below). Basic scope plus:
+
+- **CRUD:** create → edit → delete for **budget**, **pot**, and at least one **transaction** when UI allows; other creatable entities when practical.
+- **Text input:** valid and invalid values; watch toasts; i18n titles must not show raw `{placeholders}`.
+- **Own data only:** disposable names (`smoke-budget-*`, `smoke-pot-*`, `smoke-txn-*`). **Delete only what this smoke run created.** Never delete/edit user-seeded data unless the user explicitly asks.
+- **Empty / failed requests:** emulate empty lists (search/filters) and, when feasible, failed/missing data paths; confirm empty/error UI — not a crash. Prefer non-destructive approaches.
+- Pot Add Money / Withdraw: open + small valid amount **only** on a smoke pot, or open + cancel.
+- Close dialogs cleanly; do not leave modals blocking later steps.
+
+On extended hard failure: **stop**. Kill any smoke server you started. (In check-and-commit: no commit or push.)
+
+## Approval phrases (extended)
+
+- **Approve:** `yes` / `ok` / `апрув` / `extended` / `запускай расширенный` / similar.
+- **Decline:** `no` / `skip` / `не надо` / `только базовый` / similar.
+- Bare `check and commit` / `продолжай` without answering the extended question is **not** extended approval.

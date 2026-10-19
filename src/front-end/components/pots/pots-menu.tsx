@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { DeletePotDialog } from "@/front-end/components/pots/dialogs/delete-pot-dialog";
 import { EditPotDialog } from "@/front-end/components/pots/dialogs/edit-pot-dialog";
@@ -14,6 +15,7 @@ import {
 } from "@/front-end/components/ui/dropdown-menu";
 
 export function PotsMenu({ pot, children }: IPotsMenuProps) {
+  const t = useTranslations();
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
   const [isDeletePotDialogOpen, setDeletePotDialogOpen] = useState(false);
 
@@ -23,18 +25,18 @@ export function PotsMenu({ pot, children }: IPotsMenuProps) {
 
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="text-xs font-semibold text-app-color">
-          Actions with "{pot.name}"
+          {t("i18n.Common.ActionsWith", { name: pot.name })}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => setEditPotDialogOpen(true)}>
-          Edit Pot
+          {t("i18n.PotsPage.EditPot")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
           onClick={() => setDeletePotDialogOpen(true)}
         >
-          Delete Pot
+          {t("i18n.PotsPage.DeletePot")}
         </DropdownMenuItem>
       </DropdownMenuContent>
       {isEditPotDialogOpen && (

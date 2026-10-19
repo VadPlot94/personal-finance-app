@@ -1,6 +1,8 @@
 # Check and Commit
 
-Fail-fast pipeline: CI gate → browser smoke → commit → push. Do **not** skip steps or continue past a failure.
+Fail-fast pipeline: CI gate → **basic** browser smoke → (optional **extended** smoke after user approval) → commit → push. Do **not** skip steps or continue past a failure.
+
+Browser smoke **playbook** (what to click / forbid / CRUD): always read and fully execute [`.cursor/skills/browser-smoke.mdc`](../skills/browser-smoke.mdc). This command owns **pipeline order**, ask/approval gates, and stop rules.
 
 ## Workflow
 
@@ -9,7 +11,9 @@ Copy and track:
 ```
 Check and Commit:
 - [ ] Step 1: /ci-quality-check
-- [ ] Step 2: Browser sanity / smoke
+- [ ] Step 2a: Browser basic smoke (always)
+- [ ] Step 2b: Ask user — run extended smoke? (wait for approval)
+- [ ] Step 2c: Browser extended smoke (only if approved)
 - [ ] Step 3: Commit (git-commit.mdc)
 - [ ] Step 4: Push to origin
 ```
@@ -21,31 +25,43 @@ Check and Commit:
 3. On **BLOCKED**: stop. Report blockers. Do **not** run browser checks, commit, or push.
 4. Unit tests are **run** in the CI gate. Create / update / change / delete: [`.cursor/commands/update-unit-tests.mdc`](update-unit-tests.mdc).
 
-### Step 2 — Browser sanity / regression smoke
+### Step 2 — Browser smoke
 
-1. Look for automated smoke / e2e / regression tests (browser-level, not unit Vitest):
-   - `package.json` scripts: `test:e2e`, `test:smoke`, or similar
-   - Playwright / Cypress config in the repo
-   - Unit/component Vitest is already covered by Step 1 via `npm run test:run` — do **not** re-run `npm run test` (watch) here
-2. If e2e/smoke scripts exist: run them. On non-zero exit — **stop**. Do not commit or push.
-3. If none exist: manual smoke via **cursor-ide-browser** against the local app:
-   - Prefer an already-running healthy `next dev` for this repo if you can reach it (usually `http://localhost:3000`).
-   - **If port `3000` is busy** with something you should not kill, or `next` offers / binds another port: **start on that other port and smoke there** (e.g. `http://localhost:3001`). Read the actual `Local:` URL from the Ready banner — do not assume `3000`.
-   - If you start a server for this smoke run: note its **PID** (and port). When smoke finishes (pass or fail), **always kill that process** you started (`taskkill /PID <pid> /F` on Windows, or equivalent). Do **not** leave orphan `next dev` processes. Do **not** kill a pre-existing server you did not start unless the user asked — **except** when that process is clearly hung/orphan and blocking smoke (see navigation timeout below).
-   - If Next exits with `Another next dev server is already running` and refuses a second instance: reuse the existing server’s URL for smoke, or (only if reuse is impossible) free that PID, start fresh, then kill what you started when done.
-   - **Navigation / page-load timeout (~20s) — mandatory:** If browser navigate or page load against the local app takes **more than ~20 seconds** with no usable page, treat that as abnormal — something is wrong (stuck/hung server, bad port, dead process, browser lock, etc.). Do **not** keep waiting/hanging for a minute+. Immediately investigate: list listeners on localhost ports commonly used by this app (at least `3000`/`3001`), check `next` / `npm run dev` PIDs, and read recent next/dev terminal or log output if available. If a hung/orphan `next` you (or a prior agent) started is the cause — kill it and restart on a free port (or reuse a healthy existing server per the port rules above). Prefer starting on another port and smoking there if `3000` is busy with something you should not kill; always kill processes **you** started when smoke ends. Report the root cause briefly when navigation hangs.
-   - Visit core routes on the chosen base URL: `/login`, `/overview`, `/transactions`, `/budgets`, `/pots`, `/recurring`.
-   - Per route pass criteria: page loads; no Next.js error overlay / obvious crash; main content visible (snapshot or screenshot).
-   - Auth-gated pages: redirect to login is OK when unauthenticated. Do **not** invent credentials. If a session already exists, verify the authenticated page renders.
-4. On any hard failure (crash, overlay, 500, blank broken page): **stop**. Report broken routes. Do not commit or push. (Still kill any smoke server you started.)
+1. Read and follow [`.cursor/skills/browser-smoke.mdc`](../skills/browser-smoke.mdc) for basic then (if approved) extended smoke, plus the gates below.
+2. Automated e2e/smoke scripts (if any): run first per the skill; non-zero → **stop**. Do **not** re-run Vitest watch (`npm run test`).
+
+#### Step 2a — Basic smoke (mandatory)
+
+Execute **Basic smoke** from `browser-smoke.mdc`.
+
+On basic hard failure: **stop**. No extended ask, commit, or push. Kill any smoke server you started.
+
+#### Step 2b — Ask for extended smoke (mandatory gate)
+
+After **basic smoke passes**:
+
+1. Briefly report basic smoke result.
+2. Ask clearly whether to run **extended smoke**.
+3. **Hard stop:** end the turn. Do **not** start extended smoke, commit proposal, or push in the same turn.
+4. Proceed only in a **later** user turn per approval phrases in `browser-smoke.mdc`:
+   - **Approved** → Step 2c, then Step 3.
+   - **Declined** → skip 2c; continue Step 3.
+5. Bare `check and commit` / `продолжай` without answering the extended question is **not** extended approval — ask again (or decline only if the user clearly wants to go straight to commit).
+
+#### Step 2c — Extended smoke (approval only)
+
+Execute **Extended smoke** from `browser-smoke.mdc`.
+
+On extended hard failure: **stop**. No commit or push. Kill any smoke server you started.
 
 ### Step 3 — Commit
 
-1. Follow [`.cursor/rules/git-commit.mdc`](../rules/git-commit.mdc) exactly
+1. Run only after Step 2a passed, and Step 2b was answered (extended done or explicitly skipped).
+2. Follow [`.cursor/rules/git-commit.mdc`](../rules/git-commit.mdc) exactly
    (mandatory message-approval flow).
-2. Show file list, proposed message (`[branch_name] description`), and alternatives.
-3. **End the turn** after the proposal. Do **not** `git commit` in the same turn.
-4. Commit only in a later turn after the user approves **that** message text
+3. Show file list, proposed message (`[branch_name] description`), and alternatives.
+4. **End the turn** after the proposal. Do **not** `git commit` in the same turn.
+5. Commit only in a later turn after the user approves **that** message text
    (or supplies a replacement). Bare `комитай` / continue-pipeline is not enough
    without message approval. Never commit secrets (`.env`, credentials, etc.).
 
@@ -60,9 +76,11 @@ Check and Commit:
 
 ## Stop rules
 
-| Gate | On failure |
-|------|------------|
+| Gate | On failure / rule |
+|------|-------------------|
 | CI not READY TO COMMIT | Stop — no browser, commit, or push |
-| Smoke / browser fail | Stop — no commit or push |
+| Basic smoke fail | Stop — no extended ask, commit, or push |
+| Waiting for extended smoke answer | End turn — no extended / commit / push until user answers |
+| Extended smoke fail (if approved) | Stop — no commit or push |
 | User declines commit | Stop — no push |
 | Commit fails | Stop — no push |

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Budget } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import {
   useActionState,
   useContext,
@@ -32,13 +33,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
-import { handleDialogFormActionResult } from "@/front-end/lib/form-action-result";
 import financeService from "@/front-end/services/finance.service";
-import { orEmptyStr } from "@/lib/utils";
+import { handleDialogFormActionResult, orEmptyStr } from "@/lib/utils";
 import {
   Theme,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
+import translationService from "@/shared/services/translation.service";
 import type { IAddBudgetFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
@@ -72,13 +73,18 @@ function isFormValid(
 
 function validateForm(
   formBudgetData: IAddBudgetFormData,
+  t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof IAddBudgetFormData, string>> | null {
   const result = validationService.validateAddBudgetSchema(formBudgetData);
-  return result.success
-    ? null
-    : validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(
-        result,
-      );
+  if (result.success) {
+    return null;
+  }
+  const errors =
+    validationService.createErrorsWithPath<Partial<IAddBudgetFormData>>(result);
+  return translationService.translate(
+    t,
+    errors as Record<string, string>,
+  ) as Partial<Record<keyof IAddBudgetFormData, string>>;
 }
 
 function getBusyBudgets(budgets: Budget[], budget?: Budget | null): Budget[] {
@@ -101,6 +107,7 @@ export function EditBudgetDialog({
   isDialogOpen,
   setDialogOpen,
 }: IEditBudgetDialogProps) {
+  const t = useTranslations();
   const serverActionBudgetFn = useMemo(
     () => (budget?.id ? editBudgetSRF : addBudgetSRF),
     [budget?.id],
@@ -136,7 +143,7 @@ export function EditBudgetDialog({
 
   useEffect(() => {
     if (formBudgetData) {
-      setFormErrors(validateForm(formBudgetData));
+      setFormErrors(validateForm(formBudgetData, t));
     }
   }, [formBudgetData]);
 
@@ -149,6 +156,7 @@ export function EditBudgetDialog({
       isPending,
       handleOpenChange,
       setFormErrors,
+      t,
     );
   }, [formResultState]);
 
@@ -180,15 +188,17 @@ export function EditBudgetDialog({
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
           <DialogTitle className="font-bold text-3xl">
-            {!formBudgetData?.id ? "Add New Budget" : "Edit New Budget"}
+            {!formBudgetData?.id
+              ? t("i18n.BudgetsPage.AddNewBudget")
+              : t("i18n.BudgetsPage.EditNewBudget")}
           </DialogTitle>
         </DialogHeader>
         <form action={formAction}>
           <div className="flex flex-col gap-5">
             <div className="text-app-color text-xs">
               {!formBudgetData?.id
-                ? "Choose a category to set a spending budget. These categories can help you monitor spending."
-                : "As your budgets change, feel free to update your spending limits."}
+                ? t("i18n.BudgetsPage.AddDescription")
+                : t("i18n.BudgetsPage.EditDescription")}
             </div>
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
@@ -203,7 +213,7 @@ export function EditBudgetDialog({
                   htmlFor="budgetCategory"
                   className="text-app-color text-xs font-bold"
                 >
-                  Budget Category
+                  {t("i18n.BudgetsPage.BudgetCategory")}
                 </Label>
 
                 <Select
@@ -216,7 +226,9 @@ export function EditBudgetDialog({
                   }
                 >
                   <SelectTrigger className="border-gray-300 w-full cursor-pointer">
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue
+                      placeholder={t("i18n.BudgetsPage.SelectCategory")}
+                    />
                   </SelectTrigger>
 
                   <SelectContent>
@@ -233,7 +245,9 @@ export function EditBudgetDialog({
                           )}
                           className="cursor-pointer"
                         >
-                          <span>{categoryName}</span>
+                          <span>
+                            {t(`i18n.Enums.Category.${categoryName}`)}
+                          </span>
                         </SelectItem>
                       ))}
                   </SelectContent>
@@ -248,7 +262,7 @@ export function EditBudgetDialog({
                   htmlFor="maximum"
                   className="text-app-color text-xs font-bold"
                 >
-                  Maximum ($)
+                  {t("i18n.BudgetsPage.Maximum")}
                 </Label>
                 <Input
                   className="border-gray-300"
@@ -263,7 +277,7 @@ export function EditBudgetDialog({
                   onChange={(e) => {
                     handleMaximumInputChange(e.target.value);
                   }}
-                  placeholder="$ e.g. 2000"
+                  placeholder={t("i18n.Common.CashPlaceholder")}
                 />
                 <p className="text-xs text-red-500">{formErrors?.maximum}</p>
               </div>
@@ -272,7 +286,7 @@ export function EditBudgetDialog({
                   htmlFor="theme"
                   className="text-app-color text-xs font-bold"
                 >
-                  Theme
+                  {t("i18n.Common.Theme")}
                 </Label>
 
                 <Select
@@ -281,7 +295,7 @@ export function EditBudgetDialog({
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
                   <SelectTrigger className="border-gray-300 w-full cursor-pointer">
-                    <SelectValue placeholder="Select Theme" />
+                    <SelectValue placeholder={t("i18n.Common.SelectTheme")} />
                   </SelectTrigger>
 
                   <SelectContent>
@@ -297,7 +311,7 @@ export function EditBudgetDialog({
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: themeValue }}
                           />
-                          <span>{themeName}</span>
+                          <span>{t(`i18n.Enums.Theme.${themeName}`)}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -313,7 +327,7 @@ export function EditBudgetDialog({
                 className="w-full h-12 cursor-pointer"
                 disabled={isPending || !isFormValid(formErrors, formBudgetData)}
               >
-                Save Changes
+                {t("i18n.Common.SaveChanges")}
               </Button>
             </div>
           </div>

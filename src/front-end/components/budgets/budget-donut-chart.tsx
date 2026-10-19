@@ -1,8 +1,10 @@
 "use client";
 
 import type { Budget } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import type { IBudgetDonutChartProps } from "@/front-end/components/budgets/types";
+import transactionService from "@/front-end/services/transaction.service";
 import constants from "@/shared/services/constants.service";
 import type { ITransactionsForCategoryData } from "@/shared/services/types";
 
@@ -78,6 +80,7 @@ export default function BudgetDonutChart({
   holeRatio = 0.58,
   transactionsByCategoryList,
 }: IBudgetDonutChartProps) {
+  const t = useTranslations();
   const [donutSize, setDonutSize] = useState(constants.DefaultDonutChartSize);
 
   const spentByCategory = buildSpentByCategory(
@@ -143,7 +146,9 @@ export default function BudgetDonutChart({
               ${totalSpent.toFixed(0)}
             </div>
             <div className="text-xs text-app-color">
-              of ${totalAllMaximums.toFixed(0)} Limit
+              {t("i18n.BudgetsPage.OfLimit", {
+                amount: `$${totalAllMaximums.toFixed(0)}`,
+              })}
             </div>
           </div>
         </div>
@@ -155,6 +160,10 @@ export default function BudgetDonutChart({
           {categoriesWithSpent.map((b) => {
             const percent =
               totalSpent > 0 ? ((b.spent / totalSpent) * 100).toFixed(0) : 0;
+            const categoryLabel = transactionService.getCategoryLabel(
+              b.category,
+              t,
+            );
             return (
               <div key={b.category} className="flex items-center gap-2">
                 <div
@@ -162,7 +171,7 @@ export default function BudgetDonutChart({
                   style={{ backgroundColor: b.theme }}
                 />
                 <span className="font-semibold text-gray-800">
-                  {b.category}
+                  {categoryLabel}
                 </span>
                 <span className="text-gray-500">
                   ${b.spent.toFixed(0)} ({percent}%)

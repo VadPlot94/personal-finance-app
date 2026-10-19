@@ -15,4 +15,5 @@ alwaysApply: true
 - For naming conventions (files, folders, exports, interfaces), follow [`.cursor/rules/naming-convention-preferences.mdc`](naming-convention-preferences.mdc).
 - For code comments, follow [`.cursor/rules/comments.mdc`](comments.mdc).
 - For unit/component test conventions, follow [`.cursor/rules/unit-tests.mdc`](unit-tests.mdc). Create / update / change / delete tests: [`.cursor/commands/update-unit-tests.mdc`](../commands/update-unit-tests.mdc).
+- For browser smoke (basic vs extended), follow [`.cursor/skills/browser-smoke.mdc`](../skills/browser-smoke.mdc). Pipeline: [`.cursor/commands/check-and-commit.mdc`](../commands/check-and-commit.mdc).
 - For subagent routing, follow [`.cursor/rules/agents.mdc`](agents.mdc).

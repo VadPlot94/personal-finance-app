@@ -1,7 +1,19 @@
 import type { Transaction } from "@prisma/client";
 import type { IPaginationData } from "@/front-end/components/transactions/types";
+import { TransactionUICategory } from "@/shared/services/constants.service";
+import translationService from "@/shared/services/translation.service";
+import type { Translator } from "@/shared/services/types";
 
 class TransactionService {
+  public getCategoryLabel(categoryValue: string, t: Translator): string {
+    const categoryKey = Object.entries(TransactionUICategory).find(
+      ([, value]) => value === categoryValue,
+    )?.[0];
+    return categoryKey
+      ? t(`i18n.Enums.Category.${categoryKey}`)
+      : categoryValue;
+  }
+
   public getPaginationPagesNumber(
     paginationDataItems: Partial<IPaginationData> | undefined,
   ): number {
@@ -25,9 +37,12 @@ class TransactionService {
     return !transactions?.length && !!this.getSearchValue(searchValue);
   }
 
-  public getTransactionDate(date: Date): string {
+  public getTransactionDate(
+    date: Date,
+    locale: string = translationService.DefaultLocale,
+  ): string {
     return date
-      ? new Date(date).toLocaleDateString("en-US", {
+      ? new Date(date).toLocaleDateString(locale, {
           day: "numeric",
           month: "short",
           year: "numeric",

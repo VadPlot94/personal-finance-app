@@ -1,8 +1,8 @@
 "use client";
 
 import type { Pot } from "@prisma/client";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { setPotTotalSRF } from "@/back-end/server-actions/pot-actions";
 import type { IAddMoneyPotDialogProps } from "@/front-end/components/pots/types";
 import { Button } from "@/front-end/components/ui/button";
@@ -16,6 +16,9 @@ import {
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
 import financeService from "@/front-end/services/finance.service";
+import { handleDialogFormActionResult } from "@/lib/utils";
+import translationService from "@/shared/services/translation.service";
+import type { Translator } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
 function getResultPotTotal(
@@ -36,6 +39,7 @@ function computeAmountInputResult(
   pot: Pot,
   availableBalance: number,
   isWithdraw: boolean,
+  t: Translator,
 ) {
   const newAmount = val?.replaceAll(" ", "");
   const targetValidationAmount = isWithdraw ? pot.total : pot.target;
@@ -51,7 +55,10 @@ function computeAmountInputResult(
     if (!result.success) {
       return {
         newAmount,
-        validationError: result.error.issues[0].message,
+        validationError: translationService.translate(
+          t,
+          result.error.issues[0].message,
+        ),
         amountProgress: 0,
         resultTotal: pot.total,
       };
@@ -80,6 +87,8 @@ export function ChangeMoneyDialog({
   isDialogOpen,
   setDialogOpen,
 }: IAddMoneyPotDialogProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [newAmount, setNewAmount] = useState("");
   const [resultTotal, setResultTotal] = useState(pot.total);
   const [amountProgress, setAmountProgress] = useState(0);
@@ -98,6 +107,7 @@ export function ChangeMoneyDialog({
       pot,
       availableBalance,
       isWithdraw,
+      t,
     );
     setNewAmount(result.newAmount);
     setValidationError(result.validationError);
@@ -111,20 +121,15 @@ export function ChangeMoneyDialog({
       ? pot.total - amountValue
       : pot.total + amountValue;
     const response = await setPotTotalSRF(pot.id, newTotal);
-    if (response?.success) {
-      toast.success("Success", {
-        description: response.message || "OK",
-      });
-      setDialogOpen(false);
-    } else {
-      if (response.zodErrors) {
-        setValidationError(Object.values(response.zodErrors)?.[0]);
-      } else {
-        toast.error("Error", {
-          description: response.error || "ERROR",
-        });
-      }
-    }
+    handleDialogFormActionResult(
+      response,
+      false,
+      setDialogOpen,
+      (errors) => {
+        setValidationError(Object.values(errors)[0] ?? null);
+      },
+      t,
+    );
   };
 
   const totalValue = financeService.createCacheNumberFormat(newAmount);
@@ -142,20 +147,22 @@ export function ChangeMoneyDialog({
         <DialogHeader>
           <DialogTitle className="font-bold text-3xl">
             {isWithdraw
-              ? `Withdraw from '${pot?.name}'`
-              : `Add to '${pot?.name}'`}
+              ? t("i18n.PotsPage.WithdrawTitle", { name: pot?.name })
+              : t("i18n.PotsPage.AddTitle", { name: pot?.name })}
           </DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-5">
           <div className="text-app-color text-xs">
             {isWithdraw
-              ? "Withdraw from your pot to put money back in your main balance. This will reduce the amount you have in this pot."
-              : "Add money to your pot to keep it separate from your main balance. As soon as you add this money, it will be deducted from your current balance."}
+              ? t("i18n.PotsPage.WithdrawDescription")
+              : t("i18n.PotsPage.AddDescriptionMoney")}
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex flex-row justify-between items-center w-full">
-              <div className="text-app-color text-xs">New Amount</div>
+              <div className="text-app-color text-xs">
+                {t("i18n.PotsPage.NewAmount")}
+              </div>
               <div className="font-bold text-2xl">{resultTotal} $</div>
             </div>
             <div className="flex w-full rounded-sm bg-app-background overflow-hidden h-2 gap-0.5 items-center">
@@ -189,13 +196,17 @@ export function ChangeMoneyDialog({
                 )}
               </div>
               <div className="text-app-color text-xs font-semibold">
-                Target of ${pot?.target.toLocaleString("en-US")}
+                {t("i18n.PotsPage.TargetOf", {
+                  amount: `$${pot?.target.toLocaleString(locale)}`,
+                })}
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="total" className="text-app-color text-xs font-bold">
-              {isWithdraw ? "Amount to Withdraw" : "Amount to Add"}
+              {isWithdraw
+                ? t("i18n.PotsPage.AmountToWithdraw")
+                : t("i18n.PotsPage.AmountToAdd")}
             </Label>
             <Input
               className="border-gray-300"
@@ -208,7 +219,7 @@ export function ChangeMoneyDialog({
               onChange={(e) => {
                 handleTotalInputChange(e.target.value);
               }}
-              placeholder="$ e.g. 2000"
+              placeholder={t("i18n.Common.CashPlaceholder")}
             />
             <p className="text-xs text-red-500">{validationError}</p>
           </div>
@@ -218,7 +229,9 @@ export function ChangeMoneyDialog({
               className="w-full h-12 cursor-pointer"
               disabled={!isFormValid(validationError, newAmount)}
             >
-              {isWithdraw ? "Confirm Withdrawal" : "Confirm Addition"}
+              {isWithdraw
+                ? t("i18n.PotsPage.ConfirmWithdrawal")
+                : t("i18n.PotsPage.ConfirmAddition")}
             </Button>
           </div>
         </div>

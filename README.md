@@ -49,7 +49,7 @@ Track budgets, transactions, savings pots, and recurring bills with a clean and 
 - `src/back-end` — Prisma, DB services, server actions, and server components (`src/back-end/components`)
 - `src/shared` — shared types and validation utilities, i18n config
 - `src/app/i18n` — next-intl request config (server)
-- `messages/` — nested translation JSON catalogs
+- `src/i18n/messages/` — nested translation JSON catalogs
 - `src/types` — TypeScript declarations
 
 **Developer notes:** [README-dev.md](README-dev.md) (architecture decisions, backend map, debug, experiments, roadmap)

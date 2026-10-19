@@ -96,7 +96,7 @@ class BudgetDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<IAddBudgetFormData>(
           "budgetCategory",
-          "Invalid data: category is required and cannot be 'All Transactions'",
+          "i18n.Validation.CategoryRequired",
         );
       throwValidationError(zodErrorResult);
     }
@@ -105,7 +105,7 @@ class BudgetDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<IAddBudgetFormData>(
           "maximum",
-          "Invalid data: maximum is required",
+          "i18n.Validation.MaximumRequired",
         );
       throwValidationError(zodErrorResult);
     }
@@ -121,7 +121,7 @@ class BudgetDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<IAddBudgetFormData>(
           "budgetCategory",
-          "Budget with such category already exists",
+          "i18n.Validation.BudgetCategoryExists",
         );
       throwValidationError(zodErrorResult);
     }
@@ -145,7 +145,7 @@ class BudgetDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<IAddBudgetFormData>(
           "id",
-          "Invalid data: ID is required for update",
+          "i18n.Validation.IdRequiredForUpdate",
         );
       throwValidationError(zodErrorResult);
     }
@@ -158,7 +158,7 @@ class BudgetDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<IAddBudgetFormData>(
           "id",
-          "Invalid data: ID is required for delete",
+          "i18n.Validation.IdRequiredForDelete",
         );
       throwValidationError(zodErrorResult);
     }

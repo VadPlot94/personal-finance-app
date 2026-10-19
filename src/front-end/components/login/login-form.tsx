@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { registerUserSRF } from "@/back-end/server-actions/auth-actions";
@@ -13,6 +14,7 @@ import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
 import { orEmptyStr } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
+import translationService from "@/shared/services/translation.service";
 import type {
   IRegisterFormData,
   IRegisterValidationData,
@@ -79,30 +81,45 @@ function isRegisterFormValid(
 
 function validateSignInForm(
   formData: ISignInFormData,
+  t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof ISignInValidationData, string>> | null {
   const result = validationService.validateAuthSchema(formData, "signin");
-  return result.success
-    ? null
-    : validationService.createErrorsWithPath<Partial<ISignInValidationData>>(
-        result,
-      );
+  if (result.success) {
+    return null;
+  }
+  const errors =
+    validationService.createErrorsWithPath<Partial<ISignInValidationData>>(
+      result,
+    );
+  return translationService.translate(
+    t,
+    errors as Record<string, string>,
+  ) as Partial<Record<keyof ISignInValidationData, string>>;
 }
 
 function validateRegisterForm(
   formData: IRegisterFormData,
+  t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof IRegisterValidationData, string>> | null {
   const result = validationService.validateAuthSchema(formData, "register");
-  return result.success
-    ? null
-    : validationService.createErrorsWithPath<Partial<IRegisterValidationData>>(
-        result,
-      );
+  if (result.success) {
+    return null;
+  }
+  const errors =
+    validationService.createErrorsWithPath<Partial<IRegisterValidationData>>(
+      result,
+    );
+  return translationService.translate(
+    t,
+    errors as Record<string, string>,
+  ) as Partial<Record<keyof IRegisterValidationData, string>>;
 }
 
 export default function LoginForm({
   isLoading = false,
   authMode,
 }: ILoginFormProps) {
+  const t = useTranslations();
   const { data: session } = useSession();
   const router = useRouter();
   const [authFormMode, setAuthFormMode] = useState<AuthMode>(() =>
@@ -140,13 +157,13 @@ export default function LoginForm({
 
   useEffect(() => {
     if (formSignInData) {
-      setSignInErrors(validateSignInForm(formSignInData));
+      setSignInErrors(validateSignInForm(formSignInData, t));
     }
   }, [formSignInData]);
 
   useEffect(() => {
     if (formRegisterData) {
-      setRegisterErrors(validateRegisterForm(formRegisterData));
+      setRegisterErrors(validateRegisterForm(formRegisterData, t));
     }
   }, [formRegisterData]);
 
@@ -158,7 +175,7 @@ export default function LoginForm({
     });
 
     if (result?.error) {
-      toast.error("Registration successful, but login failed");
+      toast.error(t("i18n.LoginPage.ToastRegisterLoginFailed"));
       return;
     }
 
@@ -179,7 +196,7 @@ export default function LoginForm({
     setIsSigningIn(false);
 
     if (result?.error) {
-      setSignInErrors({ email: "Invalid credentials" });
+      setSignInErrors({ email: t("i18n.LoginPage.InvalidCredentials") });
       return;
     }
 
@@ -199,7 +216,7 @@ export default function LoginForm({
     });
 
     if (response.success) {
-      toast.success("Account created successfully");
+      toast.success(t("i18n.LoginPage.ToastAccountCreated"));
       await handleAutoLogin(
         orEmptyStr(formRegisterData?.email),
         orEmptyStr(formRegisterData?.password),
@@ -207,10 +224,14 @@ export default function LoginForm({
       setFormRegisterStateData(getRegisterFormData(null));
     } else {
       if (response.zodErrors) {
-        setRegisterErrors(response.zodErrors);
+        setRegisterErrors(translationService.translate(t, response.zodErrors));
       } else {
-        toast.error("Registration failed", {
-          description: response.error || "Please try again",
+        toast.error(t("i18n.LoginPage.ToastRegisterFailed"), {
+          description: translationService.translate(
+            t,
+            response.error,
+            "i18n.Common.PleaseTryAgain",
+          ),
         });
       }
     }
@@ -247,7 +268,7 @@ export default function LoginForm({
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              Sign In
+              {t("i18n.LoginPage.SignInTab")}
             </button>
 
             <button
@@ -259,7 +280,7 @@ export default function LoginForm({
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              Register
+              {t("i18n.LoginPage.RegisterTab")}
             </button>
           </div>
 
@@ -268,15 +289,14 @@ export default function LoginForm({
             <form onSubmit={handleSignIn}>
               <div className="flex flex-col gap-5">
                 <div className="text-app-color text-xs">
-                  Sign in to your account to access your personal finance
-                  dashboard.
+                  {t("i18n.LoginPage.SignInIntro")}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label
                     htmlFor="signin-email"
                     className="text-app-color text-xs font-bold"
                   >
-                    Email
+                    {t("i18n.LoginPage.Email")}
                   </Label>
                   <Input
                     id="signin-email"
@@ -291,7 +311,7 @@ export default function LoginForm({
                         }),
                       )
                     }
-                    placeholder="admin@example.com"
+                    placeholder={t("i18n.LoginPage.PlaceholderEmailSignIn")}
                   />
                   <p className="text-xs text-red-500">{signInErrors?.email}</p>
                 </div>
@@ -300,7 +320,7 @@ export default function LoginForm({
                     htmlFor="signin-password"
                     className="text-app-color text-xs font-bold"
                   >
-                    Password
+                    {t("i18n.LoginPage.Password")}
                   </Label>
                   <Input
                     id="signin-password"
@@ -315,7 +335,7 @@ export default function LoginForm({
                         }),
                       )
                     }
-                    placeholder="please enter password"
+                    placeholder={t("i18n.LoginPage.PlaceholderPassword")}
                   />
                   <p className="text-xs text-red-500">
                     {signInErrors?.password}
@@ -330,7 +350,9 @@ export default function LoginForm({
                     }
                     className="w-full h-12 cursor-pointer"
                   >
-                    {isSigningIn ? "Signing in..." : "Sign in"}
+                    {isSigningIn
+                      ? t("i18n.LoginPage.SigningIn")
+                      : t("i18n.LoginPage.SignIn")}
                   </Button>
                   <Button
                     type="button"
@@ -339,7 +361,7 @@ export default function LoginForm({
                     variant="outline"
                     className="w-full h-12 cursor-pointer"
                   >
-                    Continue with Gmail
+                    {t("i18n.LoginPage.ContinueGmail")}
                   </Button>
                   <Button
                     type="button"
@@ -348,7 +370,7 @@ export default function LoginForm({
                     variant="outline"
                     className="w-full h-12 cursor-pointer"
                   >
-                    Continue with GitHub
+                    {t("i18n.LoginPage.ContinueGitHub")}
                   </Button>
                 </div>
               </div>
@@ -360,14 +382,14 @@ export default function LoginForm({
             <form onSubmit={handleRegisterSubmit}>
               <div className="flex flex-col gap-5">
                 <div className="text-app-color text-xs">
-                  Create a new account to start managing your personal finances.
+                  {t("i18n.LoginPage.RegisterIntro")}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label
                     htmlFor="register-name"
                     className="text-app-color text-xs font-bold"
                   >
-                    Name
+                    {t("i18n.LoginPage.Name")}
                   </Label>
                   <Input
                     id="register-name"
@@ -382,7 +404,7 @@ export default function LoginForm({
                         }),
                       )
                     }
-                    placeholder="John Doe"
+                    placeholder={t("i18n.LoginPage.PlaceholderName")}
                   />
                   <p className="text-xs text-red-500">{registerErrors?.name}</p>
                 </div>
@@ -391,7 +413,7 @@ export default function LoginForm({
                     htmlFor="register-email"
                     className="text-app-color text-xs font-bold"
                   >
-                    Email
+                    {t("i18n.LoginPage.Email")}
                   </Label>
                   <Input
                     id="register-email"
@@ -406,7 +428,7 @@ export default function LoginForm({
                         }),
                       )
                     }
-                    placeholder="your@email.com"
+                    placeholder={t("i18n.LoginPage.PlaceholderEmailRegister")}
                   />
                   <p className="text-xs text-red-500">
                     {registerErrors?.email}
@@ -417,7 +439,7 @@ export default function LoginForm({
                     htmlFor="register-password"
                     className="text-app-color text-xs font-bold"
                   >
-                    Password
+                    {t("i18n.LoginPage.Password")}
                   </Label>
                   <Input
                     id="register-password"
@@ -432,7 +454,9 @@ export default function LoginForm({
                         }),
                       )
                     }
-                    placeholder="at least 6 characters"
+                    placeholder={t(
+                      "i18n.LoginPage.PlaceholderPasswordRegister",
+                    )}
                   />
                   <p className="text-xs text-red-500">
                     {registerErrors?.password}
@@ -446,7 +470,7 @@ export default function LoginForm({
                     }
                     className="w-full h-12 cursor-pointer"
                   >
-                    Create Account
+                    {t("i18n.LoginPage.CreateAccount")}
                   </Button>
                 </div>
               </div>

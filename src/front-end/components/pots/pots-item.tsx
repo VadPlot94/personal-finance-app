@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import { ChangeMoneyDialog } from "@/front-end/components/pots/dialogs/change-money-dialog";
@@ -9,6 +10,8 @@ import financeService from "@/front-end/services/finance.service";
 import constants from "@/shared/services/constants.service";
 
 export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [isAddMoneyDialogOpen, setAddMoneyDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
   const targetPotProgress = financeService.getStrPercentage(
@@ -32,7 +35,7 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
                 <img
                   className="w-5 h-5"
                   src="assets/images/icon-ellipsis.svg"
-                  alt="Actions"
+                  alt={t("i18n.Common.Actions")}
                 />
               </PotsMenu>
             </div>
@@ -40,11 +43,11 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
           <div className="flex flex-col justify-between items-center gap-3">
             <div className="flex flex-row justify-between items-center w-full">
               <div className="text-app-color text-xs font-semibold">
-                Total Saved
+                {t("i18n.PotsPage.TotalSaved")}
               </div>
               <div className="font-bold text-2xl">
                 $
-                {pot.total.toLocaleString("en-US", {
+                {pot.total.toLocaleString(locale, {
                   minimumFractionDigits: constants.NumberFractionDigits,
                 })}
               </div>
@@ -58,7 +61,9 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
             <div className="flex flex-row justify-between items-center w-full">
               <div className="font-bold text-xs">{targetPotProgress}</div>
               <div className="text-app-color text-xs font-semibold">
-                Target of ${pot.target.toLocaleString("en-US")}
+                {t("i18n.PotsPage.TargetOf", {
+                  amount: `$${pot.target.toLocaleString(locale)}`,
+                })}
               </div>
             </div>
           </div>
@@ -68,14 +73,14 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
               onClick={() => setAddMoneyDialogOpen(true)}
               className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold h-10 cursor-pointer border-2 border-transparent hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
             >
-              + Add Money
+              {t("i18n.PotsPage.AddMoney")}
             </button>
             <button
               type="button"
               onClick={() => setWithdrawDialogOpen(true)}
               className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold cursor-pointer hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
             >
-              Withdraw
+              {t("i18n.PotsPage.Withdraw")}
             </button>
           </div>
         </div>

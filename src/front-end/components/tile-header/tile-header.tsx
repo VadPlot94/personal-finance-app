@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import LoadingIndicator from "@/front-end/components/loading-indicator/loading-indicator";
 import type { ITileHeaderProps } from "@/front-end/components/tile-header/types";
 
@@ -9,6 +10,8 @@ export default function TileHeader({
   href,
   linkLabel,
 }: ITileHeaderProps) {
+  const t = useTranslations();
+
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="font-bold mobileXS:text-[20px] max-mobileXS:text-base">
@@ -22,7 +25,7 @@ export default function TileHeader({
         <LoadingIndicator>
           <img
             src="assets/images/icon-caret-right.svg"
-            alt="Caret right"
+            alt={t("i18n.Common.CaretRight")}
             className="h-4 w-4"
           />
         </LoadingIndicator>

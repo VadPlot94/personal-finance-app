@@ -1,25 +1,17 @@
 "use server";
 import "server-only";
 
-import { cookies } from "next/headers";
-import { i18nConfig, type Locale } from "@/shared/i18n/config";
+import cookiesService from "@/back-end/services/cookies.service";
 import logger from "@/shared/services/logger.service";
-
-const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+import translationService from "@/shared/services/translation.service";
 
 export async function setLocaleSRF(locale: string): Promise<boolean> {
   try {
-    if (!i18nConfig.locales.includes(locale as Locale)) {
+    if (!translationService.isValidLocale(locale)) {
       return false;
     }
 
-    const store = await cookies();
-    store.set(i18nConfig.localeCookieName, locale, {
-      path: "/",
-      sameSite: "lax",
-      maxAge: ONE_YEAR_SECONDS,
-    });
-
+    await cookiesService.setLocale(locale);
     return true;
   } catch (error) {
     logger.logError("[locale] Failed to set locale cookie:", error);

@@ -1,27 +1,21 @@
 "use client";
 
-import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { deleteBudgetSRF } from "@/back-end/server-actions/budget-actions";
 import type { IDeleteBudgetDialogProps } from "@/front-end/components/budgets/types";
 import { DeleteDialog } from "@/front-end/components/dialogs/delete-dialog";
+import { handleDialogFormActionResult } from "@/lib/utils";
 
 export function DeleteBudgetDialog({
   budget,
   isDialogOpen,
   setDialogOpen,
 }: IDeleteBudgetDialogProps) {
+  const t = useTranslations();
+
   const handleBudgetDelete = async (): Promise<void> => {
     const response = await deleteBudgetSRF(budget?.id);
-    if (response?.success) {
-      toast.success("Success", {
-        description: response.message || "OK",
-      });
-      setDialogOpen(false);
-    } else {
-      toast.error("Error", {
-        description: response.error || "ERROR",
-      });
-    }
+    handleDialogFormActionResult(response, false, setDialogOpen, undefined, t);
   };
 
   return (

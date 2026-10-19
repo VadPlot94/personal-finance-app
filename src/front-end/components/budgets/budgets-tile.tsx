@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import BudgetDonutChart from "@/front-end/components/budgets/budget-donut-chart";
 import type { IBudgetsTileProps } from "@/front-end/components/budgets/types";
 import ItemCard from "@/front-end/components/item-card/item-card";
@@ -10,12 +11,14 @@ export default function BudgetsTile({
   budgets = [],
   transactionsByCategoryList = [],
 }: IBudgetsTileProps) {
+  const t = useTranslations();
+
   return (
     <ItemCard>
       <TileHeader
-        title="Budgets"
+        title={t("i18n.BudgetsPage.Title")}
         href={constants.AppRoutes.budgets}
-        linkLabel="View All"
+        linkLabel={t("i18n.Common.ViewAll")}
       />
       <div className="flex flex-row justify-center items-center h-full gap-5">
         <BudgetDonutChart

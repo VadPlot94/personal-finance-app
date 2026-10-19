@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { IEmptyContentWrapperProps } from "@/front-end/components/empty-content-wrapper/types";
 import LoadingIndicator from "@/front-end/components/loading-indicator/loading-indicator";
 
@@ -8,6 +11,7 @@ export default function EmptyContentWrapper({
   emptyTitle,
   emptyBody,
 }: IEmptyContentWrapperProps) {
+  const t = useTranslations();
   const wrapperClassName =
     "flex flex-col w-full min-h-25 h-full justify-center items-center text-app-color text-center gap-3";
 
@@ -15,7 +19,7 @@ export default function EmptyContentWrapper({
     return (
       <div className={wrapperClassName}>
         <LoadingIndicator fullScreen={false} className="h-8 w-8" />
-        <p className="font-semibold">Loading...</p>
+        <p className="font-semibold">{t("i18n.Common.Loading")}</p>
       </div>
     );
   }

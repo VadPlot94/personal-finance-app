@@ -1,6 +1,7 @@
 "use client";
 
 import type { Transaction } from "@prisma/client";
+import { useLocale, useTranslations } from "next-intl";
 import { RecurringMenu } from "@/front-end/components/recurring/recurring-menu";
 import type { IBillsTableProps } from "@/front-end/components/transactions/types";
 import recurringService, {
@@ -14,26 +15,37 @@ export default function BillsTable({
   transactions,
   referenceDate,
 }: IBillsTableProps) {
+  const t = useTranslations();
+  const locale = useLocale();
+
+  const getDueDateLabel = (date: Date | string) =>
+    recurringService.getRecurringDueDateString(
+      date,
+      locale,
+      ({ monthName, day, suffix }) =>
+        t("i18n.RecurringPage.DueDateFormat", { monthName, day, suffix }),
+    );
+
   const getTimeCell = (status: RecurringStatus, tx: Transaction) => (
     <div
       className={cn(
         "py-4 max-w-35 min-w-0 text-green-800 truncate flex flex-row items-center gap-1",
       )}
-      title={status}
+      title={t(`i18n.Enums.RecurringStatus.${status}`)}
     >
-      {recurringService.getRecurringDueDateString(tx.date)}
+      {getDueDateLabel(tx.date)}
 
       {status === RecurringStatus.Paid && (
         <img
           src="assets/images/icon-bill-paid.svg"
-          alt="Paid"
+          alt={t("i18n.RecurringPage.Paid")}
           className="h-4 w-4"
         />
       )}
       {status === RecurringStatus.DueSoon && (
         <img
           src="assets/images/icon-bill-due.svg"
-          alt="Due Soon"
+          alt={t("i18n.RecurringPage.DueSoonAlt")}
           className="h-4 w-4"
         />
       )}
@@ -48,7 +60,7 @@ export default function BillsTable({
             scope="col"
             className="py-3 px-3 w-[40%] text-left text-xs text-app-color tracking-wider"
           >
-            Bill Title
+            {t("i18n.RecurringPage.BillTitle")}
           </th>
           <th
             scope="col"
@@ -57,10 +69,10 @@ export default function BillsTable({
               "@max-containerQueryBreakpoint820/mainLayout:hidden",
             )}
           >
-            Due Date
+            {t("i18n.RecurringPage.DueDate")}
           </th>
           <th scope="col" className="text-xs text-app-color text-right">
-            Amount
+            {t("i18n.TransactionsPage.Amount")}
           </th>
           <th className="py-3 px-3 text-right text-xs text-app-color tracking-wider"></th>
         </tr>
@@ -117,7 +129,7 @@ export default function BillsTable({
                     <img
                       className="w-5 h-5"
                       src="assets/images/icon-ellipsis.svg"
-                      alt="Actions"
+                      alt={t("i18n.Common.Actions")}
                     />
                   </RecurringMenu>
                 </div>

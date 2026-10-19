@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useState } from "react";
 import { createTransactionSRF } from "@/back-end/server-actions/transaction-actions";
 import type {
@@ -23,13 +24,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
-import { handleDialogFormActionResult } from "@/front-end/lib/form-action-result";
 import financeService from "@/front-end/services/finance.service";
-import { orEmptyStr } from "@/lib/utils";
+import { handleDialogFormActionResult, orEmptyStr } from "@/lib/utils";
 import constants, {
   TransactionType,
   TransactionUICategory,
 } from "@/shared/services/constants.service";
+import translationService from "@/shared/services/translation.service";
 import type { ICreateTransactionValidationData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
@@ -65,6 +66,7 @@ function isFormValid(
 
 function validateForm(
   formTransactionData: ICreateTransactionFormData,
+  t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof ICreateTransactionValidationData, string>> | null {
   const validationData: ICreateTransactionValidationData = {
     transactionType: formTransactionData.transactionType,
@@ -76,17 +78,24 @@ function validateForm(
 
   const result =
     validationService.validateCreateTransactionSchema(validationData);
-  return result.success
-    ? null
-    : validationService.createErrorsWithPath<ICreateTransactionValidationData>(
-        result,
-      );
+  if (result.success) {
+    return null;
+  }
+  const errors =
+    validationService.createErrorsWithPath<ICreateTransactionValidationData>(
+      result,
+    );
+  return translationService.translate(
+    t,
+    errors as Record<string, string>,
+  ) as Partial<Record<keyof ICreateTransactionValidationData, string>>;
 }
 
 export function CreateTransactionDialog({
   isDialogOpen,
   setDialogOpen,
 }: ICreateTransactionDialogProps) {
+  const t = useTranslations();
   const [formResultState, formAction, isPending] = useActionState(
     createTransactionSRF,
     null,
@@ -109,14 +118,20 @@ export function CreateTransactionDialog({
 
   useEffect(() => {
     if (formTransactionData) {
-      setFormErrors(validateForm(formTransactionData));
+      setFormErrors(validateForm(formTransactionData, t));
     }
   }, [formTransactionData]);
 
   useEffect(() => {
     // This trigger even with first component mount when formResultState = null
     // Need to call handleOpenChange only when formResultState != null
-    handleDialogFormActionResult(formResultState, isPending, handleOpenChange);
+    handleDialogFormActionResult(
+      formResultState,
+      isPending,
+      handleOpenChange,
+      undefined,
+      t,
+    );
   }, [formResultState]);
 
   const handleTransactionTypeChange = (value: TransactionType): void => {
@@ -171,13 +186,13 @@ export function CreateTransactionDialog({
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
           <DialogTitle className="font-bold text-3xl">
-            Create Transaction
+            {t("i18n.TransactionsPage.CreateTitle")}
           </DialogTitle>
         </DialogHeader>
         <form action={formAction}>
           <div className="flex flex-col gap-5">
             <div className="text-app-color text-xs">
-              Create new transaction for testing purposes.
+              {t("i18n.TransactionsPage.CreateDescription")}
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
@@ -185,7 +200,7 @@ export function CreateTransactionDialog({
                   htmlFor="transactionType"
                   className="text-app-color text-xs font-bold"
                 >
-                  Type
+                  {t("i18n.TransactionsPage.Type")}
                 </Label>
 
                 <Select
@@ -196,7 +211,9 @@ export function CreateTransactionDialog({
                   }
                 >
                   <SelectTrigger className="border-gray-300 w-full cursor-pointer">
-                    <SelectValue placeholder="Select Type" />
+                    <SelectValue
+                      placeholder={t("i18n.TransactionsPage.SelectType")}
+                    />
                   </SelectTrigger>
 
                   <SelectContent>
@@ -206,7 +223,7 @@ export function CreateTransactionDialog({
                         value={value}
                         className="cursor-pointer"
                       >
-                        <span>{name}</span>
+                        <span>{t(`i18n.Enums.TransactionType.${name}`)}</span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -218,7 +235,7 @@ export function CreateTransactionDialog({
                   htmlFor="category"
                   className="text-app-color text-xs font-bold"
                 >
-                  Transaction category
+                  {t("i18n.TransactionsPage.CategoryPlaceholder")}
                 </Label>
 
                 <Select
@@ -231,7 +248,9 @@ export function CreateTransactionDialog({
                   }
                 >
                   <SelectTrigger className="border-gray-300 w-full cursor-pointer">
-                    <SelectValue placeholder="Select Category" />
+                    <SelectValue
+                      placeholder={t("i18n.TransactionsPage.SelectCategory")}
+                    />
                   </SelectTrigger>
 
                   <SelectContent>
@@ -245,7 +264,9 @@ export function CreateTransactionDialog({
                           value={categoryValue}
                           className="cursor-pointer"
                         >
-                          <span>{categoryName}</span>
+                          <span>
+                            {t(`i18n.Enums.Category.${categoryName}`)}
+                          </span>
                         </SelectItem>
                       ))}
                   </SelectContent>
@@ -257,7 +278,7 @@ export function CreateTransactionDialog({
                   htmlFor="recipientOrSender"
                   className="text-app-color text-xs font-bold"
                 >
-                  Recipient/Sender
+                  {t("i18n.TransactionsPage.RecipientSenderLabel")}
                 </Label>
                 <Input
                   className="border-gray-300"
@@ -267,7 +288,9 @@ export function CreateTransactionDialog({
                   onChange={(e) =>
                     handleRecipientOrSenderInputChange(e.target.value)
                   }
-                  placeholder="e.g. Mark, Steve, etc"
+                  placeholder={t(
+                    "i18n.TransactionsPage.RecipientSenderPlaceholder",
+                  )}
                   maxLength={constants.MaxPotNameCharacters}
                 />
               </div>
@@ -277,7 +300,7 @@ export function CreateTransactionDialog({
                   htmlFor="amount"
                   className="text-app-color text-xs font-bold"
                 >
-                  Amount ($)
+                  {t("i18n.TransactionsPage.AmountLabel")}
                 </Label>
                 <Input
                   className="border-gray-300"
@@ -292,7 +315,7 @@ export function CreateTransactionDialog({
                   onChange={(e) => {
                     handleAmountInputChange(e.target.value);
                   }}
-                  placeholder="$ e.g. 2000"
+                  placeholder={t("i18n.Common.CashPlaceholder")}
                 />
                 <p className="text-xs text-red-500">{formErrors?.amount}</p>
               </div>
@@ -302,7 +325,7 @@ export function CreateTransactionDialog({
                   htmlFor="date"
                   className="text-app-color text-xs font-bold"
                 >
-                  Date
+                  {t("i18n.TransactionsPage.Date")}
                 </Label>
                 <Input
                   type="date"
@@ -316,10 +339,10 @@ export function CreateTransactionDialog({
                       : ""
                   }
                   onChange={(e) => handleDateInputChange(e.target.value)}
-                  placeholder="Choose Date"
+                  placeholder={t("i18n.TransactionsPage.ChooseDate")}
                 />
                 {formErrors?.date && (
-                  <p className="text-xs text-red-500">{formErrors.date}</p>
+                  <p className="text-xs text-red-500">{formErrors?.date}</p>
                 )}
               </div>
             </div>
@@ -331,7 +354,7 @@ export function CreateTransactionDialog({
                   isPending || !isFormValid(formErrors, formTransactionData)
                 }
               >
-                Save Changes
+                {t("i18n.Common.SaveChanges")}
               </Button>
             </div>
           </div>

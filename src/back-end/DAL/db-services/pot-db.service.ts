@@ -108,7 +108,7 @@ class PotDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<object>(
           "total",
-          "Total must be a valid positive number",
+          "i18n.Validation.TotalMustBePositive",
         );
       throwValidationError(zodErrorResult);
     }
@@ -167,7 +167,7 @@ class PotDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<object>(
           "potName" as ICreatePotFormData["potName"],
-          "Invalid data: pot name is required",
+          "i18n.Validation.PotNameRequired",
         );
       throwValidationError(zodErrorResult);
     }
@@ -175,7 +175,7 @@ class PotDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<object>(
           "target" as ICreatePotFormData["target"],
-          "Invalid data: target is required",
+          "i18n.Validation.TargetRequired",
         );
       throwValidationError(zodErrorResult);
     }
@@ -191,7 +191,7 @@ class PotDbService {
       const zodErrorResult =
         validationService.createCustomZodIssueResult<object>(
           "potName" as ICreatePotFormData["potName"],
-          "Pot with such name already exist",
+          "i18n.Validation.PotNameExists",
         );
       throwValidationError(zodErrorResult);
     }

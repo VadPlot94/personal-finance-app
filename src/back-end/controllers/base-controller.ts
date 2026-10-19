@@ -18,10 +18,17 @@ export abstract class BaseController {
       }
       const response = await callback(session);
 
+      const successMessageKeyByAction = {
+        get: "i18n.Common.DataGetSuccess",
+        create: "i18n.Common.DataCreateSuccess",
+        update: "i18n.Common.DataUpdateSuccess",
+        delete: "i18n.Common.DataDeleteSuccess",
+      } as const;
+
       return {
         success: true,
         data: response,
-        message: `Data ${action} successfully`,
+        message: successMessageKeyByAction[action],
       };
     } catch (error) {
       logger.logError(`[controllers] Error when ${action} data:`, error);
@@ -29,7 +36,7 @@ export abstract class BaseController {
         if (error.isZodError) {
           return {
             success: false,
-            error: "Validation error",
+            error: "i18n.Common.ValidationError",
             zodErrors: error.zodErrors,
           };
         }
@@ -40,7 +47,7 @@ export abstract class BaseController {
       }
       return {
         success: false,
-        error: `Failed to ${action} data. Please try again.`,
+        error: "i18n.Common.PleaseTryAgain",
       };
     }
   }

@@ -1,25 +1,15 @@
 import type { Transaction } from "@prisma/client";
+import type {
+  IRecurringDueDateParts,
+  IRecurringFormattedStats,
+  IRecurringStatsResult,
+} from "@/front-end/services/types";
+import translationService from "@/shared/services/translation.service";
 
 export enum RecurringStatus {
   Paid = "Paid",
   DueSoon = "DueSoon",
   Upcoming = "Upcoming",
-}
-
-export interface IRecurringFormattedStats {
-  referenceMonthName: string;
-  totalBills: string;
-  paidCount: number;
-  paidAmount: string;
-  upcomingCount: number;
-  upcomingAmount: string;
-  dueSoonCount: number;
-  dueSoonAmount: string;
-}
-
-export interface IRecurringStatsResult {
-  stats: IRecurringFormattedStats;
-  referenceDate: Date | null;
 }
 
 const emptyRecurringStats: IRecurringFormattedStats = {
@@ -37,7 +27,11 @@ const emptyRecurringStats: IRecurringFormattedStats = {
  * Service for handling recurring bills calculations and projections.
  */
 class RecurringService {
-  public getRecurringDueDateString(date: Date | string): string {
+  public getRecurringDueDateString(
+    date: Date | string,
+    locale: string = translationService.DefaultLocale,
+    formatDueDate: (parts: IRecurringDueDateParts) => string,
+  ): string {
     const d = new Date(date);
     const day = d.getDate();
 
@@ -47,9 +41,13 @@ class RecurringService {
     else if (day === 2 || day === 22) suffix = "nd";
     else if (day === 3 || day === 23) suffix = "rd";
 
-    const monthName = d.toLocaleDateString("en-US", { month: "long" });
+    if (locale.startsWith("ru")) {
+      suffix = "";
+    }
 
-    return `Monthly-${monthName} ${day}${suffix}`;
+    const monthName = d.toLocaleDateString(locale, { month: "long" });
+
+    return formatDueDate({ monthName, day, suffix });
   }
   /**
    * Finds the latest date among recurring transactions with negative amounts (expenses only).
@@ -75,7 +73,10 @@ class RecurringService {
    * @param latestDate - The most recent recurring transaction date
    * @returns Object with year, month (0-11) and human-readable name (e.g. "August 2024")
    */
-  public getForecastMonthAndName(latestDate: Date): {
+  public getForecastMonthAndName(
+    latestDate: Date,
+    locale: string = translationService.DefaultLocale,
+  ): {
     year: number;
     month: number;
     name: string;
@@ -93,7 +94,7 @@ class RecurringService {
       }
     }
 
-    const name = new Date(year, month, 1).toLocaleDateString("en-US", {
+    const name = new Date(year, month, 1).toLocaleDateString(locale, {
       month: "long",
       year: "numeric",
     });
@@ -280,6 +281,7 @@ class RecurringService {
     transactions: Transaction[] | undefined,
     now: Date | null,
     dueSoonDays: number = 7,
+    locale: string = translationService.DefaultLocale,
   ): IRecurringStatsResult {
     if (!now || !transactions?.length) {
       return {
@@ -294,7 +296,7 @@ class RecurringService {
       return {
         stats: {
           ...emptyRecurringStats,
-          referenceMonthName: "No recurring bills",
+          referenceMonthName: "",
         },
         referenceDate: null,
       };
@@ -305,7 +307,7 @@ class RecurringService {
       year,
       month,
       name: referenceMonthName,
-    } = this.getForecastMonthAndName(latestDate);
+    } = this.getForecastMonthAndName(latestDate, locale);
 
     // Step 3: referenceDate (carry over current day/time)
     const realToday = now; // in production: current date
@@ -350,9 +352,12 @@ class RecurringService {
     };
   }
 
-  public formatReferenceDateLabel(referenceDate: Date | null): string {
+  public formatReferenceDateLabel(
+    referenceDate: Date | null,
+    locale: string = translationService.DefaultLocale,
+  ): string {
     return referenceDate
-      ? referenceDate.toLocaleString("en-US", {
+      ? referenceDate.toLocaleString(locale, {
           month: "long",
           day: "numeric",
           hour: "numeric",

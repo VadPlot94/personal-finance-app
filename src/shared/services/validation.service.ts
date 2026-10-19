@@ -6,6 +6,7 @@ import constants, {
   TransactionUICategory,
 } from "@/shared/services/constants.service";
 import logger from "@/shared/services/logger.service";
+import translationService from "@/shared/services/translation.service";
 import type {
   IAddBudgetValidationData,
   ICreatePotValidationData,
@@ -20,14 +21,14 @@ class ValidationService {
   });
 
   private registerFormSchema = z.object({
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    name: z.string().min(1, "Name is required"),
+    email: z.string().email("i18n.Validation.InvalidEmail"),
+    password: z.string().min(6, "i18n.Validation.PasswordMinLength"),
+    name: z.string().min(1, "i18n.Validation.NameRequired"),
   });
 
   private signInFormSchema = z.object({
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(1, "Password is required"),
+    email: z.string().email("i18n.Validation.InvalidEmail"),
+    password: z.string().min(1, "i18n.Validation.PasswordRequired"),
   });
 
   private createTransactionFormDataSchema = z.object({
@@ -35,7 +36,7 @@ class ValidationService {
       .enum(Object.values(TransactionType))
       .optional()
       .refine((val) => !!val, {
-        message: "Please select transaction type",
+        message: "i18n.Validation.SelectTransactionType",
       }),
 
     category: z
@@ -46,7 +47,7 @@ class ValidationService {
       )
       .optional()
       .refine((val) => !!val, {
-        message: "Please select category",
+        message: "i18n.Validation.SelectCategory",
       }),
 
     recipientOrSender: this.getCommonNameSchema(),
@@ -63,13 +64,15 @@ class ValidationService {
         z
           .string()
           .trim()
-          .min(1, { message: "Date is required" })
+          .min(1, {
+            message: "i18n.Validation.DateRequired",
+          })
           .refine((val) => !Number.isNaN(Date.parse(val)), {
-            message: "Please select a valid date",
+            message: "i18n.Validation.InvalidDate",
           })
           .transform((val) => new Date(val))
           .refine((date) => date <= new Date(), {
-            message: "Date cannot be in the future",
+            message: "i18n.Validation.DateInFuture",
           })
           .refine(
             (date) => {
@@ -78,7 +81,7 @@ class ValidationService {
               return date >= minDate;
             },
             {
-              message: "Date cannot be more than 15 years in the past",
+              message: "i18n.Validation.DateTooOld",
             },
           ),
       ),
@@ -255,20 +258,27 @@ class ValidationService {
         z
           .string()
           .regex(/^[1-9]\d*$/, {
-            message: "Please enter valid cash (only digits, no leading zero)",
+            message: "i18n.Validation.InvalidCash",
           })
           .refine(
             (val) => {
               const num = Number(val);
               return !Number.isNaN(num);
             },
-            { message: "Value must be a valid number" },
+            {
+              message: "i18n.Validation.InvalidNumber",
+            },
           )
           .refine(
             (val) => {
               return Number(val) >= (minValue || 0);
             },
-            { message: `Value can not be less then total: ${minValue || 0}` },
+            {
+              message: translationService.joinKeyWithParams(
+                "i18n.Validation.ValueLessThanTotal",
+                { minValue: minValue || 0 },
+              ),
+            },
           ),
       );
   }
@@ -282,17 +292,21 @@ class ValidationService {
         z
           .string()
           .min(3, {
-            message: "The value must be at least 3 characters long",
+            message: "i18n.Validation.NameMinLength",
           })
           .max(constants.MaxPotNameCharacters, {
-            message: `The value is too long (max. ${constants.MaxPotNameCharacters} characters)`,
+            message: translationService.joinKeyWithParams(
+              "i18n.Validation.NameTooLong",
+              {
+                max: constants.MaxPotNameCharacters,
+              },
+            ),
           })
           .regex(/^[a-zA-Z0-9\s\-_]+$/, {
-            message:
-              "Only letters, numbers, spaces, hyphens and underscores are allowed",
+            message: "i18n.Validation.NameInvalidChars",
           })
           .refine((val) => !excludedNames?.includes(val), {
-            message: "Such value already exist",
+            message: "i18n.Validation.ValueAlreadyExists",
           }),
       );
   }
@@ -308,31 +322,59 @@ class ValidationService {
   ) {
     return this.getCommonCashNumberSchema(0)
       .refine((val) => Number(val) + oldTotal <= currentBalance, {
-        message: `Value cannot exceed 'Available Balance' (${currentBalance} $)`,
+        message: translationService.joinKeyWithParams(
+          "i18n.Validation.ExceedsBalance",
+          {
+            balance: currentBalance,
+          },
+        ),
       })
       .refine((val) => Number(val) + oldTotal <= target, {
-        message: `Value cannot exceed 'Target'/'Total' (${target} $)`,
+        message: translationService.joinKeyWithParams(
+          "i18n.Validation.ExceedsTarget",
+          {
+            target,
+          },
+        ),
       });
   }
 
   private logZodErrors(error: z.ZodError, context: string) {
     error.issues.forEach((issue) => {
       const path = issue.path.join(".") || "root";
-      const message = this.getZodIssueErrorMessage(issue);
+      const message = this.getZodIssueErrorMessage(issue, {
+        translateForLogs: true,
+      });
       logger.logError(
         `[${context}] Validation failed at "${path}": ${issue.code} - ${message}`,
       );
     });
   }
 
-  private getZodIssueErrorMessage(issue: z.core.$ZodIssue) {
+  private getZodIssueErrorMessage(
+    issue: z.core.$ZodIssue,
+    options?: { translateForLogs?: boolean },
+  ) {
+    const resolveMessage = (
+      rawMessage: string | null | undefined,
+    ): string | null => {
+      if (!rawMessage) {
+        return null;
+      }
+      return options?.translateForLogs
+        ? translationService.translateToDefaultLocale(rawMessage)
+        : rawMessage;
+    };
+
     let message = Array.isArray(issue.message)
-      ? issue.message.join(", ")
-      : issue.message;
+      ? issue.message.map(resolveMessage).filter(Boolean).join(", ")
+      : (resolveMessage(issue.message) ?? "");
     const innerErrors = (issue as { errors: z.core.$ZodIssue[] })?.errors
       ?.flat()
-      ?.map((error: z.core.$ZodIssue) => error?.message)
-      ?.filter((message: string) => !!message)
+      ?.map((innerIssue: z.core.$ZodIssue) =>
+        resolveMessage(innerIssue?.message),
+      )
+      ?.filter(Boolean)
       ?.join(", ");
     if (innerErrors) {
       message += `: ${innerErrors}`;

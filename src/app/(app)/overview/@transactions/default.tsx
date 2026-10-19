@@ -1,3 +1,4 @@
-export default function Default() {
-  return <div>Loading transactions...</div>;
+export default function TransactionsDefault() {
+  // Guards the overview layout against soft-navigation failures if child URLs will be introduced later.
+  return null;
 }

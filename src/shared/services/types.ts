@@ -6,6 +6,18 @@ import type {
   TransactionUICategory,
 } from "@/shared/services/constants.service";
 
+export type Translator = (
+  key: string,
+  values?: Record<string, string | number>,
+) => string;
+
+export interface IFormActionResult {
+  success: boolean;
+  message?: string;
+  error?: string | null;
+  zodErrors?: Record<string, string>;
+}
+
 export interface ISideBarMenuItem {
   href: string;
   iconUrl: string;

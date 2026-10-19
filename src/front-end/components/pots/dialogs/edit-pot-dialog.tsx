@@ -1,6 +1,7 @@
 "use client";
 
 import type { Pot } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import {
   useActionState,
   useContext,
@@ -31,10 +32,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/front-end/components/ui/select";
-import { handleDialogFormActionResult } from "@/front-end/lib/form-action-result";
 import financeService from "@/front-end/services/finance.service";
-import { orEmptyStr } from "@/lib/utils";
+import { handleDialogFormActionResult, orEmptyStr } from "@/lib/utils";
 import constants, { Theme } from "@/shared/services/constants.service";
+import translationService from "@/shared/services/translation.service";
 import type { ICreatePotFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
 
@@ -68,7 +69,8 @@ function isFormValid(
 function validateForm(
   formPotData: ICreatePotFormData,
   potNames: string[],
-  potTotal?: number,
+  potTotal: number | undefined,
+  t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof ICreatePotFormData, string>> | null {
   const result = validationService.validateCreatePotSchema(
     formPotData,
@@ -76,11 +78,15 @@ function validateForm(
     potTotal,
   );
 
-  return result.success
-    ? null
-    : validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(
-        result,
-      );
+  if (result.success) {
+    return null;
+  }
+  const errors =
+    validationService.createErrorsWithPath<Partial<ICreatePotFormData>>(result);
+  return translationService.translate(
+    t,
+    errors as Record<string, string>,
+  ) as Partial<Record<keyof ICreatePotFormData, string>>;
 }
 
 function getOtherPotNames(pots: Pot[], pot?: Pot): string[] {
@@ -95,6 +101,7 @@ export function EditPotDialog({
   isDialogOpen,
   setDialogOpen,
 }: IEditPotDialogProps) {
+  const t = useTranslations();
   const serverActionPotFn = useMemo(
     () => (pot?.id ? editPotSRF : createPotSRF),
     [pot?.id],
@@ -129,7 +136,7 @@ export function EditPotDialog({
 
   useEffect(() => {
     if (formPotData) {
-      setFormErrors(validateForm(formPotData, potNames, pot?.total));
+      setFormErrors(validateForm(formPotData, potNames, pot?.total, t));
     }
   }, [formPotData]);
 
@@ -141,6 +148,7 @@ export function EditPotDialog({
       isPending,
       handleOpenChange,
       setFormErrors,
+      t,
     );
   }, [formResultState]);
 
@@ -168,7 +176,9 @@ export function EditPotDialog({
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
           <DialogTitle className="font-bold text-3xl">
-            {!formPotData?.id ? "Add New Pot" : "Edit New Pot"}
+            {!formPotData?.id
+              ? t("i18n.PotsPage.AddNewPot")
+              : t("i18n.PotsPage.EditNewPot")}
           </DialogTitle>
         </DialogHeader>
         {/*
@@ -187,8 +197,8 @@ export function EditPotDialog({
           <div className="flex flex-col gap-5">
             <div className="text-app-color text-xs">
               {!formPotData?.id
-                ? "Create a pot to set savings targets. These can help keep you on track as you save for special purchases."
-                : "If your saving targets change, feel free to update your pots."}
+                ? t("i18n.PotsPage.AddDescription")
+                : t("i18n.PotsPage.EditDescription")}
             </div>
             <div className="flex flex-col gap-2">
               {formPotData?.id && (
@@ -199,7 +209,7 @@ export function EditPotDialog({
                   htmlFor="name"
                   className="text-app-color text-xs font-bold"
                 >
-                  Pot Name
+                  {t("i18n.PotsPage.PotName")}
                 </Label>
                 <Input
                   className="border-gray-300"
@@ -207,7 +217,7 @@ export function EditPotDialog({
                   name="potName"
                   value={formPotData?.potName}
                   onChange={(e) => handlePotNameInputChange(e.target.value)}
-                  placeholder="e.g. For cookies"
+                  placeholder={t("i18n.PotsPage.PotNamePlaceholder")}
                   maxLength={constants.MaxPotNameCharacters}
                 />
                 <div className="flex flex-row justify-between items-center">
@@ -215,7 +225,7 @@ export function EditPotDialog({
                   <p className="text-app-color text-xs min-w-25">
                     {constants.MaxPotNameCharacters -
                       (formPotData?.potName?.length || 0)}{" "}
-                    Characters Left
+                    {t("i18n.PotsPage.CharactersLeft")}
                   </p>
                 </div>
               </div>
@@ -224,7 +234,7 @@ export function EditPotDialog({
                   htmlFor="target"
                   className="text-app-color text-xs font-bold"
                 >
-                  Target ($)
+                  {t("i18n.PotsPage.Target")}
                 </Label>
                 <Input
                   className="border-gray-300"
@@ -239,7 +249,7 @@ export function EditPotDialog({
                   onChange={(e) => {
                     handleTargetInputChange(e.target.value);
                   }}
-                  placeholder="$ e.g. 2000"
+                  placeholder={t("i18n.Common.CashPlaceholder")}
                 />
                 <p className="text-xs text-red-500">{formErrors?.target}</p>
               </div>
@@ -248,7 +258,7 @@ export function EditPotDialog({
                   htmlFor="theme"
                   className="text-app-color text-xs font-bold"
                 >
-                  Theme
+                  {t("i18n.Common.Theme")}
                 </Label>
 
                 <Select
@@ -257,7 +267,7 @@ export function EditPotDialog({
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
                   <SelectTrigger className="border-gray-300 w-full cursor-pointer">
-                    <SelectValue placeholder="Select Theme" />
+                    <SelectValue placeholder={t("i18n.Common.SelectTheme")} />
                   </SelectTrigger>
 
                   <SelectContent>
@@ -272,7 +282,7 @@ export function EditPotDialog({
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: themeValue }}
                           />
-                          <span>{themeName}</span>
+                          <span>{t(`i18n.Enums.Theme.${themeName}`)}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -286,7 +296,7 @@ export function EditPotDialog({
                 className="w-full h-12 cursor-pointer"
                 disabled={isPending || !isFormValid(formErrors, formPotData)}
               >
-                Save Changes
+                {t("i18n.Common.SaveChanges")}
               </Button>
             </div>
           </div>

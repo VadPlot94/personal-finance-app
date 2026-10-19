@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import type { ITransactionsTableProps } from "@/front-end/components/transactions/types";
 import transactionService from "@/front-end/services/transaction.service";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,9 @@ import { cn } from "@/lib/utils";
 export default function TransactionsTable({
   transactions,
 }: ITransactionsTableProps) {
+  const t = useTranslations();
+  const locale = useLocale();
+
   return (
     <table className="min-w-full divide-y divide-gray-200 cursor-default font-size">
       <thead>
@@ -15,7 +19,7 @@ export default function TransactionsTable({
             scope="col"
             className="py-3 px-3 w-[40%] text-left text-xs text-app-color tracking-wider"
           >
-            Recipient/Sender
+            {t("i18n.TransactionsPage.RecipientSender")}
           </th>
           <th
             scope="col"
@@ -24,7 +28,7 @@ export default function TransactionsTable({
               "@max-containerQueryBreakpoint820/mainLayout:hidden",
             )}
           >
-            Category
+            {t("i18n.TransactionsPage.Category")}
           </th>
           <th
             scope="col"
@@ -33,13 +37,13 @@ export default function TransactionsTable({
               "@max-containerQueryBreakpoint820/mainLayout:hidden",
             )}
           >
-            Transaction Date
+            {t("i18n.TransactionsPage.TransactionDate")}
           </th>
           <th
             scope="col"
             className="py-3 px-3 text-right text-xs text-app-color tracking-wider"
           >
-            Amount
+            {t("i18n.TransactionsPage.Amount")}
           </th>
         </tr>
       </thead>
@@ -63,7 +67,7 @@ export default function TransactionsTable({
                       "@containerQueryBreakpoint820/mainLayout:hidden",
                     )}
                   >
-                    {tx.category}
+                    {transactionService.getCategoryLabel(tx.category, t)}
                   </span>
                 </div>
               </div>
@@ -75,7 +79,7 @@ export default function TransactionsTable({
                 "@max-containerQueryBreakpoint820/mainLayout:hidden",
               )}
             >
-              {tx.category}
+              {transactionService.getCategoryLabel(tx.category, t)}
             </td>
 
             <td
@@ -84,7 +88,7 @@ export default function TransactionsTable({
                 "@max-containerQueryBreakpoint820/mainLayout:hidden",
               )}
             >
-              {transactionService.getTransactionDate(tx.date)}
+              {transactionService.getTransactionDate(tx.date, locale)}
             </td>
 
             <td className="flex flex-col h-full items-end justify-center gap-1 min-h-[64px]">
@@ -93,8 +97,8 @@ export default function TransactionsTable({
                   <img
                     className="w-5 h-5"
                     src="assets/images/recurring-subscription-icon.svg"
-                    alt="Recurring"
-                    title="Recurring"
+                    alt={t("i18n.TransactionsPage.Recurring")}
+                    title={t("i18n.TransactionsPage.Recurring")}
                   />
                 )}
                 <span
@@ -113,7 +117,7 @@ export default function TransactionsTable({
                   "@containerQueryBreakpoint820/mainLayout:hidden",
                 )}
               >
-                {transactionService.getTransactionDate(tx.date)}
+                {transactionService.getTransactionDate(tx.date, locale)}
               </span>
             </td>
           </tr>

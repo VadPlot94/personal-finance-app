@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
@@ -17,6 +18,8 @@ export default function Recurring({
   paginationData,
   isLoading = false,
 }: IRecurringProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [_isAddTransactionDialogOpen, setAddRecurringBillDialogOpen] =
     useState(false);
   // Avoid hydration mismatch: new Date() / toLocaleString can differ SSR vs client.
@@ -37,33 +40,33 @@ export default function Recurring({
         recurringTransactions,
         now,
         constants.RecurringDueSoonDays,
+        locale,
       ),
-    [recurringTransactions, now /* realToday */],
+    [recurringTransactions, now /* realToday */, locale],
   );
 
-  const referenceDateLabel =
-    recurringService.formatReferenceDateLabel(referenceDate);
+  const referenceDateLabel = recurringService.formatReferenceDateLabel(
+    referenceDate,
+    locale,
+  );
+
+  const referenceMonthName =
+    stats.referenceMonthName || t("i18n.RecurringPage.NoRecurringBills");
 
   return (
     <>
       <PageHeader
-        name="Recurring Bills"
-        buttonName="Add Recurring Bill"
+        name={t("i18n.RecurringPage.Title")}
+        buttonName={t("i18n.RecurringPage.AddRecurringBill")}
         handleButtonClick={() => setAddRecurringBillDialogOpen(true)}
       />
       <EmptyContentWrapper
         hasItems={!!recurringTransactions?.length}
         isLoading={isLoading}
-        emptyTitle="No recurring bills are available."
-        emptyBody={
-          <>
-            Click{" "}
-            <span className="font-semibold">
-              &nbsp;'Add Recurring Bill'&nbsp;
-            </span>{" "}
-            button at the corner of the page to create it.
-          </>
-        }
+        emptyTitle={t("i18n.RecurringPage.EmptyTitle")}
+        emptyBody={t.rich("i18n.RecurringPage.EmptyBody", {
+          bold: (chunks) => <span className="font-semibold">{chunks}</span>,
+        })}
       >
         <div
           className={cn(
@@ -77,23 +80,25 @@ export default function Recurring({
                 <img
                   className="w-10"
                   src="assets/images/icon-recurring-bills.svg"
-                  alt="Recurring bills icon"
+                  alt={t("i18n.RecurringPage.IconAlt")}
                 />
               </div>
               <div className="flex flex-col gap-3 text-white">
                 <div className="text-sm">
-                  Total Bills ({stats.referenceMonthName}, as of{" "}
-                  {referenceDateLabel})
+                  {t("i18n.RecurringPage.TotalBills", {
+                    month: referenceMonthName,
+                    date: referenceDateLabel,
+                  })}
                 </div>
                 <div className="font-bold text-3xl">${stats.totalBills}</div>
               </div>
             </ItemCard>
 
             <ItemCard className="justify-start">
-              <div className="font-bold">Summary</div>
+              <div className="font-bold">{t("i18n.RecurringPage.Summary")}</div>
               <div className="flex flex-col justify-between text-xs">
                 <RecurringSummaryItem
-                  label="Paid Bills"
+                  label={t("i18n.RecurringPage.PaidBills")}
                   count={stats.paidCount}
                   amount={stats.paidAmount}
                 />
@@ -101,7 +106,7 @@ export default function Recurring({
                 <div className="my-3 h-px bg-gray-200 w-full" />
 
                 <RecurringSummaryItem
-                  label="Total Upcoming"
+                  label={t("i18n.RecurringPage.TotalUpcoming")}
                   count={stats.upcomingCount}
                   amount={stats.upcomingAmount}
                 />
@@ -109,7 +114,7 @@ export default function Recurring({
                 <div className="my-3 h-px bg-gray-200 w-full" />
 
                 <RecurringSummaryItem
-                  label="Due Soon"
+                  label={t("i18n.RecurringPage.DueSoon")}
                   count={stats.dueSoonCount}
                   amount={stats.dueSoonAmount}
                   labelClassName="text-red-500 font-semibold"

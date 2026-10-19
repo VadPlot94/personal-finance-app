@@ -14,18 +14,18 @@ export default function OverviewBalanceCards({
       )}
     >
       <BalanceCard
-        title={t("i18n.PageOverview.CurrentBalance")}
+        title={t("i18n.OverviewPage.CurrentBalance")}
         amount={balance?.current}
         bgColor="bg-black"
         textTitleColor="text-white"
         textAmountColor="text-white"
       />
       <BalanceCard
-        title={t("i18n.PageOverview.Income")}
+        title={t("i18n.OverviewPage.Income")}
         amount={balance?.income}
       />
       <BalanceCard
-        title={t("i18n.PageOverview.Expenses")}
+        title={t("i18n.OverviewPage.Expenses")}
         amount={balance?.expenses}
       />
     </div>

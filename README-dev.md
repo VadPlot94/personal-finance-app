@@ -47,9 +47,17 @@ Exception: `?category=` is only a deep-link from Budgets (`TransactionsTile` →
 ### Notes
 
 - Client → Server Action → JSON is a normal pattern for interactive tables when every filter click should not rewrite the URL.
-- `nuqs` is installed (adapter in `Providers`) but is **not** used for transaction filters for the same reason.
 
 ---
+
+## i18n (next-intl)
+
+- Package: `next-intl` (cookie `locale`, no `/[locale]` URL prefix)
+- Locales: `en-US` (default), `ru-RU` — see [`translation.service.ts`](src/shared/services/translation.service.ts)
+- Messages: [`src/i18n/messages/en-US.json`](src/i18n/messages/en-US.json), [`src/i18n/messages/ru-RU.json`](src/i18n/messages/ru-RU.json) — keys under `i18n.*`
+- Client: `useTranslations()` / `useLocale()`; server: `getTranslations()` / `getLocale()`
+- Switcher: [`locale-switcher`](src/front-end/components/locale-switcher/locale-switcher.tsx) → [`setLocaleSRF`](src/back-end/server-actions/locale-actions.ts) (cookie + `router.refresh()`);
+- `<html lang>`: root layout uses `DefaultLocale`; [`html-lang`](src/front-end/components/html-lang/html-lang.tsx) syncs from `useLocale()` after hydrate
 
 ## Backend
 
@@ -57,6 +65,7 @@ Exception: `?category=` is only a deep-link from Budgets (`TransactionsTile` →
 - `src/back-end/prisma/schema.prisma` — Prisma schema
 - `src/back-end/prisma/seed.ts` — `setTestAppData` helper; runs on first admin login, not via CLI
 - `src/back-end/DAL/db-services` — database services layer
+- `src/back-end/services` — non-DB server services (e.g. [`cookies.service.ts`](src/back-end/services/cookies.service.ts) wraps `await cookies()`)
 - `src/back-end/server-actions` — server actions for auth and data operations
 - `src/back-end/components` — React Server Components (no `"use client"`); client UI stays in `src/front-end/components`
 
@@ -111,19 +120,6 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 - caching - migrated to `cacheComponents: true` (`use cache` + `cacheTag` / `updateTag`)
 - Add notfound page/function testing: `@notfound` (delayed `loading` → `notFound()`)
 - Error boundaries for testing: root `error.tsx`, `(app)/error.tsx`, `global-error.tsx`, plus admin-only test buttons (`TestAppErrorButton` on Overview, `TestGlobalErrorButton` in root layout) — visible only to the admin user
-
----
-
-## i18n (next-intl)
-
-- Package: `next-intl` (cookie locale, no `/[locale]` URL prefix)
-- Locales: `en` (default), `ru`
-- Shared config: [`src/shared/i18n/config.ts`](src/shared/i18n/config.ts) — locales, `defaultLocale`, cookie name
-- Request config (Next wiring, server-only): [`src/app/i18n/request.ts`](src/app/i18n/request.ts)
-- Messages: nested catalogs in [`messages/en.json`](messages/en.json), [`messages/ru.json`](messages/ru.json)
-- Switcher: header dropdown [`locale-switcher`](src/front-end/components/locale-switcher/locale-switcher.tsx) → [`setLocaleSRF`](src/back-end/server-actions/locale-actions.ts) writes cookie `locale`, then `router.refresh()`
-- `<html lang>`: root layout uses `defaultLocale` (avoids cookie read outside Suspense / `/_not-found` prerender); [`html-lang`](src/front-end/components/html-lang/html-lang.tsx) syncs `document.documentElement.lang` from `useLocale()` after hydrate
-- Migrate UI strings gradually via `getTranslations` (RSC) / `useTranslations` (client)
 
 ---
 

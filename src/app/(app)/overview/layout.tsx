@@ -21,7 +21,7 @@ export default async function OverviewLayout({
   return (
     <>
       <div className="h-15 flex items-center justify-between gap-4 font-bold text-3xl">
-        <span>{t("i18n.PageOverview.Title")}</span>
+        <span>{t("i18n.OverviewPage.Title")}</span>
         <div className="flex flex-row items-center gap-3">
           <LocaleSwitcher />
           <TestAppErrorButton />

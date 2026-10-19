@@ -1,6 +1,7 @@
 "use client";
 
 import { useLinkStatus } from "next/link";
+import { useTranslations } from "next-intl";
 import type { ILoadingIndicatorProps } from "@/front-end/components/loading-indicator/types";
 
 export default function LoadingIndicator({
@@ -8,13 +9,14 @@ export default function LoadingIndicator({
   fullScreen = false,
   className,
 }: ILoadingIndicatorProps) {
+  const t = useTranslations();
   const { pending } = useLinkStatus();
   const isLoading = pending || !children;
 
   const spinner = (
     <img
       src="/assets/images/icon-link-spinner.svg"
-      alt="Loading"
+      alt={t("i18n.Common.LoadingAlt")}
       className={fullScreen ? "h-10 w-10 animate-spin" : "h-4 w-4 animate-spin"}
     />
   );

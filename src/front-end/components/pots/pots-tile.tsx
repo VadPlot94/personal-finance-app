@@ -1,5 +1,6 @@
 "use client";
 import type { Pot } from "@prisma/client";
+import { useLocale, useTranslations } from "next-intl";
 import ItemCard from "@/front-end/components/item-card/item-card";
 import type { IPotsTileProps } from "@/front-end/components/pots/types";
 import TileHeader from "@/front-end/components/tile-header/tile-header";
@@ -13,17 +14,17 @@ function buildTilePots(pots: Pot[]): (Pot | null)[] {
 }
 
 export default function PotsTile({ pots = [] }: IPotsTileProps) {
-  const totalSum = potService
-    .getAllSavedPotsMoney(pots)
-    .toLocaleString("en-US");
+  const t = useTranslations();
+  const locale = useLocale();
+  const totalSum = potService.getAllSavedPotsMoney(pots).toLocaleString(locale);
   const tilePots = buildTilePots(pots);
 
   return (
     <ItemCard>
       <TileHeader
-        title="Pots"
+        title={t("i18n.PotsPage.Title")}
         href={constants.AppRoutes.pots}
-        linkLabel="See details"
+        linkLabel={t("i18n.Common.SeeDetails")}
       />
       <div
         className={cn(
@@ -36,7 +37,9 @@ export default function PotsTile({ pots = [] }: IPotsTileProps) {
             <img src="assets/images/icon-pot.svg" alt="" aria-hidden="true" />
           </div>
           <div className="flex flex-col justify-between items-stretch">
-            <div className="text-app-color text-sm">Total Saved</div>
+            <div className="text-app-color text-sm">
+              {t("i18n.PotsPage.TotalSaved")}
+            </div>
             <div className="font-bold text-3xl">${totalSum}</div>
           </div>
         </div>

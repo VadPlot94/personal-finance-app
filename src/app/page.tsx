@@ -1,23 +1,28 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import CreateAccountLink from "@/front-end/components/create-account-link";
 import SignInButton from "@/front-end/components/sign-in-button/sign-in-button";
 import constants from "@/shared/services/constants.service";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const t = await getTranslations();
+
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-50 to-white">
       {/* Navigation */}
       <nav className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-black">FinanceApp</div>
+            <div className="text-2xl font-bold text-black">
+              {t("i18n.LandingPage.Brand")}
+            </div>
             <div className="flex gap-4">
               <SignInButton className="px-4" />
               <Link
                 href={constants.AppRoutes.overview}
                 className="rounded-lg bg-black px-4 py-2 text-white hover:bg-slate-800"
               >
-                Get Started
+                {t("i18n.LandingPage.GetStarted")}
               </Link>
             </div>
           </div>
@@ -28,11 +33,10 @@ export default function HomePage() {
       <section className="mx-auto max-w-5xl px-4 py-15 sm:px-6 lg:px-6">
         <div className="text-center">
           <h1 className="mb-6 text-5xl font-bold tracking-tight text-slate-900 md:text-6xl">
-            Keep track of your money and save for the future
+            {t("i18n.LandingPage.HeroTitle")}
           </h1>
           <p className="mb-8 text-xl text-slate-600">
-            Personal finance app help you to control your spending in one place.
-            Track transactions, set budgets, and add to savings pots easily.
+            {t("i18n.LandingPage.HeroBody")}
           </p>
         </div>
       </section>
@@ -42,37 +46,33 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold text-slate-900">
-              Powerful Features
+              {t("i18n.LandingPage.FeaturesTitle")}
             </h2>
             <p className="text-lg text-slate-600">
-              Everything you need to manage your personal finances effectively.
+              {t("i18n.LandingPage.FeaturesSubtitle")}
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                title: "Track Transactions",
-                description:
-                  "Monitor all your income and expenses in one place. Get detailed insights into your spending patterns.",
+                title: t("i18n.LandingPage.FeatureTransactionsTitle"),
+                description: t("i18n.LandingPage.FeatureTransactionsBody"),
                 icon: "💰",
               },
               {
-                title: "Smart Budgets",
-                description:
-                  "Set category-based budgets and watch your spending in real-time. Stay in control of your finances.",
+                title: t("i18n.LandingPage.FeatureBudgetsTitle"),
+                description: t("i18n.LandingPage.FeatureBudgetsBody"),
                 icon: "📊",
               },
               {
-                title: "Savings Pots",
-                description:
-                  "Create multiple savings goals and track your progress toward achieving them easily.",
+                title: t("i18n.LandingPage.FeaturePotsTitle"),
+                description: t("i18n.LandingPage.FeaturePotsBody"),
                 icon: "🎯",
               },
               {
-                title: "Recurring Bills",
-                description:
-                  "Keep track of your recurring payments and never miss a bill deadline.",
+                title: t("i18n.LandingPage.FeatureRecurringTitle"),
+                description: t("i18n.LandingPage.FeatureRecurringBody"),
                 icon: "📅",
               },
             ].map((feature) => (
@@ -96,11 +96,10 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold text-slate-900">
-              How It Works
+              {t("i18n.LandingPage.HowItWorksTitle")}
             </h2>
             <p className="text-lg text-slate-600">
-              Get started in just four simple steps. Less than 5 minutes to set
-              up.
+              {t("i18n.LandingPage.HowItWorksSubtitle")}
             </p>
           </div>
 
@@ -108,27 +107,23 @@ export default function HomePage() {
             {[
               {
                 step: "01",
-                title: "Create Your Account",
-                description:
-                  "Sign up with your email and secure password. Verify to get started.",
+                title: t("i18n.LandingPage.Step1Title"),
+                description: t("i18n.LandingPage.Step1Body"),
               },
               {
                 step: "02",
-                title: "Add Your Transactions",
-                description:
-                  "Manually add transactions or import them. Categorize with ease.",
+                title: t("i18n.LandingPage.Step2Title"),
+                description: t("i18n.LandingPage.Step2Body"),
               },
               {
                 step: "03",
-                title: "Set Your Budget",
-                description:
-                  "Define spending limits for different categories based on goals.",
+                title: t("i18n.LandingPage.Step3Title"),
+                description: t("i18n.LandingPage.Step3Body"),
               },
               {
                 step: "04",
-                title: "Monitor & Adjust",
-                description:
-                  "Watch progress on dashboard, visualize trends, adjust as needed.",
+                title: t("i18n.LandingPage.Step4Title"),
+                description: t("i18n.LandingPage.Step4Body"),
               },
             ].map((item) => (
               <div key={item.step} className="text-center">
@@ -149,17 +144,16 @@ export default function HomePage() {
       <section className="border-t border-slate-200 py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-4xl font-bold text-slate-900">
-            Ready to Take Control?
+            {t("i18n.LandingPage.CtaTitle")}
           </h2>
           <p className="mb-8 text-lg text-slate-600">
-            Join thousands of users who are already managing their finances
-            smarter. Start your journey to financial freedom today.
+            {t("i18n.LandingPage.CtaBody")}
           </p>
           <Link
             href={constants.AppRoutes.login}
             className="inline-block rounded-lg bg-black px-8 py-3 font-semibold text-white hover:bg-slate-800"
           >
-            Create Free Account
+            {t("i18n.LandingPage.CreateFreeAccount")}
           </Link>
         </div>
       </section>
@@ -169,21 +163,24 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
-              <h3 className="font-semibold text-slate-900">FinanceApp</h3>
+              <h3 className="font-semibold text-slate-900">
+                {t("i18n.LandingPage.Brand")}
+              </h3>
               <p className="mt-2 text-slate-600">
-                Your trusted personal finance management tool for a better
-                financial future.
+                {t("i18n.LandingPage.FooterTagline")}
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-slate-900">Features</h4>
+              <h4 className="font-semibold text-slate-900">
+                {t("i18n.LandingPage.FooterFeatures")}
+              </h4>
               <ul className="mt-2 space-y-1 text-slate-600">
                 <li>
                   <a
                     href={constants.AppRoutes.transactions}
                     className="hover:text-slate-900"
                   >
-                    Transactions
+                    {t("i18n.Navigation.Transactions")}
                   </a>
                 </li>
                 <li>
@@ -191,7 +188,7 @@ export default function HomePage() {
                     href={constants.AppRoutes.budgets}
                     className="hover:text-slate-900"
                   >
-                    Budgets
+                    {t("i18n.Navigation.Budgets")}
                   </a>
                 </li>
                 <li>
@@ -199,7 +196,7 @@ export default function HomePage() {
                     href={constants.AppRoutes.pots}
                     className="hover:text-slate-900"
                   >
-                    Savings Pots
+                    {t("i18n.LandingPage.FooterSavingsPots")}
                   </a>
                 </li>
                 <li>
@@ -207,13 +204,15 @@ export default function HomePage() {
                     href={constants.AppRoutes.recurring}
                     className="hover:text-slate-900"
                   >
-                    Recurring Bills
+                    {t("i18n.Navigation.Recurring")}
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-slate-900">Account</h4>
+              <h4 className="font-semibold text-slate-900">
+                {t("i18n.LandingPage.FooterAccount")}
+              </h4>
               <ul className="mt-2 space-y-1 text-slate-600">
                 <li>
                   <SignInButton className="hover:b-none" />
@@ -225,7 +224,11 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-8 border-t border-slate-200 pt-8 text-center text-slate-600">
-            <p>&copy; 2025 FinanceApp. All rights reserved.</p>
+            <p>
+              {t("i18n.LandingPage.Copyright", {
+                year: new Date().getFullYear(),
+              })}
+            </p>
           </div>
         </div>
       </footer>

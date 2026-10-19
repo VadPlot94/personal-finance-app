@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import ItemCard from "@/front-end/components/item-card/item-card";
@@ -15,26 +16,24 @@ export default function Transactions({
   category,
   isLoading = false,
 }: ITransactionsProps) {
+  const t = useTranslations();
   const [isCreateTransactionDialogOpen, setCreateTransactionDialogOpen] =
     useState(false);
 
   return (
     <>
       <PageHeader
-        name="Transactions"
-        buttonName="Create Transaction"
+        name={t("i18n.TransactionsPage.Title")}
+        buttonName={t("i18n.TransactionsPage.CreateTransaction")}
         handleButtonClick={() => setCreateTransactionDialogOpen(true)}
       />
       <EmptyContentWrapper
         hasItems={!!transactions?.length}
         isLoading={isLoading}
-        emptyTitle="No transactions are available."
-        emptyBody={
-          <>
-            Click <span className="font-semibold">'Add Transaction'</span>{" "}
-            button at the corner of the page to create it.
-          </>
-        }
+        emptyTitle={t("i18n.TransactionsPage.EmptyTitle")}
+        emptyBody={t.rich("i18n.TransactionsPage.EmptyBody", {
+          bold: (chunks) => <span className="font-semibold">{chunks}</span>,
+        })}
       >
         <ItemCard className="min-h-133.25">
           <TransactionsTableLayout

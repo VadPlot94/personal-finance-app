@@ -2,6 +2,7 @@
 
 import type { Pot } from "@prisma/client";
 import { wrapGrid } from "animate-css-grid";
+import { useTranslations } from "next-intl";
 import { createContext, useEffect, useRef, useState } from "react";
 import EmptyContentWrapper from "@/front-end/components/empty-content-wrapper/empty-content-wrapper";
 import PageHeader from "@/front-end/components/page-header/page-header";
@@ -33,6 +34,7 @@ export default function Pots({
   availableBalance = 0,
   isLoading = false,
 }: IPotsProps) {
+  const t = useTranslations();
   const [isEditPotDialogOpen, setEditPotDialogOpen] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -80,20 +82,17 @@ export default function Pots({
   return (
     <PotsContext value={pots}>
       <PageHeader
-        name="Pots"
-        buttonName="+ Add New Pot"
+        name={t("i18n.PotsPage.Title")}
+        buttonName={t("i18n.PotsPage.AddNewPotButton")}
         handleButtonClick={() => setEditPotDialogOpen(true)}
       />
       <EmptyContentWrapper
         hasItems={!!pots.length}
         isLoading={isLoading}
-        emptyTitle="No pots are available."
-        emptyBody={
-          <>
-            Click <span className="font-semibold">'+Add New Pot'</span> button
-            at the corner of the page to create your first pot.
-          </>
-        }
+        emptyTitle={t("i18n.PotsPage.EmptyTitle")}
+        emptyBody={t.rich("i18n.PotsPage.EmptyBody", {
+          bold: (chunks) => <span className="font-semibold">{chunks}</span>,
+        })}
       >
         <div
           ref={gridRef}

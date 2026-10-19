@@ -46,12 +46,12 @@ If Biome flags a restricted name (e.g. `Error`), keep the matching / suffix-corr
 
 ```ts
 // ✅ GOOD
-i18nConfig.locales.map((i18nLocale) => (
+translationService.locales.map((i18nLocale) => (
   <DropdownMenuItem key={i18nLocale}>{i18nLocale.toUpperCase()}</DropdownMenuItem>
 ));
 
 // ❌ BAD
-i18nConfig.locales.map((item) => (
+translationService.locales.map((item) => (
   <DropdownMenuItem key={item}>{item.toUpperCase()}</DropdownMenuItem>
 ));
 ```
