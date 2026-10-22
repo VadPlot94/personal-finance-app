@@ -1,32 +1,43 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import transactionController from "@/back-end/controllers/transaction-controller";
 import Transactions from "@/front-end/components/transactions/transactions";
-import constants, {
-  TransactionUICategory,
-} from "@/shared/services/constants.service";
+import transactionService from "@/front-end/services/transaction.service";
+import constants from "@/shared/services/constants.service";
 
 export default async function TransactionsPage({
   searchParams,
 }: PageProps<typeof constants.AppRoutes.transactions>) {
-  const params = await searchParams;
-  const categoryParam = params.category;
-  const category = (
-    typeof categoryParam === "string"
-      ? decodeURIComponent(categoryParam)
-      : TransactionUICategory.AllTransactions
-  ) as TransactionUICategory;
-  if (!Object.values(TransactionUICategory).includes(category)) {
-    notFound();
-  }
   const { data: { paginationData, transactions } = {} } =
     await transactionController.getAllTransactions({
       transactionsCount: constants.TransactionRecordsPerPage,
     });
+
   return (
-    <Transactions
-      transactions={transactions}
-      paginationData={paginationData}
-      category={category}
-    />
+    <Suspense
+      fallback={
+        <Transactions
+          transactions={transactions}
+          paginationData={paginationData}
+        />
+      }
+    >
+      {(async () => {
+        const params = await searchParams;
+        const category = transactionService.getValidTransactionCategory(
+          params?.category as string,
+        );
+        if (!category) {
+          return notFound();
+        }
+        return (
+          <Transactions
+            category={category}
+            transactions={transactions}
+            paginationData={paginationData}
+          />
+        );
+      })()}
+    </Suspense>
   );
 }

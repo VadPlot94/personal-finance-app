@@ -89,8 +89,9 @@ Unit and component tests use **Vitest** + **React Testing Library**.
 - Test files: `tests/<file-under-test>.tests.ts(x)` next to the module (see `.cursor/rules/unit-tests.mdc`)
 - Run watch: `npm run test`
 - Run once: `npm run test:run`
+- Instant-nav (production `instant()`): `npm run build:instant-nav` then `npm run test:instant-nav` — see [`instant-nav.rig.md`](instant-nav.rig.md)
 
-Async Server Components are not covered by Vitest (use e2e later if needed). Controllers/DAL integration tests are out of scope for this setup.
+Async Server Components are not covered by Vitest. Controllers/DAL integration tests are out of scope for this setup.
 
 ---
 
@@ -118,6 +119,7 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 - add import "server-only"; to back-end files
 - split back-end on different layers (add server only) — FE / shared / BE boundaries + `server-only` / `"use server"` / `"use client"`
 - caching - migrated to `cacheComponents: true` (`use cache` + `cacheTag` / `updateTag`)
+- prefetch - migrated to `partialPrefetching: true`; app routes use viewport `prefetch={true}` (see `instant-nav.rig.md`)
 - Add notfound page/function testing: `@notfound` (delayed `loading` → `notFound()`)
 - Error boundaries for testing: root `error.tsx`, `(app)/error.tsx`, `global-error.tsx`, plus admin-only test buttons (`TestAppErrorButton` on Overview, `TestGlobalErrorButton` in root layout) — visible only to the admin user
 
@@ -127,4 +129,3 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 
 - calculate balance in right way
 - add route handlers (only if a public HTTP API is needed — not for transaction table filters; those stay on Server Actions)
-- migrate to partial prefetching

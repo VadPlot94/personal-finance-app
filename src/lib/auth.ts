@@ -6,6 +6,7 @@ import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import authService from "@/back-end/DAL/db-services/auth.service";
 import prisma from "@/back-end/prisma/prisma-client";
+import { AuthMode } from "@/shared/services/constants.service";
 
 export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -27,7 +28,7 @@ export const authOptions: NextAuthConfig = {
           | undefined,
       ) {
         // authorize method only for login (not register)
-        const user = await authService.authUser("signin", credentials);
+        const user = await authService.authUser(AuthMode.SignIn, credentials);
         if (!user?.id) {
           return null;
         }

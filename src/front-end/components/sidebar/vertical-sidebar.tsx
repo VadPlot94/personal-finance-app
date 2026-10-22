@@ -1,6 +1,7 @@
 "use client";
 
 import type { User } from "@prisma/client";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -130,9 +131,10 @@ export default function VerticalSidebar() {
               {constants.SideBarNavMenuItemsConfig.map((item) => {
                 const label = t(item.titleI18nKey);
                 return (
-                  <a
+                  <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={item.isPrefetch}
                     title={label}
                     className={`flex flex-col justify-center items-center
                   p-3 rounded-tr-md rounded-br-md cursor-pointer w-full
@@ -165,7 +167,7 @@ export default function VerticalSidebar() {
                         {label}
                       </span>
                     </div>
-                  </a>
+                  </Link>
                 );
               })}
             </nav>

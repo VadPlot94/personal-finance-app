@@ -23,6 +23,7 @@ export interface ISideBarMenuItem {
   iconUrl: string;
   title: string;
   isAccount?: boolean;
+  isPrefetch?: boolean;
 }
 
 export interface ICreatePotValidationData {

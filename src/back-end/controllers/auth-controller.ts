@@ -5,6 +5,7 @@ import type { Session } from "next-auth";
 import { BaseController } from "@/back-end/controllers/base-controller";
 import type { ValidationResponse } from "@/back-end/controllers/types";
 import authService from "@/back-end/DAL/db-services/auth.service";
+import { AuthMode } from "@/shared/services/constants.service";
 
 class AuthController extends BaseController {
   public async registerUser(
@@ -14,7 +15,7 @@ class AuthController extends BaseController {
       "create",
       async () =>
         authService.authUser(
-          "register",
+          AuthMode.Register,
           credentials as unknown as
             | Partial<Record<"name" | "email" | "password", unknown>>
             | undefined,
@@ -32,7 +33,7 @@ class AuthController extends BaseController {
   ): Promise<ValidationResponse<Partial<User> | null>> {
     return await this.validationObjectWrapper<Partial<User> | null>(
       "get",
-      async () => authService.authUser("signin", credentials),
+      async () => authService.authUser(AuthMode.SignIn, credentials),
       { requireAuth: false },
     );
   }

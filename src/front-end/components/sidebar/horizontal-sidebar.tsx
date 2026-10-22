@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -32,6 +33,7 @@ function buildSideBarItems(
       href: item.href,
       iconUrl: item.iconUrl,
       title: t(item.titleI18nKey),
+      isPrefetch: item.isPrefetch,
     })),
     {
       href: constants.SignOutMenuItemConfig.href,
@@ -74,12 +76,8 @@ export default function HorizontalSidebar() {
       <div className="text-app-color h-full pt-2 px-3">
         <nav className="flex flex-row gap-1">
           {sideBarItems.map((sideBarItem) => {
-            return (
-              <a
-                key={sideBarItem.href}
-                href={sideBarItem.href}
-                className={cn(
-                  `flex flex-col justify-center items-center gap-3
+            const itemClassName = cn(
+              `flex flex-col justify-center items-center gap-3
                   p-3 rounded-tl-md rounded-tr-md transition cursor-pointer min-w-5 w-full
                   ${
                     activePath === sideBarItem.href
@@ -87,10 +85,11 @@ export default function HorizontalSidebar() {
                       : "hover:bg-gray-800"
                   }
                 `,
-                  "max-sm:gap-0",
-                  sideBarItem.isAccount && "pointer-events-none cursor-default",
-                )}
-              >
+              "max-sm:gap-0",
+              sideBarItem.isAccount && "pointer-events-none cursor-default",
+            );
+            const itemBody = (
+              <>
                 <img
                   src={sideBarItem.iconUrl}
                   alt={sideBarItem.title}
@@ -112,7 +111,18 @@ export default function HorizontalSidebar() {
                 >
                   {sideBarItem.title}
                 </span>
-              </a>
+              </>
+            );
+
+            return (
+              <Link
+                key={sideBarItem.href}
+                href={sideBarItem.href}
+                prefetch={sideBarItem.isPrefetch}
+                className={itemClassName}
+              >
+                {itemBody}
+              </Link>
             );
           })}
         </nav>

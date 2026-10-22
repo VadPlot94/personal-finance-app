@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   cacheComponents: true,
+  partialPrefetching: true,
+  experimental: {
+    exposeTestingApiInProductionBuild:
+      process.env.npm_lifecycle_event === "build:instant-nav",
+  },
 };
 
 const withNextIntl = createNextIntlPlugin(

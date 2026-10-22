@@ -33,6 +33,7 @@ export default function SignInButton({ className }: ISignInButtonProps) {
   return (
     <Link
       href={constants.AppRoutes.login}
+      prefetch={true}
       className={cn(
         "rounded-lg py-2 text-slate-700 hover:bg-slate-100",
         className,

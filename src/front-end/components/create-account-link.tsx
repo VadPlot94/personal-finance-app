@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { AuthMode } from "@/front-end/components/login/login-form";
-import constants from "@/shared/services/constants.service";
+import constants, { AuthMode } from "@/shared/services/constants.service";
 
 export default function CreateAccountLink() {
   const t = useTranslations();
@@ -13,7 +12,11 @@ export default function CreateAccountLink() {
 
   if (status === "loading") {
     return (
-      <Link href={registerHref} className="hover:text-slate-900">
+      <Link
+        href={registerHref}
+        prefetch={true}
+        className="hover:text-slate-900"
+      >
         {t("i18n.LoginPage.CreateAccount")}
       </Link>
     );
@@ -31,7 +34,7 @@ export default function CreateAccountLink() {
   }
 
   return (
-    <Link href={registerHref} className="hover:text-slate-900">
+    <Link href={registerHref} prefetch={true} className="hover:text-slate-900">
       {t("i18n.LoginPage.CreateAccount")}
     </Link>
   );

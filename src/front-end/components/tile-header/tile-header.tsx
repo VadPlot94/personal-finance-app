@@ -19,6 +19,7 @@ export default function TileHeader({
       </div>
       <Link
         href={href}
+        prefetch={true}
         className="flex flex-row items-center gap-3 text-sm text-app-color"
       >
         <span className="w-fit font-weight">{linkLabel}</span>

@@ -11,6 +11,8 @@
     "format-and-fix": "biome check --write",
     "test": "vitest",
     "test:run": "vitest run",
+    "build:instant-nav": "next build",
+    "test:instant-nav": "playwright test",
     "prisma:generate": "prisma generate --schema=src/back-end/prisma/schema.prisma",
     "prisma:push": "prisma db push --schema=src/back-end/prisma/schema.prisma",
     "prisma:push-force": "prisma db push --schema=src/back-end/prisma/schema.prisma --force-reset",
@@ -39,6 +41,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
+    "@next/playwright": "^16.4.2",
+    "@playwright/test": "^1.64.1",
     "@prisma/client": "^6.15.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "^10.4.2",

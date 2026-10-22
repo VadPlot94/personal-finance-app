@@ -57,6 +57,11 @@ export enum TransactionType {
   Expense = "Expense",
 }
 
+export enum AuthMode {
+  SignIn = "signin",
+  Register = "register",
+}
+
 class ConstantsService {
   public readonly MaxPotNameCharacters = 20;
   public readonly TransactionRecordsPerPage = 5;
@@ -92,26 +97,31 @@ class ConstantsService {
       href: this.AppRoutes.overview,
       iconUrl: "assets/images/icon-nav-overview.svg",
       titleI18nKey: "i18n.Navigation.Overview",
+      isPrefetch: true,
     },
     {
       href: this.AppRoutes.transactions,
       iconUrl: "assets/images/icon-nav-transactions.svg",
       titleI18nKey: "i18n.Navigation.Transactions",
+      isPrefetch: true,
     },
     {
       href: this.AppRoutes.budgets,
       iconUrl: "assets/images/icon-nav-budgets.svg",
       titleI18nKey: "i18n.Navigation.Budgets",
+      isPrefetch: true,
     },
     {
       href: this.AppRoutes.pots,
       iconUrl: "assets/images/icon-nav-pots.svg",
       titleI18nKey: "i18n.Navigation.Pots",
+      isPrefetch: true,
     },
     {
       href: this.AppRoutes.recurring,
       iconUrl: "assets/images/icon-nav-recurring-bills.svg",
       titleI18nKey: "i18n.Navigation.Recurring",
+      isPrefetch: true,
     },
   ];
 

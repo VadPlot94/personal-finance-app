@@ -5,6 +5,19 @@ import translationService from "@/shared/services/translation.service";
 import type { Translator } from "@/shared/services/types";
 
 class TransactionService {
+  public getValidTransactionCategory(
+    categoryParam: string,
+  ): TransactionUICategory | null {
+    const category = (
+      typeof categoryParam === "string"
+        ? decodeURIComponent(categoryParam)
+        : TransactionUICategory.AllTransactions
+    ) as TransactionUICategory;
+    return Object.values(TransactionUICategory).includes(category)
+      ? category
+      : null;
+  }
+
   public getCategoryLabel(categoryValue: string, t: Translator): string {
     const categoryKey = Object.entries(TransactionUICategory).find(
       ([, value]) => value === categoryValue,

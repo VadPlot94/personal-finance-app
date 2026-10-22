@@ -4,6 +4,8 @@ import CreateAccountLink from "@/front-end/components/create-account-link";
 import SignInButton from "@/front-end/components/sign-in-button/sign-in-button";
 import constants from "@/shared/services/constants.service";
 
+const copyrightYear = new Date().getFullYear();
+
 export default async function HomePage() {
   const t = await getTranslations();
 
@@ -20,6 +22,7 @@ export default async function HomePage() {
               <SignInButton className="px-4" />
               <Link
                 href={constants.AppRoutes.overview}
+                prefetch={true}
                 className="rounded-lg bg-black px-4 py-2 text-white hover:bg-slate-800"
               >
                 {t("i18n.LandingPage.GetStarted")}
@@ -151,6 +154,7 @@ export default async function HomePage() {
           </p>
           <Link
             href={constants.AppRoutes.login}
+            prefetch={true}
             className="inline-block rounded-lg bg-black px-8 py-3 font-semibold text-white hover:bg-slate-800"
           >
             {t("i18n.LandingPage.CreateFreeAccount")}
@@ -176,36 +180,40 @@ export default async function HomePage() {
               </h4>
               <ul className="mt-2 space-y-1 text-slate-600">
                 <li>
-                  <a
+                  <Link
                     href={constants.AppRoutes.transactions}
+                    prefetch={true}
                     className="hover:text-slate-900"
                   >
                     {t("i18n.Navigation.Transactions")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
+                  <Link
                     href={constants.AppRoutes.budgets}
+                    prefetch={true}
                     className="hover:text-slate-900"
                   >
                     {t("i18n.Navigation.Budgets")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
+                  <Link
                     href={constants.AppRoutes.pots}
+                    prefetch={true}
                     className="hover:text-slate-900"
                   >
                     {t("i18n.LandingPage.FooterSavingsPots")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
+                  <Link
                     href={constants.AppRoutes.recurring}
+                    prefetch={true}
                     className="hover:text-slate-900"
                   >
                     {t("i18n.Navigation.Recurring")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -226,7 +234,7 @@ export default async function HomePage() {
           <div className="mt-8 border-t border-slate-200 pt-8 text-center text-slate-600">
             <p>
               {t("i18n.LandingPage.Copyright", {
-                year: new Date().getFullYear(),
+                year: copyrightYear,
               })}
             </p>
           </div>

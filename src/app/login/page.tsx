@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import authController from "@/back-end/controllers/auth-controller";
 import LoginForm from "@/front-end/components/login/login-form";
+import authService from "@/front-end/services/auth.service";
 import constants from "@/shared/services/constants.service";
 
 async function LoginRedirectIfAuthenticated() {
@@ -12,19 +13,23 @@ async function LoginRedirectIfAuthenticated() {
   return null;
 }
 
-export default async function LoginPage({
+export default function LoginPage({
   searchParams,
 }: PageProps<typeof constants.AppRoutes.login>) {
-  const { authMode } = await searchParams;
-
   return (
     <>
       <Suspense fallback={null}>
         <LoginRedirectIfAuthenticated />
       </Suspense>
-      <LoginForm
-        authMode={typeof authMode === "string" ? authMode : undefined}
-      />
+      <Suspense fallback={<LoginForm isLoading />}>
+        {(async () => {
+          const params = await searchParams;
+          const authMode = authService.getValidAuthMode(
+            params.authMode as string,
+          );
+          return <LoginForm authMode={authMode} />;
+        })()}
+      </Suspense>
     </>
   );
 }

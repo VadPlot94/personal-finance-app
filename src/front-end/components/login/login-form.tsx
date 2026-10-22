@@ -13,7 +13,7 @@ import { Button } from "@/front-end/components/ui/button";
 import { Input } from "@/front-end/components/ui/input";
 import { Label } from "@/front-end/components/ui/label";
 import { orEmptyStr } from "@/lib/utils";
-import constants from "@/shared/services/constants.service";
+import constants, { AuthMode } from "@/shared/services/constants.service";
 import translationService from "@/shared/services/translation.service";
 import type {
   IRegisterFormData,
@@ -22,18 +22,6 @@ import type {
   ISignInValidationData,
 } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
-
-export enum AuthMode {
-  SignIn = "signin",
-  Register = "register",
-}
-
-function resolveAuthMode(authMode?: string): AuthMode {
-  if (authMode && Object.values(AuthMode).includes(authMode as AuthMode)) {
-    return authMode as AuthMode;
-  }
-  return AuthMode.SignIn;
-}
 
 // Transform and set sign in form data
 function getSignInFormData(
@@ -83,7 +71,10 @@ function validateSignInForm(
   formData: ISignInFormData,
   t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof ISignInValidationData, string>> | null {
-  const result = validationService.validateAuthSchema(formData, "signin");
+  const result = validationService.validateAuthSchema(
+    formData,
+    AuthMode.SignIn,
+  );
   if (result.success) {
     return null;
   }
@@ -101,7 +92,10 @@ function validateRegisterForm(
   formData: IRegisterFormData,
   t: (key: string, values?: Record<string, string | number>) => string,
 ): Partial<Record<keyof IRegisterValidationData, string>> | null {
-  const result = validationService.validateAuthSchema(formData, "register");
+  const result = validationService.validateAuthSchema(
+    formData,
+    AuthMode.Register,
+  );
   if (result.success) {
     return null;
   }
@@ -122,8 +116,8 @@ export default function LoginForm({
   const t = useTranslations();
   const { data: session } = useSession();
   const router = useRouter();
-  const [authFormMode, setAuthFormMode] = useState<AuthMode>(() =>
-    resolveAuthMode(authMode),
+  const [authFormMode, setAuthFormMode] = useState<AuthMode>(
+    () => authMode ?? AuthMode.SignIn,
   );
 
   // Redirect to overview if already logged in
@@ -285,7 +279,7 @@ export default function LoginForm({
           </div>
 
           {/* Sign In Form */}
-          {authFormMode === "signin" && (
+          {authFormMode === AuthMode.SignIn && (
             <form onSubmit={handleSignIn}>
               <div className="flex flex-col gap-5">
                 <div className="text-app-color text-xs">
@@ -378,7 +372,7 @@ export default function LoginForm({
           )}
 
           {/* Register Form */}
-          {authFormMode === "register" && (
+          {authFormMode === AuthMode.Register && (
             <form onSubmit={handleRegisterSubmit}>
               <div className="flex flex-col gap-5">
                 <div className="text-app-color text-xs">

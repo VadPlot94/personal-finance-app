@@ -1,6 +1,7 @@
 import type { Pot } from "@prisma/client";
 import { z } from "zod";
 import constants, {
+  AuthMode,
   type Theme,
   TransactionType,
   TransactionUICategory,
@@ -178,14 +179,14 @@ class ValidationService {
 
   public validateAuthSchema(
     formData: { email: string; password: string; name?: string },
-    schema: "signin" | "register",
+    schema: AuthMode,
   ): z.ZodSafeParseResult<{ email: string; password: string; name?: string }> {
     const validationObj: z.ZodSafeParseResult<{
       email: string;
       password: string;
       name?: string;
     }> =
-      schema === "signin"
+      schema === AuthMode.SignIn
         ? this.signInFormSchema.safeParse({
             email: formData.email,
             password: formData.password,
@@ -195,7 +196,7 @@ class ValidationService {
     if (validationObj.error) {
       this.logZodErrors(
         validationObj.error,
-        schema === "signin" ? "Sign In" : "Register",
+        schema === AuthMode.SignIn ? "Sign In" : "Register",
       );
     }
 

@@ -7,12 +7,12 @@ import { authEnv } from "@/back-end/config/auth-env";
 import userService from "@/back-end/DAL/db-services/user.service";
 import { setTestAppData } from "@/back-end/prisma/seed";
 import { auth } from "@/lib/auth";
-import constants from "@/shared/services/constants.service";
+import constants, { AuthMode } from "@/shared/services/constants.service";
 import validationService from "@/shared/services/validation.service";
 
 class AuthService {
   public async authUser(
-    action: "register" | "signin",
+    action: AuthMode,
     credentials:
       | Partial<Record<"email" | "password" | "name", unknown>>
       | undefined,
@@ -21,9 +21,9 @@ class AuthService {
     if (!validCredentials) {
       return null;
     }
-    if (action === "register") {
+    if (action === AuthMode.Register) {
       return await this.registerUser(validCredentials);
-    } else if (action === "signin") {
+    } else if (action === AuthMode.SignIn) {
       return await this.authorizeUser(validCredentials);
     }
     return null;
@@ -31,7 +31,7 @@ class AuthService {
 
   public getValidCredentials(
     credentials: Record<string, unknown> | undefined,
-    schema: "signin" | "register",
+    schema: AuthMode,
   ): { email: string; password: string; name?: string } | null {
     const email =
       typeof credentials?.email === "string"
