@@ -19,6 +19,10 @@ Rules for creating, updating, changing, or deleting unit/component tests: [`.cur
 - Example: `src/front-end/services/finance.service.ts` → `src/front-end/services/tests/finance.service.tests.ts`
 - Example: `src/front-end/components/tile-header/tile-header.tsx` → `src/front-end/components/tile-header/tests/tile-header.tests.tsx`
 
+## Do not test
+
+- **`src/front-end/components/ui/*`** (shadcn / installed UI kit) — treat as third-party library code. Do **not** create, update, or run dedicated unit/component tests for these files. Cover app behavior through feature components that consume them instead. Also excluded from Vitest coverage (`vitest.config.mts`).
+
 ## Structure
 
 - Top-level `describe` = name of the service / class / component under test.

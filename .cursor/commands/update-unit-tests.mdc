@@ -119,3 +119,4 @@ On failure: fix tests or report product bugs. Do not weaken assertions just to g
 - Follow [`.cursor/rules/unit-tests.mdc`](../rules/unit-tests.mdc).
 - May edit test files and `lib/test-utils` mocks after gate; avoid drive-by production refactors.
 - Do not invent a new test stack; use Vitest + RTL already in the project.
+- **Never** create or update tests under `src/front-end/components/ui/*` (shadcn / installed UI kit).

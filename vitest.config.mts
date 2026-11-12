@@ -38,6 +38,8 @@ export default defineConfig({
         "src/**/types.ts",
         "src/**/test-utils/**",
         "src/**/dto-model-types/**",
+        // shadcn / installed UI kit — not app-owned; do not cover or unit-test
+        "src/front-end/components/ui/**",
       ],
     },
   },

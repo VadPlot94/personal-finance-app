@@ -129,6 +129,7 @@ Unit and component tests use **Vitest** + **React Testing Library**.
 - Browser UI (debug + live coverage): `npm run test:ui` → opens Vitest UI (usually `http://localhost:51204/__vitest__/`)
 - Coverage once: `npm run test:coverage` → terminal table + `coverage/` (HTML at `coverage/index.html`; open via `npm run test:coverage:open`)
 - Coverage scope (see `vitest.config.mts`): shared/FE services, BE mappers/controllers/DAL/common, `src/lib/utils.ts` — not App Router pages or UI components
+- Do **not** unit-test `src/front-end/components/ui/*` (shadcn / installed UI kit); excluded from coverage. Cover behavior via feature components that consume them.
 - Instant-nav (production `instant()`): `npm run build:instant-nav` then `npm run test:instant-nav` — see [`instant-nav.rig.md`](instant-nav.rig.md)
 
 ### CI coverage (GitHub / GitLab)
