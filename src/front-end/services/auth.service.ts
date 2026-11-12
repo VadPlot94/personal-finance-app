@@ -1,4 +1,4 @@
-import { AuthMode } from "@/shared/services/constants.service";
+import constants, { AuthMode } from "@/shared/services/constants.service";
 
 class AuthService {
   public getValidAuthMode(authMode?: string): AuthMode {
@@ -10,6 +10,18 @@ class AuthService {
     return Object.values(AuthMode).includes(resolvedAuthMode)
       ? resolvedAuthMode
       : AuthMode.SignIn;
+  }
+
+  public async signOut(
+    callbackUrl: string = constants.AppRoutes.home,
+  ): Promise<void> {
+    // Dynamic import: this module is also used from RSC (login page).
+    // A top-level next-auth/react import would pull client-only code into the server bundle.
+    const { signOut } = await import("next-auth/react");
+    await signOut({
+      callbackUrl,
+      redirect: true,
+    });
   }
 }
 

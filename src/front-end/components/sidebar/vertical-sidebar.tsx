@@ -3,9 +3,10 @@
 import type { User } from "@prisma/client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import authService from "@/front-end/services/auth.service";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 
@@ -39,13 +40,6 @@ export default function VerticalSidebar() {
   useEffect(() => {
     setSessionUserData(session?.data?.user as User);
   }, [session?.status, session?.data?.user]);
-
-  const handleSignOutClick = async () => {
-    await signOut({
-      callbackUrl: "/",
-      redirect: true,
-    });
-  };
 
   const financeLabel = t("i18n.Navigation.Finance");
   const userLabel = sessionUserData?.name || t("i18n.Navigation.User");
@@ -219,7 +213,7 @@ export default function VerticalSidebar() {
           type="button"
           className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
           onClick={() => {
-            void handleSignOutClick();
+            void authService.signOut();
           }}
           title={signOutLabel}
         >

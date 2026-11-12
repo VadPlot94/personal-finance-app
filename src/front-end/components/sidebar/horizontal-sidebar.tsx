@@ -6,6 +6,7 @@ import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import authService from "@/front-end/services/auth.service";
 import { cn } from "@/lib/utils";
 import constants from "@/shared/services/constants.service";
 import type { ISideBarMenuItem } from "@/shared/services/types";
@@ -39,6 +40,7 @@ function buildSideBarItems(
       href: constants.SignOutMenuItemConfig.href,
       iconUrl: constants.SignOutMenuItemConfig.iconUrl,
       title: t(constants.SignOutMenuItemConfig.titleI18nKey),
+      isSignOut: true,
     },
   ];
 }
@@ -120,6 +122,13 @@ export default function HorizontalSidebar() {
                 href={sideBarItem.href}
                 prefetch={sideBarItem.isPrefetch}
                 className={itemClassName}
+                onClick={(event) => {
+                  if (!sideBarItem.isSignOut) {
+                    return;
+                  }
+                  event.preventDefault();
+                  void authService.signOut();
+                }}
               >
                 {itemBody}
               </Link>

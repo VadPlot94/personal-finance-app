@@ -164,7 +164,7 @@ export default function LoginForm({
   const handleAutoLogin = async (email: string, password: string) => {
     const result = await signIn("credentials", {
       redirect: false,
-      email,
+      email: email.trim().toLowerCase(),
       password,
     });
 
@@ -183,7 +183,7 @@ export default function LoginForm({
 
     const result = await signIn("credentials", {
       redirect: false,
-      email: orEmptyStr(formSignInData?.email),
+      email: orEmptyStr(formSignInData?.email).trim().toLowerCase(),
       password: orEmptyStr(formSignInData?.password),
     });
 
@@ -204,7 +204,7 @@ export default function LoginForm({
     setRegisterErrors(null);
 
     const response = await registerUserSRF({
-      email: orEmptyStr(formRegisterData?.email),
+      email: orEmptyStr(formRegisterData?.email).trim().toLowerCase(),
       password: orEmptyStr(formRegisterData?.password),
       name: orEmptyStr(formRegisterData?.name),
     });
@@ -212,7 +212,7 @@ export default function LoginForm({
     if (response.success) {
       toast.success(t("i18n.LoginPage.ToastAccountCreated"));
       await handleAutoLogin(
-        orEmptyStr(formRegisterData?.email),
+        orEmptyStr(formRegisterData?.email).trim().toLowerCase(),
         orEmptyStr(formRegisterData?.password),
       );
       setFormRegisterStateData(getRegisterFormData(null));
@@ -295,6 +295,9 @@ export default function LoginForm({
                   <Input
                     id="signin-email"
                     type="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
                     className="border-gray-300"
                     value={orEmptyStr(formSignInData?.email)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -319,6 +322,8 @@ export default function LoginForm({
                   <Input
                     id="signin-password"
                     type="password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     className="border-gray-300"
                     value={orEmptyStr(formSignInData?.password)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -412,6 +417,9 @@ export default function LoginForm({
                   <Input
                     id="register-email"
                     type="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
                     className="border-gray-300"
                     value={orEmptyStr(formRegisterData?.email)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

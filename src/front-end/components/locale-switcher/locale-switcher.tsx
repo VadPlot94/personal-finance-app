@@ -48,13 +48,13 @@ export default function LocaleSwitcher() {
     >
       <SelectTrigger
         aria-label={t("i18n.Locale.Language")}
-        className="border-gray-300 w-fit cursor-pointer justify-start gap-1 px-2.5"
+        className="border-gray-300 w-fit shrink-0 cursor-pointer justify-start gap-1 px-2.5"
       >
         <SelectValue
           placeholder={getLocaleShortLabel(translationService.DefaultLocale)}
         />
       </SelectTrigger>
-      <SelectContent align="end">
+      <SelectContent align="end" position="popper">
         {translationService.Locales.map((i18nLocale) => (
           <SelectItem
             key={i18nLocale}

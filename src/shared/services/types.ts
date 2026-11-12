@@ -24,6 +24,7 @@ export interface ISideBarMenuItem {
   title: string;
   isAccount?: boolean;
   isPrefetch?: boolean;
+  isSignOut?: boolean;
 }
 
 export interface ICreatePotValidationData {

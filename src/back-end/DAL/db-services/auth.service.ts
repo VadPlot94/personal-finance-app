@@ -35,7 +35,7 @@ class AuthService {
   ): { email: string; password: string; name?: string } | null {
     const email =
       typeof credentials?.email === "string"
-        ? credentials.email.trim()
+        ? credentials.email.trim().toLowerCase()
         : undefined;
     const password =
       typeof credentials?.password === "string"
@@ -94,7 +94,7 @@ class AuthService {
     password: string | undefined,
   ): boolean {
     const { email: adminEmail, password: adminPassword } = authEnv;
-    return email === adminEmail && password === adminPassword;
+    return email?.trim().toLowerCase() === adminEmail?.trim().toLowerCase() && password === adminPassword;
   }
 
   private async authorizeUser(validCredentials: {
@@ -109,7 +109,7 @@ class AuthService {
     if (user) {
       // Backfill: env admin may predate User.isAdmin (defaulted false on db push)
       let isAdmin = user.isAdmin;
-      if (!isAdmin && email === authEnv.email) {
+      if (!isAdmin && email === authEnv.email?.trim().toLowerCase()) {
         const updated = await userService.setIsAdmin(user.id, true);
         isAdmin = updated.isAdmin;
       }
