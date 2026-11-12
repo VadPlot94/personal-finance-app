@@ -100,3 +100,14 @@ export interface ITransactionsForCategoryData {
   category: TransactionUICategory;
   transactions: Transaction[];
 }
+
+export interface IBalanceComputed {
+  current: number;
+  income: number;
+  expenses: number;
+}
+
+export interface IYearMonth {
+  year: number;
+  month: number;
+}

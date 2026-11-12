@@ -3,6 +3,12 @@ import type { IPaginationData } from "@/front-end/components/transactions/types"
 
 export interface IRecurringProps {
   recurringTransactions?: Transaction[];
+  /**
+   * All recurring expenses for the Paid / Upcoming / Due Soon summary.
+   * `recurringTransactions` is only the current table page, so totals cannot
+   * be computed from it — later pages would be missing from the counts.
+   */
+  statsTransactions?: Transaction[];
   paginationData?: IPaginationData;
   isLoading?: boolean;
 }

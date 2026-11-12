@@ -1,6 +1,6 @@
 import "server-only";
 import type { Budget, Pot, Transaction } from "@prisma/client";
-import { balanceRepository } from "@/back-end/DAL/repositories/balance.repository";
+import balanceDbService from "@/back-end/DAL/db-services/balance-db.service";
 import { budgetRepository } from "@/back-end/DAL/repositories/budget.repository";
 import { potRepository } from "@/back-end/DAL/repositories/pot.repository";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
@@ -10,13 +10,6 @@ const data = require("@/../initial-data/data.json");
 
 export async function setTestAppData(userId: string) {
   try {
-    await balanceRepository.upsertBalance({
-      userId,
-      current: data.balance.current,
-      income: data.balance.income,
-      expenses: data.balance.expenses,
-    });
-
     await Promise.all(
       data.transactions.map((transaction: Transaction) =>
         transactionRepository.createTransaction({
@@ -53,6 +46,8 @@ export async function setTestAppData(userId: string) {
         }),
       ),
     );
+
+    await balanceDbService.recalculateBalance(userId);
 
     logger.logInfo("[seed] Seed completed");
   } catch (error) {

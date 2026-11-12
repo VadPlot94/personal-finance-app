@@ -71,6 +71,43 @@ Exception: `?category=` is only a deep-link from Budgets (`TransactionsTile` →
 
 ---
 
+## Balance, pots, budgets, recurring
+
+**Source of truth.** Income, expenses, and Current come only from posted `Transaction` rows.
+
+- **Income** = sum of `amount > 0`
+- **Expenses** = `|sum of amount < 0|`
+- **Current** = `income − expenses` (= sum of all `amount`). No opening balance. No seed `4836`.
+- The `Balance` table is a **cache** of that aggregate. `getBalance` always recalculates from transactions. Seed writes transactions first, then `recalculateBalance` (it does not upsert `data.json` balance).
+
+**Pots** do not change Current. They earmark money already in Current:
+
+- `available = current − sum(pot.total)`
+- `current − available` = money in pots
+- Add Money / Withdraw / create / delete pot change `pot.total` only (deleting a pot returns that total to available; Current stays the same)
+
+**Budgets** are category spend caps. They are not part of the Current / Income / Expenses formula.
+
+**Recurring auto-post (changes balance).** Recurring bills are ordinary `Transaction` rows with `recurring: true` (expense `amount < 0`). There is no cron.
+
+- Template = latest recurring expense for that `name`
+- Due date in the **current calendar month** = `min(dayOfMonth, daysInMonth)`
+- If `today >= due` and no row with that `name` exists in this year/month, insert a clone (`recurring: true`) and recalculate balance
+- Runs lazily before `getBalance` and `getAllRecurring`
+- Transaction / recurring / budget-spend lists are **not** `"use cache"`'d. Auto-post writes during GET; a Server Component cannot call `updateTag`, so a tagged cache would show the old list after Current dropped.
+- **No backfill** of past months (that would drive Current negative from 2024 seed bills)
+
+**Recurring summary UI (does not change balance).**
+
+- The month of the latest recurring row is treated as incomplete and is skipped
+- Summary month = the nearest **previous** month that still has recurring rows (seed: latest August 2024 → July 2024)
+- If newer posts exist (e.g. October 2026), latest = October (incomplete) → walk back until a month with data
+- Paid / Upcoming / Due soon use that summary month; today’s day is projected into it (`createReferenceDate`)
+- Total Bills, Summary, and the overview tile show the year + month label
+- The table lists all recurring rows, not only the summary month
+
+---
+
 ## Authentication (details)
 
 - Credentials authentication via custom auth service
@@ -127,5 +164,4 @@ If auth behaves unexpectedly, verify `.env` / `.env.local` values and restart th
 
 ## Todo / Roadmap
 
-- calculate balance in right way
 - add route handlers (only if a public HTTP API is needed — not for transaction table filters; those stay on Server Actions)

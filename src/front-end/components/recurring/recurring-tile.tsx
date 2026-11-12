@@ -45,6 +45,13 @@ export default function RecurringTile({
         emptyTitle={t("i18n.RecurringPage.EmptyTitle")}
       >
         <div className="flex flex-col gap-3 justify-between flex-1 text-xs text-app-color font-semibold">
+          <div>
+            {t("i18n.RecurringPage.Summary", {
+              month:
+                stats.referenceMonthName ||
+                t("i18n.RecurringPage.NoRecurringBills"),
+            })}
+          </div>
           <RecurringSummaryItem
             label={t("i18n.RecurringPage.PaidBills")}
             amount={stats.paidAmount}

@@ -202,11 +202,10 @@ export function EditBudgetDialog({
             </div>
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
-                <>
-                  {/* TODO: formErrors?.["id"] appears in the dialog when empty — need to hide somehow */}
-                  <input type="hidden" name="id" value={formBudgetData.id} />
-                  <p className="text-xs text-red-500">{formErrors?.id}</p>
-                </>
+                <input type="hidden" name="id" value={formBudgetData.id} />
+              )}
+              {formErrors?.id && (
+                <p className="text-xs text-red-500">{formErrors.id}</p>
               )}
               <div className="flex flex-col gap-2">
                 <Label
@@ -252,10 +251,11 @@ export function EditBudgetDialog({
                       ))}
                   </SelectContent>
                 </Select>
-                {/* TODO: formErrors appears in the dialog when empty — need to hide somehow */}
-                <p className="text-xs text-red-500">
-                  {formErrors?.budgetCategory}
-                </p>
+                {formErrors?.budgetCategory && (
+                  <p className="text-xs text-red-500">
+                    {formErrors.budgetCategory}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label
@@ -279,7 +279,9 @@ export function EditBudgetDialog({
                   }}
                   placeholder={t("i18n.Common.CashPlaceholder")}
                 />
-                <p className="text-xs text-red-500">{formErrors?.maximum}</p>
+                {formErrors?.maximum && (
+                  <p className="text-xs text-red-500">{formErrors.maximum}</p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label
@@ -317,8 +319,9 @@ export function EditBudgetDialog({
                     ))}
                   </SelectContent>
                 </Select>
-                {/* TODO: formErrors appears in the dialog when empty — need to hide somehow */}
-                <p className="text-xs text-red-500">{formErrors?.theme}</p>
+                {formErrors?.theme && (
+                  <p className="text-xs text-red-500">{formErrors.theme}</p>
+                )}
               </div>
             </div>
             <div className="flex flex-col gap-2">

@@ -272,7 +272,7 @@
       "EmptyBody": "Click <bold>''Add Recurring Bill''</bold> button at the corner of the page to create it.",
       "IconAlt": "Recurring bills icon",
       "TotalBills": "Total Bills ({month}, as of {date})",
-      "Summary": "Summary",
+      "Summary": "Summary ({month})",
       "PaidBills": "Paid Bills",
       "TotalUpcoming": "Total Upcoming",
       "DueSoon": "Due Soon",

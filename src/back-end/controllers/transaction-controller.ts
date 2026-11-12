@@ -1,10 +1,10 @@
 import "server-only";
 
-import { cacheLife, cacheTag, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import type { Session } from "next-auth";
 import { BaseController } from "@/back-end/controllers/base-controller";
 import type { ValidationResponse } from "@/back-end/controllers/types";
-import { balanceTag, transactionsTag } from "@/back-end/DAL/cache/cache-tags";
+import { balanceTag } from "@/back-end/DAL/cache/cache-tags";
 import balanceDbService from "@/back-end/DAL/db-services/balance-db.service";
 import transactionDbService from "@/back-end/DAL/db-services/transaction-db.service";
 import type { ICreateTransactionDTOOutput } from "@/back-end/dto-model-types/transaction-dto-model.type";
@@ -15,24 +15,9 @@ import type {
   ITransactionsForCategoryData,
 } from "@/shared/services/types";
 
-async function getAllTransactionsCached(
-  data: Partial<IGetTransactionsParams> | undefined,
-  userId: string,
-): Promise<ITransactionDataResponse> {
-  "use cache";
-  cacheTag(transactionsTag(userId));
-  cacheLife("minutes");
-  return transactionDbService.getAllTransactions(data, userId);
-}
-
-async function getMonthlyExpensesByCategoryCached(
-  userId: string,
-): Promise<ITransactionsForCategoryData[]> {
-  "use cache";
-  cacheTag(transactionsTag(userId));
-  cacheLife("minutes");
-  return transactionDbService.getMonthlyExpensesByCategory(userId);
-}
+// Transaction lists are not cached.
+// Recurring auto-post inserts due bills during GET, and a Server Component cannot call updateTag.
+// A `"use cache"` list would keep showing the old rows after Current had already been reduced.
 
 class TransactionController extends BaseController {
   public async createTransaction(
@@ -47,7 +32,7 @@ class TransactionController extends BaseController {
           formData,
           userId,
         );
-        await balanceDbService.updateBalanceForTransaction(userId, 0);
+        await balanceDbService.recalculateBalance(userId);
         this.syncChanges(userId);
         return transaction;
       },
@@ -60,7 +45,10 @@ class TransactionController extends BaseController {
     return await this.validationObjectWrapper<ITransactionDataResponse>(
       "get",
       async (session?: Session) => {
-        return await getAllTransactionsCached(data, session?.user?.id!);
+        return await transactionDbService.getAllTransactions(
+          data,
+          session?.user?.id!,
+        );
       },
     );
   }
@@ -71,7 +59,9 @@ class TransactionController extends BaseController {
     return await this.validationObjectWrapper<ITransactionsForCategoryData[]>(
       "get",
       async (session?: Session) => {
-        return await getMonthlyExpensesByCategoryCached(session?.user?.id!);
+        return await transactionDbService.getMonthlyExpensesByCategory(
+          session?.user?.id!,
+        );
       },
     );
   }
@@ -91,7 +81,6 @@ class TransactionController extends BaseController {
   }
 
   private syncChanges(userId: string) {
-    updateTag(transactionsTag(userId));
     updateTag(balanceTag(userId));
   }
 }

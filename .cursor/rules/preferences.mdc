@@ -20,5 +20,11 @@ Current preferences:
 - Server Actions (`"use server"` / `*SRF`) are for mutations and client-invoked calls only. RSC data reads go through controllers from `src/app` (not via get*SRF). Client table refetch (e.g. transactions pagination/filters) may use get*SRF; filters stay out of the URL by design — see `README-dev.md`.
 - When project changes affect docs, update the matching README in the same change: [`README.md`](../../README.md) for public/onboarding (features, setup, scripts, pages, tech stack); [`README-dev.md`](../../README-dev.md) for architecture decisions, backend map, auth details, debug, experiments, roadmap. Do not dump dev-only notes into the main README.
 - Logging: prefix every message with the logical area in brackets, e.g. `[auth] AUTH_EMAIL and AUTH_PASSWORD environment variables are not set`, `[pots] Failed to get pots data`.
+- Class members always have an explicit access modifier (`public` / `protected` / `private`). Do not rely on TypeScript’s default `public`.
+- Assign modifiers by **actual callers**, not “might be useful later”:
+  - `public` — called from outside this class (other modules, or tests via the public API).
+  - `protected` — subclass hooks only. Rare in this project; do not use “just in case”.
+  - `private` — used only inside this class (including other private methods).
+- Do **not** widen a member to `public` only so a test can call it. Cover that behavior through a public method (see [unit-tests.mdc](unit-tests.mdc)).
 - Class member order: all fields first, then all methods. Within fields and within methods: `public` → `protected` → `private`. Constructor sits with public methods (immediately after fields, before other public methods).
 - Prefer **classes** over standalone functions for shared/domain logic (services, helpers with related methods/state). Put the logic on a class (default-export instance, like existing `*.service.ts`). Use a plain function only when it is a tiny one-off local helper, a React hook, or a framework/API constraint requires a function export.

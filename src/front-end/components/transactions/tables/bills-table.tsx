@@ -28,25 +28,22 @@ export default function BillsTable({
 
   const getTimeCell = (status: RecurringStatus, tx: Transaction) => (
     <div
-      className={cn(
-        "py-4 max-w-35 min-w-0 text-green-800 truncate flex flex-row items-center gap-1",
-      )}
+      className="py-4 min-w-0 text-green-800 flex flex-row items-center gap-1"
       title={t(`i18n.Enums.RecurringStatus.${status}`)}
     >
-      {getDueDateLabel(tx.date)}
-
+      <span className="truncate min-w-0">{getDueDateLabel(tx.date)}</span>
       {status === RecurringStatus.Paid && (
         <img
           src="assets/images/icon-bill-paid.svg"
           alt={t("i18n.RecurringPage.Paid")}
-          className="h-4 w-4"
+          className="h-4 w-4 shrink-0"
         />
       )}
       {status === RecurringStatus.DueSoon && (
         <img
           src="assets/images/icon-bill-due.svg"
           alt={t("i18n.RecurringPage.DueSoonAlt")}
-          className="h-4 w-4"
+          className="h-4 w-4 shrink-0"
         />
       )}
     </div>

@@ -317,7 +317,9 @@ export function CreateTransactionDialog({
                   }}
                   placeholder={t("i18n.Common.CashPlaceholder")}
                 />
-                <p className="text-xs text-red-500">{formErrors?.amount}</p>
+                {formErrors?.amount && (
+                  <p className="text-xs text-red-500">{formErrors.amount}</p>
+                )}
               </div>
 
               <div className="flex flex-col gap-2">

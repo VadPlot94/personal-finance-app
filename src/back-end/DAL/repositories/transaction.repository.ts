@@ -148,6 +148,13 @@ export class TransactionRepository extends BaseRepository<"transaction"> {
     return (result?.count ?? 0) > 0;
   }
 
+  public async getRecurringExpenses(userId: string): Promise<Transaction[]> {
+    return this.findMany({
+      where: { userId, recurring: true, amount: { lt: 0 } },
+      orderBy: { date: "desc" },
+    });
+  }
+
   public async createTransaction(
     data: Omit<Transaction, "id">,
   ): Promise<Transaction> {

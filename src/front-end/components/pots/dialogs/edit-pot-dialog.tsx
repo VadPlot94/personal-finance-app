@@ -204,6 +204,9 @@ export function EditPotDialog({
               {formPotData?.id && (
                 <input type="hidden" name="id" value={formPotData.id} />
               )}
+              {formErrors?.id && (
+                <p className="text-xs text-red-500">{formErrors.id}</p>
+              )}
               <div className="flex flex-col gap-2">
                 <Label
                   htmlFor="name"
@@ -221,7 +224,9 @@ export function EditPotDialog({
                   maxLength={constants.MaxPotNameCharacters}
                 />
                 <div className="flex flex-row justify-between items-center">
-                  <p className="text-xs text-red-500">{formErrors?.potName}</p>
+                  {formErrors?.potName && (
+                    <p className="text-xs text-red-500">{formErrors.potName}</p>
+                  )}
                   <p className="text-app-color text-xs min-w-25">
                     {constants.MaxPotNameCharacters -
                       (formPotData?.potName?.length || 0)}{" "}
@@ -251,7 +256,9 @@ export function EditPotDialog({
                   }}
                   placeholder={t("i18n.Common.CashPlaceholder")}
                 />
-                <p className="text-xs text-red-500">{formErrors?.target}</p>
+                {formErrors?.target && (
+                  <p className="text-xs text-red-500">{formErrors.target}</p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label

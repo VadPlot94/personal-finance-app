@@ -11,7 +11,3 @@ export function potsTag(userId: string): string {
 export function budgetsTag(userId: string): string {
   return `budgets:${userId}`;
 }
-
-export function transactionsTag(userId: string): string {
-  return `transactions:${userId}`;
-}

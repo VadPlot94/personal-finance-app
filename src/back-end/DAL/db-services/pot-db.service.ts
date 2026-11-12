@@ -10,6 +10,7 @@ import type {
   IEditPotDTOOutput,
 } from "@/back-end/dto-model-types/pot-dto-model.type";
 import potMapper from "@/back-end/mappers/pot-mapper";
+import balanceService from "@/shared/services/balance.service";
 import potService from "@/shared/services/pot.service";
 import type { ICreatePotFormData } from "@/shared/services/types";
 import validationService from "@/shared/services/validation.service";
@@ -127,7 +128,10 @@ class PotDbService {
     const oldTotal = isWithdraw ? 0 : total;
     const balance = await balanceRepository.getCurrent(userId);
     const totalSum = potService.getAllSavedPotsMoney(pots);
-    const availableBalance = (balance?.current ?? 0) - totalSum;
+    const availableBalance = balanceService.computeAvailable(
+      balance?.current ?? 0,
+      totalSum,
+    );
     const deltaAmount = Math.abs(newTotal - total);
 
     const zodValidationResult = validationService.validateTotal(
@@ -153,7 +157,12 @@ class PotDbService {
     userId: string,
   ): Promise<never | boolean> {
     if (!potModel?.id) {
-      throw new CustomError("ID is required for update");
+      const zodErrorResult =
+        validationService.createCustomZodIssueResult<ICreatePotFormData>(
+          "id",
+          "i18n.Validation.IdRequiredForUpdate",
+        );
+      throwValidationError(zodErrorResult);
     }
 
     return this.validateCreatePotModel(potModel, userId);

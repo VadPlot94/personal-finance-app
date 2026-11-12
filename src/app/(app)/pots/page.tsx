@@ -2,6 +2,7 @@ import authController from "@/back-end/controllers/auth-controller";
 import balanceController from "@/back-end/controllers/balance-controller";
 import potController from "@/back-end/controllers/pot-controller";
 import Pots from "@/front-end/components/pots/pots";
+import balanceService from "@/shared/services/balance.service";
 import potService from "@/shared/services/pot.service";
 
 export default async function PotsPage() {
@@ -14,7 +15,10 @@ export default async function PotsPage() {
   const pots = potsResult.data ?? [];
   const balance = balanceResult.data;
   const totalSum = potService.getAllSavedPotsMoney(pots);
-  const availableBalance = balance ? balance.current - totalSum : 0;
+  const availableBalance = balanceService.computeAvailable(
+    balance?.current ?? 0,
+    totalSum,
+  );
 
   return <Pots pots={pots} availableBalance={availableBalance} />;
 }

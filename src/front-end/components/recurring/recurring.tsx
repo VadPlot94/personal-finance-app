@@ -15,6 +15,7 @@ import constants from "@/shared/services/constants.service";
 
 export default function Recurring({
   recurringTransactions = [],
+  statsTransactions,
   paginationData,
   isLoading = false,
 }: IRecurringProps) {
@@ -29,20 +30,18 @@ export default function Recurring({
     setNow(new Date());
   }, []);
 
-  const recurringTransactionsForTable = recurringTransactions?.slice(
-    0,
-    constants.TransactionRecordsPerPage,
-  );
+  // Summary uses the full recurring list, not the paginated table rows.
+  const transactionsForStats = statsTransactions ?? recurringTransactions;
 
   const { stats, referenceDate } = useMemo(
     () =>
       recurringService.computeRecurringStats(
-        recurringTransactions,
+        transactionsForStats,
         now,
         constants.RecurringDueSoonDays,
         locale,
       ),
-    [recurringTransactions, now /* realToday */, locale],
+    [transactionsForStats, now /* realToday */, locale],
   );
 
   const referenceDateLabel = recurringService.formatReferenceDateLabel(
@@ -61,7 +60,7 @@ export default function Recurring({
         handleButtonClick={() => setAddRecurringBillDialogOpen(true)}
       />
       <EmptyContentWrapper
-        hasItems={!!recurringTransactions?.length}
+        hasItems={!!transactionsForStats.length}
         isLoading={isLoading}
         emptyTitle={t("i18n.RecurringPage.EmptyTitle")}
         emptyBody={t.rich("i18n.RecurringPage.EmptyBody", {
@@ -95,7 +94,9 @@ export default function Recurring({
             </ItemCard>
 
             <ItemCard className="justify-start">
-              <div className="font-bold">{t("i18n.RecurringPage.Summary")}</div>
+              <div className="font-bold">
+                {t("i18n.RecurringPage.Summary", { month: referenceMonthName })}
+              </div>
               <div className="flex flex-col justify-between text-xs">
                 <RecurringSummaryItem
                   label={t("i18n.RecurringPage.PaidBills")}
@@ -126,7 +127,7 @@ export default function Recurring({
 
           <ItemCard>
             <TransactionsTableLayout
-              transactions={recurringTransactionsForTable}
+              transactions={recurringTransactions}
               paginationData={paginationData}
               isRecurringOnly={true}
             >

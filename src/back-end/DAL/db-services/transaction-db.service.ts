@@ -31,6 +31,10 @@ class TransactionDbService {
     return transactionMapper.mapGetTransactionsToOutput(response);
   }
 
+  public async getRecurringExpenses(userId: string): Promise<Transaction[]> {
+    return transactionRepository.getRecurringExpenses(userId);
+  }
+
   public async getMonthlyExpensesByCategory(
     userId: string,
   ): Promise<ITransactionsForCategoryData[]> {

@@ -4,14 +4,10 @@ import { balanceRepository } from "@/back-end/DAL/repositories/balance.repositor
 import type { IBalanceDTOOutput } from "@/back-end/dto-model-types/balance-dto-model.type";
 import balanceMapper from "@/back-end/mappers/balance-mapper";
 import prisma from "@/back-end/prisma/prisma-client";
+import balanceService from "@/shared/services/balance.service";
 
 class BalanceDbService {
   public async getBalance(userId: string): Promise<IBalanceDTOOutput> {
-    const currentBalance = await balanceRepository.getCurrent(userId);
-    if (currentBalance) {
-      return balanceMapper.mapBalanceToOutput(currentBalance);
-    }
-
     const recalculated = await this.recalculateBalance(userId);
     return balanceMapper.mapBalanceToOutput(recalculated);
   }
@@ -27,9 +23,10 @@ class BalanceDbService {
       _sum: { amount: true },
     });
 
-    const income = incomeResult._sum.amount ?? 0;
-    const expenses = Math.abs(expensesResult._sum.amount ?? 0);
-    const current = income - expenses;
+    const { current, income, expenses } = balanceService.computeFromSums(
+      incomeResult._sum.amount ?? 0,
+      Math.abs(expensesResult._sum.amount ?? 0),
+    );
 
     return await balanceRepository.upsertBalance({
       userId,
@@ -37,23 +34,6 @@ class BalanceDbService {
       income,
       expenses,
     });
-  }
-
-  public async updateIncomeBalance(userId: string): Promise<Balance> {
-    return await this.recalculateBalance(userId);
-  }
-
-  public async updateExpensesBalance(userId: string): Promise<Balance> {
-    return await this.recalculateBalance(userId);
-  }
-
-  public async updateBalanceForTransaction(
-    userId: string,
-    amount: number,
-  ): Promise<Balance> {
-    return amount >= 0
-      ? await this.updateIncomeBalance(userId)
-      : await this.updateExpensesBalance(userId);
   }
 }
 
