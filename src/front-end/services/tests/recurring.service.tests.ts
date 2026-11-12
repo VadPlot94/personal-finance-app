@@ -1,8 +1,9 @@
 import type { Transaction } from "@prisma/client";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import recurringService, {
   RecurringStatus,
 } from "@/front-end/services/recurring.service";
+import recurringScheduleService from "@/shared/services/recurring-schedule.service";
 
 function createRecurringExpense(
   overrides: Partial<Transaction> = {},
@@ -60,6 +61,26 @@ describe("RecurringService", () => {
 
       // Assert
       expect(result).toBe("22nd");
+    });
+
+    it("uses th suffix for day 4 in English", () => {
+      // Arrange
+      const date = new Date(2026, 0, 4);
+      const formatDueDate = (parts: {
+        monthName: string;
+        day: number;
+        suffix: string;
+      }) => `${parts.day}${parts.suffix}`;
+
+      // Act
+      const result = recurringService.getRecurringDueDateString(
+        date,
+        "en-US",
+        formatDueDate,
+      );
+
+      // Assert
+      expect(result).toBe("4th");
     });
 
     it("clears the ordinal suffix for Russian locales", () => {
@@ -234,6 +255,11 @@ describe("RecurringService", () => {
           date: new Date(2026, 1, 20),
           amount: -10,
         }),
+        createRecurringExpense({
+          id: "jan-nan",
+          date: new Date(2026, 0, 6),
+          amount: Number.NaN as never,
+        }),
       ];
       const now = new Date(2026, 0, 12, 9, 0, 0);
 
@@ -255,6 +281,98 @@ describe("RecurringService", () => {
       expect(result.stats.dueSoonAmount).toBe("30.00");
       expect(result.stats.totalBills).toBe("90.00");
       expect(result.stats.referenceMonthName).toMatch(/January/);
+    });
+
+    it("returns empty stats when there are no recurring expenses", () => {
+      // Arrange
+      const transactions = [
+        createRecurringExpense({ recurring: false, amount: -10 }),
+        createRecurringExpense({ amount: 25 }),
+      ];
+      const now = new Date(2026, 0, 12);
+
+      // Act
+      const result = recurringService.computeRecurringStats(transactions, now);
+
+      // Assert
+      expect(result.referenceDate).toBeNull();
+      expect(result.stats.totalBills).toBe("0.00");
+    });
+
+    it("returns empty stats when forecast month cannot be resolved", () => {
+      // Arrange
+      const transactions = [createRecurringExpense()];
+      const now = new Date(2026, 0, 12);
+      const spy = vi
+        .spyOn(recurringScheduleService, "getSummaryYearMonth")
+        .mockReturnValue(null);
+
+      // Act
+      const result = recurringService.computeRecurringStats(transactions, now);
+
+      // Assert
+      expect(result.referenceDate).toBeNull();
+      spy.mockRestore();
+    });
+
+    it("keeps the forecast month name when the month has no bills", () => {
+      // Arrange
+      const transactions = [
+        createRecurringExpense({
+          id: "jan",
+          date: new Date(2026, 0, 5),
+        }),
+        createRecurringExpense({
+          id: "feb",
+          date: new Date(2026, 1, 20),
+        }),
+      ];
+      const now = new Date(2026, 0, 12);
+      const spy = vi
+        .spyOn(recurringScheduleService, "getSummaryYearMonth")
+        .mockReturnValue({ year: 2025, month: 11 });
+
+      // Act
+      const result = recurringService.computeRecurringStats(
+        transactions,
+        now,
+        7,
+        "en-US",
+      );
+
+      // Assert
+      expect(result.referenceDate).toEqual(new Date(2025, 11, 12));
+      expect(result.stats.referenceMonthName).toMatch(/December/);
+      expect(result.stats.paidCount).toBe(0);
+      spy.mockRestore();
+    });
+
+    it("clamps the reference day to the last day of a shorter month", () => {
+      // Arrange
+      // Latest is March → forecast with data is February (28 days in 2026).
+      const transactions = [
+        createRecurringExpense({
+          id: "feb",
+          date: new Date(2026, 1, 5),
+        }),
+        createRecurringExpense({
+          id: "mar",
+          date: new Date(2026, 2, 20),
+        }),
+      ];
+      const now = new Date(2026, 0, 31, 8, 0, 0);
+
+      // Act
+      const result = recurringService.computeRecurringStats(
+        transactions,
+        now,
+        7,
+        "en-US",
+      );
+
+      // Assert
+      expect(result.referenceDate?.getMonth()).toBe(1);
+      expect(result.referenceDate?.getDate()).toBe(28);
     });
   });
 

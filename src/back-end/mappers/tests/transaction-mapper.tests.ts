@@ -182,4 +182,40 @@ describe("TransactionMapper", () => {
       expect(result).toEqual({ id: "tx-42" });
     });
   });
+
+  describe("mapGetTransactionsToOutput", () => {
+    it("returns the response unchanged", () => {
+      // Arrange
+      const response = {
+        transactions: [],
+        paginationData: {
+          allTransactionsCount: 0,
+          page: 1,
+          transactionsCount: 5,
+        },
+      };
+
+      // Act
+      const result = transactionMapper.mapGetTransactionsToOutput(response);
+
+      // Assert
+      expect(result).toBe(response);
+    });
+  });
+
+  describe("mapGetTransactionsForCategoryToOutput", () => {
+    it("returns the items unchanged", () => {
+      // Arrange
+      const items = [
+        { category: TransactionUICategory.Bills, transactions: [] },
+      ];
+
+      // Act
+      const result =
+        transactionMapper.mapGetTransactionsForCategoryToOutput(items);
+
+      // Assert
+      expect(result).toBe(items);
+    });
+  });
 });

@@ -70,7 +70,7 @@ Ask clearly, then wait. Example:
 1. Align with current public API and behavior.
 2. Fix assertions for intentional logic changes.
 3. Remove obsolete cases that no longer apply (within scope).
-4. Public API only; AAA + F.I.R.S.T.
+4. Test public methods thoroughly (private/protected only via cases that public methods exercise); AAA + F.I.R.S.T. See [unit-tests.mdc](../rules/unit-tests.mdc) “Public vs private / protected”.
 
 ### Step 3 — Create new tests
 

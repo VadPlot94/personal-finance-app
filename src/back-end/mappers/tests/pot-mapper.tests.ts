@@ -45,6 +45,42 @@ describe("PotMapper", () => {
     });
   });
 
+  describe("mapCreateDBPotToOutput", () => {
+    it("returns the created pot id", () => {
+      // Arrange & Act
+      const result = potMapper.mapCreateDBPotToOutput({ id: "pot-1" });
+
+      // Assert
+      expect(result).toEqual({ id: "pot-1" });
+    });
+  });
+
+  describe("mapEditPotInputToDBPot", () => {
+    it("reuses create mapping for edit input", () => {
+      // Arrange
+      const formData = new FormData();
+      formData.set("potName", "Rainy Day");
+      formData.set("target", "80");
+
+      // Act
+      const result = potMapper.mapEditPotInputToDBPot(formData);
+
+      // Assert
+      expect(result?.name).toBe("Rainy Day");
+      expect(result?.target).toBe(80);
+    });
+  });
+
+  describe("mapEditDBPotToOutput", () => {
+    it("returns the edited pot id", () => {
+      // Arrange & Act
+      const result = potMapper.mapEditDBPotToOutput({ id: "pot-2" });
+
+      // Assert
+      expect(result).toEqual({ id: "pot-2" });
+    });
+  });
+
   describe("mapSetPotTotalInputToDBPot", () => {
     it("returns id and total", () => {
       // Arrange & Act

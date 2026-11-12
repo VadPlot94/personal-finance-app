@@ -52,6 +52,32 @@ describe("BudgetMapper", () => {
     });
   });
 
+  describe("mapEditBudgetInputToDBBudget", () => {
+    it("reuses create mapping for edit input", () => {
+      // Arrange
+      const formData = new FormData();
+      formData.set("budgetCategory", TransactionUICategory.Bills);
+      formData.set("maximum", "50");
+
+      // Act
+      const result = budgetMapper.mapEditBudgetInputToDBBudget(formData);
+
+      // Assert
+      expect(result?.category).toBe(TransactionUICategory.Bills);
+      expect(result?.maximum).toBe(50);
+    });
+  });
+
+  describe("mapEditDBBudgetToOutput", () => {
+    it("returns the edited budget id", () => {
+      // Arrange & Act
+      const result = budgetMapper.mapEditDBBudgetToOutput({ id: "b-2" });
+
+      // Assert
+      expect(result).toEqual({ id: "b-2" });
+    });
+  });
+
   describe("mapGetAllBudgetsToOutput", () => {
     it("wraps budgets in an object", () => {
       // Arrange

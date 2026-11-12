@@ -26,7 +26,12 @@ Rules for creating, updating, changing, or deleting unit/component tests: [`.cur
 - Group tests with `describe` by method or behavior.
 - Prefer **one assertion / one condition per test** (one logical outcome per `it`).
 - Use **Arrange → Act → Assert**, and mark each phase with comments (`// Arrange`, `// Act`, `// Assert`). When setup and call are one expression, use `// Arrange & Act`.
-- Never call `private` / `protected` members directly — test only through the public API.
+
+### Public vs private / protected
+
+- Tests target **public** methods (and public behavior), **not** `private` / `protected` members. Never call `private` / `protected` directly (no `(service as any).…`, no widening access just for tests).
+- Still test **thoroughly**: if `private` / `protected` methods exist, they exist to serve cases inside public methods.
+- Cover **all those cases** via the public API so every relevant branch/path inside the `private` / `protected` helpers is actually invoked and asserted (happy path, edges, errors) — not only the thin public happy path.
 
 ```ts
 it("returns 0 when current is NaN", () => {

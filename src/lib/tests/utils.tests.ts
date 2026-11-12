@@ -1,7 +1,122 @@
-import { describe, expect, it } from "vitest";
-import { orEmptyStr, removeUndefinedFields } from "@/lib/utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("sonner", () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
+vi.mock("@/shared/services/translation.service", () => ({
+  default: {
+    translate: vi.fn(
+      (
+        _t: unknown,
+        input: string | Record<string, string> | null | undefined,
+        fallback?: string,
+      ) => {
+        if (input && typeof input === "object") {
+          return input;
+        }
+        return input || fallback || "";
+      },
+    ),
+  },
+}));
+
+import { toast } from "sonner";
+import {
+  cn,
+  handleDialogFormActionResult,
+  orEmptyStr,
+  removeUndefinedFields,
+} from "@/lib/utils";
 
 describe("utils", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("cn", () => {
+    it("merges class names", () => {
+      // Arrange & Act
+      const result = cn("p-2", false && "hidden", "text-sm");
+
+      // Assert
+      expect(result).toContain("p-2");
+      expect(result).toContain("text-sm");
+    });
+  });
+
+  describe("handleDialogFormActionResult", () => {
+    it("does nothing when form state is null", () => {
+      // Arrange
+      const onOpenChange = vi.fn();
+
+      // Act
+      handleDialogFormActionResult(null, false, onOpenChange);
+
+      // Assert
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+
+    it("shows a success toast and closes the dialog", () => {
+      // Arrange
+      const onOpenChange = vi.fn();
+
+      // Act
+      handleDialogFormActionResult(
+        { success: true, message: "i18n.Common.Ok" },
+        false,
+        onOpenChange,
+      );
+
+      // Assert
+      expect(toast.success).toHaveBeenCalled();
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it("sets translated zod errors when present", () => {
+      // Arrange
+      const onOpenChange = vi.fn();
+      const setFormErrors = vi.fn();
+
+      // Act
+      handleDialogFormActionResult(
+        {
+          success: false,
+          zodErrors: { amount: "i18n.Validation.InvalidCash" },
+        },
+        false,
+        onOpenChange,
+        setFormErrors,
+      );
+
+      // Assert
+      expect(setFormErrors).toHaveBeenCalledWith({
+        amount: "i18n.Validation.InvalidCash",
+      });
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+    });
+
+    it("shows an error toast for non-zod failures", () => {
+      // Arrange
+      const onOpenChange = vi.fn();
+
+      // Act
+      handleDialogFormActionResult(
+        { success: false, error: "boom" },
+        false,
+        onOpenChange,
+      );
+
+      // Assert
+      expect(toast.error).toHaveBeenCalled();
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+    });
+  });
+
   describe("orEmptyStr", () => {
     it("returns the value when present", () => {
       // Arrange & Act
