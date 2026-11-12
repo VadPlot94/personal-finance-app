@@ -135,4 +135,59 @@ describe("TransactionService", () => {
       expect(result).toBe("Jan 15, 2024");
     });
   });
+
+  describe("getValidTransactionCategory", () => {
+    it("returns a known category value", () => {
+      // Arrange & Act
+      const result =
+        transactionService.getValidTransactionCategory("Entertainment");
+
+      // Assert
+      expect(result).toBe("Entertainment");
+    });
+
+    it("decodes a URI-encoded category", () => {
+      // Arrange
+      const encoded = encodeURIComponent("Dining Out");
+
+      // Act
+      const result = transactionService.getValidTransactionCategory(encoded);
+
+      // Assert
+      expect(result).toBe("Dining Out");
+    });
+
+    it("returns null for an unknown category", () => {
+      // Arrange & Act
+      const result =
+        transactionService.getValidTransactionCategory("Not A Category");
+
+      // Assert
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("getCategoryLabel", () => {
+    it("translates a known category enum key", () => {
+      // Arrange
+      const t = (key: string) => `translated:${key}`;
+
+      // Act
+      const result = transactionService.getCategoryLabel("Entertainment", t);
+
+      // Assert
+      expect(result).toBe("translated:i18n.Enums.Category.Entertainment");
+    });
+
+    it("returns the raw value when the category is unknown", () => {
+      // Arrange
+      const t = (key: string) => key;
+
+      // Act
+      const result = transactionService.getCategoryLabel("Custom", t);
+
+      // Assert
+      expect(result).toBe("Custom");
+    });
+  });
 });

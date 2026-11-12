@@ -1,7 +1,33 @@
 import { describe, expect, it } from "vitest";
-import { removeUndefinedFields } from "@/lib/utils";
+import { orEmptyStr, removeUndefinedFields } from "@/lib/utils";
 
 describe("utils", () => {
+  describe("orEmptyStr", () => {
+    it("returns the value when present", () => {
+      // Arrange & Act
+      const result = orEmptyStr("hello");
+
+      // Assert
+      expect(result).toBe("hello");
+    });
+
+    it("returns an empty string for null", () => {
+      // Arrange & Act
+      const result = orEmptyStr(null);
+
+      // Assert
+      expect(result).toBe("");
+    });
+
+    it("returns an empty string for undefined", () => {
+      // Arrange & Act
+      const result = orEmptyStr(undefined);
+
+      // Assert
+      expect(result).toBe("");
+    });
+  });
+
   describe("removeUndefinedFields", () => {
     it("drops null keys", () => {
       // Arrange
