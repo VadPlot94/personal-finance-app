@@ -133,8 +133,8 @@ Unit and component tests use **Vitest** + **React Testing Library**.
 
 ### CI coverage (GitHub / GitLab)
 
-- GitHub Actions: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — runs `test:coverage` on PRs and `main`; uploads `coverage/` as an artifact; % is in the job log.
-- GitLab CI: [`.gitlab-ci.yml`](.gitlab-ci.yml) — same on MRs / default branch; Cobertura report + coverage regex so MR shows the %.
+- GitHub Actions: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — runs `test:coverage` on PRs and `main`; uploads `coverage/` as an artifact; on PRs posts a coverage % comment via `vitest-coverage-report-action` (needs a GitHub remote/PR).
+- GitLab CI: [`.gitlab-ci.yml`](.gitlab-ci.yml) — same on MRs / default branch; Cobertura + coverage regex for MR %; JUnit (`coverage/junit.xml`) for Test Reports in the MR.
 - Both use `npm ci --ignore-scripts` + `prisma:generate` so CI does not need a live Postgres (`postinstall` recreate-db is skipped).
 
 Async Server Components are not covered by Vitest. Controllers/DAL integration tests are out of scope for this setup.

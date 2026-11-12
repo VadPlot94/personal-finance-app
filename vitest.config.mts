@@ -8,9 +8,20 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.tests.{ts,tsx}"],
+    reporters: ["default", "junit"],
+    outputFile: {
+      junit: "./coverage/junit.xml",
+    },
     coverage: {
       provider: "v8",
-      reporter: ["text", "html", "lcov", "cobertura"],
+      reporter: [
+        "text",
+        "html",
+        "lcov",
+        "cobertura",
+        "json",
+        "json-summary",
+      ],
       reportsDirectory: "./coverage",
       // Business logic only — pages/UI would drown the MR percentage.
       include: [
