@@ -23,10 +23,12 @@ export default defineConfig({
         "json-summary",
       ],
       reportsDirectory: "./coverage",
-      // Business logic only — pages/UI would drown the MR percentage.
+      // App logic + feature components. App Router pages stay out (drown MR %).
+      // shadcn UI kit is excluded below — not app-owned.
       include: [
         "src/shared/services/**/*.{ts,tsx}",
         "src/front-end/services/**/*.{ts,tsx}",
+        "src/front-end/components/**/*.{ts,tsx}",
         "src/back-end/mappers/**/*.{ts,tsx}",
         "src/back-end/common/**/*.{ts,tsx}",
         "src/back-end/controllers/**/*.{ts,tsx}",
@@ -38,7 +40,6 @@ export default defineConfig({
         "src/**/types.ts",
         "src/**/test-utils/**",
         "src/**/dto-model-types/**",
-        // shadcn / installed UI kit — not app-owned; do not cover or unit-test
         "src/front-end/components/ui/**",
       ],
     },
