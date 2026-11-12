@@ -1,5 +1,4 @@
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/back-end/lib/test-utils/server-only.mock";
 
@@ -40,16 +39,17 @@ describe("CreateTransactionDialog", () => {
       ).toBeDisabled();
     });
 
-    it("updates recipient when the user types", async () => {
+    it("updates recipient when the user types", () => {
       // Arrange
-      const user = userEvent.setup();
       renderWithIntl(
         <CreateTransactionDialog isDialogOpen setDialogOpen={vi.fn()} />,
       );
+      const recipient = screen.getByRole("textbox", {
+        name: /recipient\/sender/i,
+      });
 
       // Act
-      const recipient = screen.getByLabelText(/recipient\/sender/i);
-      await user.type(recipient, "Coffee Shop");
+      fireEvent.change(recipient, { target: { value: "Coffee Shop" } });
 
       // Assert
       expect(recipient).toHaveValue("Coffee Shop");
