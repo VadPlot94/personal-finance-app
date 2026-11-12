@@ -126,7 +126,16 @@ Unit and component tests use **Vitest** + **React Testing Library**.
 - Test files: `tests/<file-under-test>.tests.ts(x)` next to the module (see `.cursor/rules/unit-tests.mdc`)
 - Run watch: `npm run test`
 - Run once: `npm run test:run`
+- Browser UI (debug + live coverage): `npm run test:ui` → opens Vitest UI (usually `http://localhost:51204/__vitest__/`)
+- Coverage once: `npm run test:coverage` → terminal table + `coverage/` (HTML at `coverage/index.html`; open via `npm run test:coverage:open`)
+- Coverage scope (see `vitest.config.mts`): shared/FE services, BE mappers/controllers/DAL/common, `src/lib/utils.ts` — not App Router pages or UI components
 - Instant-nav (production `instant()`): `npm run build:instant-nav` then `npm run test:instant-nav` — see [`instant-nav.rig.md`](instant-nav.rig.md)
+
+### CI coverage (GitHub / GitLab)
+
+- GitHub Actions: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — runs `test:coverage` on PRs and `main`; uploads `coverage/` as an artifact; % is in the job log.
+- GitLab CI: [`.gitlab-ci.yml`](.gitlab-ci.yml) — same on MRs / default branch; Cobertura report + coverage regex so MR shows the %.
+- Both use `npm ci --ignore-scripts` + `prisma:generate` so CI does not need a live Postgres (`postinstall` recreate-db is skipped).
 
 Async Server Components are not covered by Vitest. Controllers/DAL integration tests are out of scope for this setup.
 

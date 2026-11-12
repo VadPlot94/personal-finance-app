@@ -1,0 +1,32 @@
+# Unit tests + coverage % on MRs / default branch.
+# Skip postinstall recreate-db (needs Postgres). Tests only need Prisma Client.
+
+stages:
+  - test
+
+unit-tests:
+  stage: test
+  image: node:20
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  script:
+    - npm ci --ignore-scripts
+    - npm run prisma:generate
+    - npm run test:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths:
+      - coverage/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
