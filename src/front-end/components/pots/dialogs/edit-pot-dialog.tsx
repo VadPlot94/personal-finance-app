@@ -19,6 +19,7 @@ import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -195,11 +196,11 @@ export function EditPotDialog({
         */}
         <form action={formAction}>
           <div className="flex flex-col gap-5">
-            <div className="text-app-color text-xs">
+            <DialogDescription className="text-app-color text-xs">
               {!formPotData?.id
                 ? t("i18n.PotsPage.AddDescription")
                 : t("i18n.PotsPage.EditDescription")}
-            </div>
+            </DialogDescription>
             <div className="flex flex-col gap-2">
               {formPotData?.id && (
                 <input type="hidden" name="id" value={formPotData.id} />
@@ -222,10 +223,19 @@ export function EditPotDialog({
                   onChange={(e) => handlePotNameInputChange(e.target.value)}
                   placeholder={t("i18n.PotsPage.PotNamePlaceholder")}
                   maxLength={constants.MaxPotNameCharacters}
+                  aria-invalid={!!formErrors?.potName}
+                  aria-describedby={
+                    formErrors?.potName ? "edit-pot-name-error" : undefined
+                  }
                 />
                 <div className="flex flex-row justify-between items-center">
                   {formErrors?.potName && (
-                    <p className="text-xs text-red-500">{formErrors.potName}</p>
+                    <p
+                      id="edit-pot-name-error"
+                      className="text-xs text-red-500"
+                    >
+                      {formErrors.potName}
+                    </p>
                   )}
                   <p className="text-app-color text-xs min-w-25">
                     {constants.MaxPotNameCharacters -
@@ -255,9 +265,15 @@ export function EditPotDialog({
                     handleTargetInputChange(e.target.value);
                   }}
                   placeholder={t("i18n.Common.CashPlaceholder")}
+                  aria-invalid={!!formErrors?.target}
+                  aria-describedby={
+                    formErrors?.target ? "edit-pot-target-error" : undefined
+                  }
                 />
                 {formErrors?.target && (
-                  <p className="text-xs text-red-500">{formErrors.target}</p>
+                  <p id="edit-pot-target-error" className="text-xs text-red-500">
+                    {formErrors.target}
+                  </p>
                 )}
               </div>
               <div className="flex flex-col gap-2">
@@ -273,7 +289,14 @@ export function EditPotDialog({
                   value={formPotData?.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
-                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
+                  <SelectTrigger
+                    id="theme"
+                    className="border-gray-300 w-full cursor-pointer"
+                    aria-invalid={!!formErrors?.theme}
+                    aria-describedby={
+                      formErrors?.theme ? "edit-pot-theme-error" : undefined
+                    }
+                  >
                     <SelectValue placeholder={t("i18n.Common.SelectTheme")} />
                   </SelectTrigger>
 
@@ -295,6 +318,15 @@ export function EditPotDialog({
                     ))}
                   </SelectContent>
                 </Select>
+                {formErrors?.theme ? (
+                  <p
+                    id="edit-pot-theme-error"
+                    className="text-xs text-red-500"
+                    role="alert"
+                  >
+                    {formErrors.theme}
+                  </p>
+                ) : null}
               </div>
             </div>
             <div className="flex flex-col gap-2">

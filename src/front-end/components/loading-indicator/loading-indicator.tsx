@@ -23,7 +23,12 @@ export default function LoadingIndicator({
 
   if (fullScreen) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-white/80">
+      <div
+        className="flex min-h-screen w-full items-center justify-center bg-white/80"
+        role="status"
+        aria-live="polite"
+        aria-label={t("i18n.Common.Loading")}
+      >
         <span
           className={`inline-flex items-center justify-center ${className ?? ""}`}
           aria-hidden="true"

@@ -88,6 +88,11 @@ export default function BudgetsItem({
         </div>
         <div
           className="p-1 w-full rounded-sm bg-app-background overflow-hidden h-9 border-2 border-transparent transition-all duration-300"
+          role="progressbar"
+          aria-label={t("i18n.Common.BudgetProgress")}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.min(100, Math.round(percentBarProgress))}
           style={{
             borderColor: isOver
               ? "#dc2626"
@@ -135,7 +140,7 @@ export default function BudgetsItem({
         </div>
         {isOver && (
           <div className="mt-1 text-sm font-medium text-red-600 bg-red-50 px-3 py-2 rounded-md flex items-center gap-2">
-            <span>⚠️</span>
+            <span aria-hidden="true">⚠️</span>
             <span>
               {t("i18n.BudgetsPage.OverBudgetBy", {
                 amount: `$${Math.abs(remaining).toFixed(2)}`,
@@ -146,7 +151,7 @@ export default function BudgetsItem({
 
         {isWarning && !isOver && (
           <div className="mt-1 text-sm font-medium text-amber-700 bg-amber-50 px-3 py-2 rounded-md flex items-center gap-2">
-            <span>⚠️</span>
+            <span aria-hidden="true">⚠️</span>
             <span>
               {t("i18n.BudgetsPage.AlmostUsed", {
                 percent: percentBarProgress.toFixed(0),

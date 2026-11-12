@@ -6,6 +6,7 @@ import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/front-end/components/ui/dialog";
@@ -33,9 +34,9 @@ export function DeleteDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-5">
-          <div className="text-app-color text-xs">
+          <DialogDescription className="text-app-color text-xs">
             {t("i18n.Common.DeleteBody", { name: itemName })}
-          </div>
+          </DialogDescription>
         </div>
         <div className="flex flex-row gap-2 justify-between">
           <Button

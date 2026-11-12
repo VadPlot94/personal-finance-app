@@ -176,11 +176,13 @@ export default function TransactionsTableLayout({
             />
             <button
               type="button"
+              tabIndex={-1}
+              aria-hidden="true"
               className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
             >
               <img
                 src="/assets/images/icon-search.svg"
-                alt={t("i18n.Common.Search")}
+                alt=""
                 className="h-5 w-5"
               />
             </button>
@@ -201,6 +203,7 @@ export default function TransactionsTableLayout({
                 onValueChange={(value: SortBy) => handleSortByChange(value)}
               >
                 <SelectTrigger
+                  aria-label={t("i18n.TransactionsPage.SortBy")}
                   className={cn(
                     "border-gray-300 w-full cursor-pointer",
                     "max-md:hidden",
@@ -217,8 +220,9 @@ export default function TransactionsTableLayout({
                   </div>
                 )}
                 <SelectPrimitive.Trigger
+                  aria-label={t("i18n.TransactionsPage.SortBy")}
                   className={cn(
-                    "border-none w-full size-6 outline-none cursor-pointer",
+                    "border-none w-full size-6 outline-none cursor-pointer focus-visible:ring-[3px] focus-visible:ring-ring/50",
                     "md:hidden",
                   )}
                 >
@@ -226,7 +230,8 @@ export default function TransactionsTableLayout({
                     <img
                       className="size-6"
                       src="assets/images/icon-sort-mobile.svg"
-                      alt={t("i18n.Common.Sort")}
+                      alt=""
+                      aria-hidden="true"
                     />
                   </div>
                 </SelectPrimitive.Trigger>
@@ -255,6 +260,7 @@ export default function TransactionsTableLayout({
                   }
                 >
                   <SelectTrigger
+                    aria-label={t("i18n.TransactionsPage.CategoryPlaceholder")}
                     className={cn(
                       "border-gray-300 w-full min-w-40 cursor-pointer",
                       "max-md:hidden",
@@ -268,15 +274,17 @@ export default function TransactionsTableLayout({
                   </SelectTrigger>
 
                   <SelectPrimitive.Trigger
+                    aria-label={t("i18n.TransactionsPage.CategoryPlaceholder")}
                     className={cn(
-                      "border-none w-full size-6 outline-none cursor-pointer",
+                      "border-none w-full size-6 outline-none cursor-pointer focus-visible:ring-[3px] focus-visible:ring-ring/50",
                       "md:hidden",
                     )}
                   >
                     <img
                       className="size-6"
                       src="assets/images/icon-filter-mobile.svg"
-                      alt={t("i18n.Common.Filter")}
+                      alt=""
+                      aria-hidden="true"
                     />
                   </SelectPrimitive.Trigger>
 
@@ -313,16 +321,19 @@ export default function TransactionsTableLayout({
           </EmptyContentWrapper>
         </div>
       </div>
-      <div className="grid grid-cols-[auto_1fr_auto] items-center w-full gap-10">
+      <div
+        className="grid grid-cols-[auto_1fr_auto] items-center w-full gap-10"
+        role="navigation"
+        aria-label={t("i18n.Common.Pagination")}
+      >
         <div className="justify-self-start">
           <button
             type="button"
             onClick={() => handlePrevButtonClick()}
+            disabled={selectedPageNumber <= 1}
+            aria-label={t("i18n.Common.PreviousPage")}
             className={cn(
-              "flex items-center justify-center cursor-pointer text-app-color border-2 w-10 h-8 rounded-[10px] hover:bg-gray-100 border-gray-300",
-              selectedPageNumber <= 1
-                ? "bg-gray-300 hover:bg-gray-300 cursor-default"
-                : "",
+              "flex items-center justify-center cursor-pointer text-app-color border-2 w-10 h-8 rounded-[10px] hover:bg-gray-100 border-gray-300 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:cursor-default",
             )}
           >
             <img
@@ -343,8 +354,10 @@ export default function TransactionsTableLayout({
                   type="button"
                   key={pageNumber}
                   onClick={() => handlePaginationPageButtonClick(pageNumber)}
+                  aria-label={t("i18n.Common.PageNumber", { page: pageNumber })}
+                  aria-current={isCurrentPage ? "page" : undefined}
                   className={cn(
-                    "flex items-center justify-center cursor-pointer border-2 min-w-7 h-8 rounded-[8px] text-app-color transition-colors shrink-0",
+                    "flex items-center justify-center cursor-pointer border-2 min-w-7 h-8 rounded-[8px] text-app-color transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
                     isCurrentPage
                       ? "bg-black text-white border-transparent"
                       : "hover:bg-gray-100 border-gray-300",
@@ -363,11 +376,10 @@ export default function TransactionsTableLayout({
           <button
             type="button"
             onClick={() => handleNextButtonClick(totalPages)}
+            disabled={selectedPageNumber >= totalPages}
+            aria-label={t("i18n.Common.NextPage")}
             className={cn(
-              "flex items-center justify-center cursor-pointer text-app-color border-2 w-10 h-8 rounded-[10px] hover:bg-gray-100 border-gray-300",
-              selectedPageNumber >= totalPages
-                ? "bg-gray-300 hover:bg-gray-300 cursor-default"
-                : "",
+              "flex items-center justify-center cursor-pointer text-app-color border-2 w-10 h-8 rounded-[10px] hover:bg-gray-100 border-gray-300 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:cursor-default",
             )}
           >
             <img

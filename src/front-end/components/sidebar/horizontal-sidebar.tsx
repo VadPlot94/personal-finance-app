@@ -76,13 +76,18 @@ export default function HorizontalSidebar() {
   return (
     <div className="flex flex-col justify-end bg-black rounded-tl-lg rounded-tr-lg shadow-sm min-w-full">
       <div className="text-app-color h-full pt-2 px-3">
-        <nav className="flex flex-row gap-1">
+        <nav
+          className="flex flex-row gap-1"
+          aria-label={t("i18n.Navigation.Finance")}
+        >
           {sideBarItems.map((sideBarItem) => {
+            const isActive = activePath === sideBarItem.href;
             const itemClassName = cn(
               `flex flex-col justify-center items-center gap-3
                   p-3 rounded-tl-md rounded-tr-md transition cursor-pointer min-w-5 w-full
+                  focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50
                   ${
-                    activePath === sideBarItem.href
+                    isActive
                       ? "bg-white text-black border-b-4 border-b-green-500"
                       : "hover:bg-gray-800"
                   }
@@ -94,7 +99,8 @@ export default function HorizontalSidebar() {
               <>
                 <img
                   src={sideBarItem.iconUrl}
-                  alt={sideBarItem.title}
+                  alt=""
+                  aria-hidden="true"
                   title={sideBarItem.title}
                   className={cn(
                     "h-5 w-5",
@@ -122,6 +128,13 @@ export default function HorizontalSidebar() {
                 href={sideBarItem.href}
                 prefetch={sideBarItem.isPrefetch}
                 className={itemClassName}
+                aria-label={sideBarItem.title}
+                aria-current={
+                  !sideBarItem.isAccount && !sideBarItem.isSignOut && isActive
+                    ? "page"
+                    : undefined
+                }
+                tabIndex={sideBarItem.isAccount ? -1 : undefined}
                 onClick={(event) => {
                   if (!sideBarItem.isSignOut) {
                     return;

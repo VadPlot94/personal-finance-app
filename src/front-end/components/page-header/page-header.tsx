@@ -19,7 +19,7 @@ export default function PageHeader({
           <button
             type="button"
             onClick={() => handleButtonClick?.()}
-            className="bg-black rounded-lg text-white text-sm p-2 cursor-pointer whitespace-nowrap"
+            className="bg-black rounded-lg text-white text-sm p-2 cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             {buttonName}
           </button>

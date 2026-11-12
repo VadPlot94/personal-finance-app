@@ -252,11 +252,19 @@ export default function LoginForm({
       <ItemCard className="w-full max-w-md">
         <EmptyContentWrapper isLoading={showLoading} hasItems={!showLoading}>
           {/* Tab Toggle */}
-          <div className="flex gap-4 border-b border-slate-200">
+          <div
+            className="flex gap-4 border-b border-slate-200"
+            role="tablist"
+            aria-label={t("i18n.Meta.Title")}
+          >
             <button
               onClick={() => handleAuthFormToggleClick(AuthMode.SignIn)}
               type="button"
-              className={`pb-3 font-bold text-3xl transition-colors cursor-pointer ${
+              role="tab"
+              aria-selected={authFormMode === AuthMode.SignIn}
+              aria-controls="signin-panel"
+              id="signin-tab"
+              className={`pb-3 font-bold text-3xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
                 authFormMode === AuthMode.SignIn
                   ? "border-b-2 border-black text-black"
                   : "text-slate-500 hover:text-slate-700"
@@ -268,7 +276,11 @@ export default function LoginForm({
             <button
               onClick={() => handleAuthFormToggleClick(AuthMode.Register)}
               type="button"
-              className={`pb-3 font-bold text-3xl transition-colors cursor-pointer ${
+              role="tab"
+              aria-selected={authFormMode === AuthMode.Register}
+              aria-controls="register-panel"
+              id="register-tab"
+              className={`pb-3 font-bold text-3xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
                 authFormMode === AuthMode.Register
                   ? "border-b-2 border-black text-black"
                   : "text-slate-500 hover:text-slate-700"
@@ -280,7 +292,12 @@ export default function LoginForm({
 
           {/* Sign In Form */}
           {authFormMode === AuthMode.SignIn && (
-            <form onSubmit={handleSignIn}>
+            <form
+              onSubmit={handleSignIn}
+              id="signin-panel"
+              role="tabpanel"
+              aria-labelledby="signin-tab"
+            >
               <div className="flex flex-col gap-5">
                 <div className="text-app-color text-xs">
                   {t("i18n.LoginPage.SignInIntro")}
@@ -300,6 +317,10 @@ export default function LoginForm({
                     spellCheck={false}
                     className="border-gray-300"
                     value={orEmptyStr(formSignInData?.email)}
+                    aria-invalid={Boolean(signInErrors?.email)}
+                    aria-describedby={
+                      signInErrors?.email ? "signin-email-error" : undefined
+                    }
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormSignInStateData(
                         getSignInFormData({
@@ -310,7 +331,15 @@ export default function LoginForm({
                     }
                     placeholder={t("i18n.LoginPage.PlaceholderEmailSignIn")}
                   />
-                  <p className="text-xs text-red-500">{signInErrors?.email}</p>
+                  {signInErrors?.email ? (
+                    <p
+                      id="signin-email-error"
+                      className="text-xs text-red-500"
+                      role="alert"
+                    >
+                      {signInErrors.email}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label
@@ -326,6 +355,12 @@ export default function LoginForm({
                     autoCorrect="off"
                     className="border-gray-300"
                     value={orEmptyStr(formSignInData?.password)}
+                    aria-invalid={Boolean(signInErrors?.password)}
+                    aria-describedby={
+                      signInErrors?.password
+                        ? "signin-password-error"
+                        : undefined
+                    }
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormSignInStateData(
                         getSignInFormData({
@@ -336,9 +371,15 @@ export default function LoginForm({
                     }
                     placeholder={t("i18n.LoginPage.PlaceholderPassword")}
                   />
-                  <p className="text-xs text-red-500">
-                    {signInErrors?.password}
-                  </p>
+                  {signInErrors?.password ? (
+                    <p
+                      id="signin-password-error"
+                      className="text-xs text-red-500"
+                      role="alert"
+                    >
+                      {signInErrors.password}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Button
@@ -378,7 +419,12 @@ export default function LoginForm({
 
           {/* Register Form */}
           {authFormMode === AuthMode.Register && (
-            <form onSubmit={handleRegisterSubmit}>
+            <form
+              onSubmit={handleRegisterSubmit}
+              id="register-panel"
+              role="tabpanel"
+              aria-labelledby="register-tab"
+            >
               <div className="flex flex-col gap-5">
                 <div className="text-app-color text-xs">
                   {t("i18n.LoginPage.RegisterIntro")}
@@ -395,6 +441,10 @@ export default function LoginForm({
                     type="text"
                     className="border-gray-300"
                     value={orEmptyStr(formRegisterData?.name)}
+                    aria-invalid={Boolean(registerErrors?.name)}
+                    aria-describedby={
+                      registerErrors?.name ? "register-name-error" : undefined
+                    }
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormRegisterStateData(
                         getRegisterFormData({
@@ -405,7 +455,15 @@ export default function LoginForm({
                     }
                     placeholder={t("i18n.LoginPage.PlaceholderName")}
                   />
-                  <p className="text-xs text-red-500">{registerErrors?.name}</p>
+                  {registerErrors?.name ? (
+                    <p
+                      id="register-name-error"
+                      className="text-xs text-red-500"
+                      role="alert"
+                    >
+                      {registerErrors.name}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label
@@ -422,6 +480,10 @@ export default function LoginForm({
                     spellCheck={false}
                     className="border-gray-300"
                     value={orEmptyStr(formRegisterData?.email)}
+                    aria-invalid={Boolean(registerErrors?.email)}
+                    aria-describedby={
+                      registerErrors?.email ? "register-email-error" : undefined
+                    }
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormRegisterStateData(
                         getRegisterFormData({
@@ -432,9 +494,15 @@ export default function LoginForm({
                     }
                     placeholder={t("i18n.LoginPage.PlaceholderEmailRegister")}
                   />
-                  <p className="text-xs text-red-500">
-                    {registerErrors?.email}
-                  </p>
+                  {registerErrors?.email ? (
+                    <p
+                      id="register-email-error"
+                      className="text-xs text-red-500"
+                      role="alert"
+                    >
+                      {registerErrors.email}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label
@@ -448,6 +516,12 @@ export default function LoginForm({
                     type="password"
                     className="border-gray-300"
                     value={orEmptyStr(formRegisterData?.password)}
+                    aria-invalid={Boolean(registerErrors?.password)}
+                    aria-describedby={
+                      registerErrors?.password
+                        ? "register-password-error"
+                        : undefined
+                    }
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormRegisterStateData(
                         getRegisterFormData({
@@ -460,9 +534,15 @@ export default function LoginForm({
                       "i18n.LoginPage.PlaceholderPasswordRegister",
                     )}
                   />
-                  <p className="text-xs text-red-500">
-                    {registerErrors?.password}
-                  </p>
+                  {registerErrors?.password ? (
+                    <p
+                      id="register-password-error"
+                      className="text-xs text-red-500"
+                      role="alert"
+                    >
+                      {registerErrors.password}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Button

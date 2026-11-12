@@ -48,7 +48,13 @@
       "DataUpdateSuccess": "Data updated successfully",
       "DataDeleteSuccess": "Data deleted successfully",
       "DataGetSuccess": "Data loaded successfully",
-      "ValidationError": "Validation error"
+      "ValidationError": "Validation error",
+      "PreviousPage": "Previous page",
+      "NextPage": "Next page",
+      "Pagination": "Pagination",
+      "PageNumber": "Page {page}",
+      "BudgetProgress": "Budget progress",
+      "PotProgress": "Pot progress"
     },
     "Errors": {
       "Title": "Something went wrong",

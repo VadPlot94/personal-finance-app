@@ -14,9 +14,11 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
   const locale = useLocale();
   const [isAddMoneyDialogOpen, setAddMoneyDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
-  const targetPotProgress = financeService.getStrPercentage(
-    financeService.calculateProgressPercentage(pot.total, pot.target),
+  const progressPercent = financeService.calculateProgressPercentage(
+    pot.total,
+    pot.target,
   );
+  const targetPotProgress = financeService.getStrPercentage(progressPercent);
 
   return (
     <>
@@ -52,7 +54,14 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
                 })}
               </div>
             </div>
-            <div className="w-full rounded-sm bg-app-background overflow-hidden h-2">
+            <div
+              className="w-full rounded-sm bg-app-background overflow-hidden h-2"
+              role="progressbar"
+              aria-label={t("i18n.Common.PotProgress")}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(progressPercent)}
+            >
               <div
                 className="rounded-sm h-full transition-[width] duration-500 ease-in-out bg-green-500 w-0"
                 style={{ backgroundColor: pot.theme, width: targetPotProgress }}
@@ -71,14 +80,14 @@ export default function PotsItem({ pot, availableBalance }: IPotsItemProps) {
             <button
               type="button"
               onClick={() => setAddMoneyDialogOpen(true)}
-              className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold h-10 cursor-pointer border-2 border-transparent hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
+              className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold h-10 cursor-pointer border-2 border-transparent hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               {t("i18n.PotsPage.AddMoney")}
             </button>
             <button
               type="button"
               onClick={() => setWithdrawDialogOpen(true)}
-              className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold cursor-pointer hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)]"
+              className="bg-app-background rounded-lg text-black text-sm p-2 w-full font-bold cursor-pointer hover:shadow-[0_0_10px_1px_rgba(0,0,0,0.3)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               {t("i18n.PotsPage.Withdraw")}
             </button>

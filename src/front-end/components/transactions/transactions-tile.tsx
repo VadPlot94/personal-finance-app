@@ -48,7 +48,14 @@ export default function TransactionsTile({
       >
         <div className="flex flex-row justify-between h-full gap-5">
           <div className="h-full flex-1 min-w-0">
-            <table className="min-w-full divide-y divide-gray-200 cursor-default">
+            <table
+              className="min-w-full divide-y divide-gray-200 cursor-default"
+              aria-label={
+                isBudgetTile
+                  ? t("i18n.TransactionsPage.LatestSpending")
+                  : t("i18n.TransactionsPage.Title")
+              }
+            >
               <tbody
                 className={`divide-y ${isBudgetTile ? "divide-y-2 divide-dotted divide-gray-500" : "divide-gray-200"}`}
               >

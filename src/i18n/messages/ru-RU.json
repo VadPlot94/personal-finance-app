@@ -48,7 +48,13 @@
       "DataUpdateSuccess": "Данные успешно обновлены",
       "DataDeleteSuccess": "Данные успешно удалены",
       "DataGetSuccess": "Данные успешно загружены",
-      "ValidationError": "Ошибка валидации"
+      "ValidationError": "Ошибка валидации",
+      "PreviousPage": "Предыдущая страница",
+      "NextPage": "Следующая страница",
+      "Pagination": "Пагинация",
+      "PageNumber": "Страница {page}",
+      "BudgetProgress": "Прогресс бюджета",
+      "PotProgress": "Прогресс копилки"
     },
     "Errors": {
       "Title": "Что-то пошло не так",

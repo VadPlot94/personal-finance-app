@@ -9,6 +9,7 @@ import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -139,6 +140,16 @@ export function ChangeMoneyDialog({
     pot.target,
   );
 
+  const displayedProgress = validationError
+    ? Number.NaN
+    : isWithdraw
+      ? initialPotTotalProgress - amountProgress
+      : initialPotTotalProgress + amountProgress;
+
+  const progressValue = Number.isNaN(displayedProgress)
+    ? initialPotTotalProgress
+    : displayedProgress;
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
@@ -153,11 +164,11 @@ export function ChangeMoneyDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-5">
-          <div className="text-app-color text-xs">
+          <DialogDescription className="text-app-color text-xs">
             {isWithdraw
               ? t("i18n.PotsPage.WithdrawDescription")
               : t("i18n.PotsPage.AddDescriptionMoney")}
-          </div>
+          </DialogDescription>
           <div className="flex flex-col gap-3">
             <div className="flex flex-row justify-between items-center w-full">
               <div className="text-app-color text-xs">
@@ -165,7 +176,14 @@ export function ChangeMoneyDialog({
               </div>
               <div className="font-bold text-2xl">{resultTotal} $</div>
             </div>
-            <div className="flex w-full rounded-sm bg-app-background overflow-hidden h-2 gap-0.5 items-center">
+            <div
+              className="flex w-full rounded-sm bg-app-background overflow-hidden h-2 gap-0.5 items-center"
+              role="progressbar"
+              aria-valuenow={progressValue}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={t("i18n.PotsPage.NewAmount")}
+            >
               <div
                 className="rounded-sm rounded-r-none h-full transition-[width] duration-500 ease-in-out w-0"
                 style={{
@@ -187,13 +205,7 @@ export function ChangeMoneyDialog({
             </div>
             <div className="flex flex-row justify-between items-center w-full">
               <div className="font-bold text-xs">
-                {financeService.getStrPercentage(
-                  validationError
-                    ? NaN
-                    : isWithdraw
-                      ? initialPotTotalProgress - amountProgress
-                      : initialPotTotalProgress + amountProgress,
-                )}
+                {financeService.getStrPercentage(displayedProgress)}
               </div>
               <div className="text-app-color text-xs font-semibold">
                 {t("i18n.PotsPage.TargetOf", {
@@ -220,8 +232,16 @@ export function ChangeMoneyDialog({
                 handleTotalInputChange(e.target.value);
               }}
               placeholder={t("i18n.Common.CashPlaceholder")}
+              aria-invalid={!!validationError}
+              aria-describedby={
+                validationError ? "change-money-total-error" : undefined
+              }
             />
-            <p className="text-xs text-red-500">{validationError}</p>
+            {validationError && (
+              <p id="change-money-total-error" className="text-xs text-red-500">
+                {validationError}
+              </p>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <Button

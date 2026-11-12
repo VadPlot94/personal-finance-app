@@ -20,6 +20,7 @@ import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -195,11 +196,11 @@ export function EditBudgetDialog({
         </DialogHeader>
         <form action={formAction}>
           <div className="flex flex-col gap-5">
-            <div className="text-app-color text-xs">
+            <DialogDescription className="text-app-color text-xs">
               {!formBudgetData?.id
                 ? t("i18n.BudgetsPage.AddDescription")
                 : t("i18n.BudgetsPage.EditDescription")}
-            </div>
+            </DialogDescription>
             <div className="flex flex-col gap-2">
               {formBudgetData?.id && (
                 <input type="hidden" name="id" value={formBudgetData.id} />
@@ -224,7 +225,16 @@ export function EditBudgetDialog({
                     )
                   }
                 >
-                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
+                  <SelectTrigger
+                    id="budgetCategory"
+                    className="border-gray-300 w-full cursor-pointer"
+                    aria-invalid={!!formErrors?.budgetCategory}
+                    aria-describedby={
+                      formErrors?.budgetCategory
+                        ? "edit-budget-category-error"
+                        : undefined
+                    }
+                  >
                     <SelectValue
                       placeholder={t("i18n.BudgetsPage.SelectCategory")}
                     />
@@ -252,7 +262,11 @@ export function EditBudgetDialog({
                   </SelectContent>
                 </Select>
                 {formErrors?.budgetCategory && (
-                  <p className="text-xs text-red-500">
+                  <p
+                    id="edit-budget-category-error"
+                    className="text-xs text-red-500"
+                    role="alert"
+                  >
                     {formErrors.budgetCategory}
                   </p>
                 )}
@@ -278,9 +292,20 @@ export function EditBudgetDialog({
                     handleMaximumInputChange(e.target.value);
                   }}
                   placeholder={t("i18n.Common.CashPlaceholder")}
+                  aria-invalid={!!formErrors?.maximum}
+                  aria-describedby={
+                    formErrors?.maximum
+                      ? "edit-budget-maximum-error"
+                      : undefined
+                  }
                 />
                 {formErrors?.maximum && (
-                  <p className="text-xs text-red-500">{formErrors.maximum}</p>
+                  <p
+                    id="edit-budget-maximum-error"
+                    className="text-xs text-red-500"
+                  >
+                    {formErrors.maximum}
+                  </p>
                 )}
               </div>
               <div className="flex flex-col gap-2">
@@ -296,7 +321,14 @@ export function EditBudgetDialog({
                   value={formBudgetData?.theme}
                   onValueChange={(value) => handleThemeInputChange(value)}
                 >
-                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
+                  <SelectTrigger
+                    id="theme"
+                    className="border-gray-300 w-full cursor-pointer"
+                    aria-invalid={!!formErrors?.theme}
+                    aria-describedby={
+                      formErrors?.theme ? "edit-budget-theme-error" : undefined
+                    }
+                  >
                     <SelectValue placeholder={t("i18n.Common.SelectTheme")} />
                   </SelectTrigger>
 
@@ -320,7 +352,13 @@ export function EditBudgetDialog({
                   </SelectContent>
                 </Select>
                 {formErrors?.theme && (
-                  <p className="text-xs text-red-500">{formErrors.theme}</p>
+                  <p
+                    id="edit-budget-theme-error"
+                    className="text-xs text-red-500"
+                    role="alert"
+                  >
+                    {formErrors.theme}
+                  </p>
                 )}
               </div>
             </div>

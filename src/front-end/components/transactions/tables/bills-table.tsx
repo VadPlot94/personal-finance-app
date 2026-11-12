@@ -50,7 +50,10 @@ export default function BillsTable({
   );
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 cursor-default font-size">
+    <table
+      className="min-w-full divide-y divide-gray-200 cursor-default font-size"
+      aria-label={t("i18n.RecurringPage.Title")}
+    >
       <thead>
         <tr>
           <th
@@ -71,7 +74,11 @@ export default function BillsTable({
           <th scope="col" className="text-xs text-app-color text-right">
             {t("i18n.TransactionsPage.Amount")}
           </th>
-          <th className="py-3 px-3 text-right text-xs text-app-color tracking-wider"></th>
+          <th
+            scope="col"
+            className="py-3 px-3 text-right text-xs text-app-color tracking-wider"
+            aria-label={t("i18n.Common.Actions")}
+          />
         </tr>
       </thead>
 

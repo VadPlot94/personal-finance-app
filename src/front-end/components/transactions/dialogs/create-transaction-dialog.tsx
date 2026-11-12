@@ -12,6 +12,7 @@ import { Button } from "@/front-end/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/front-end/components/ui/dialog";
@@ -191,9 +192,9 @@ export function CreateTransactionDialog({
         </DialogHeader>
         <form action={formAction}>
           <div className="flex flex-col gap-5">
-            <div className="text-app-color text-xs">
+            <DialogDescription className="text-app-color text-xs">
               {t("i18n.TransactionsPage.CreateDescription")}
-            </div>
+            </DialogDescription>
             <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
                 <Label
@@ -210,7 +211,10 @@ export function CreateTransactionDialog({
                     handleTransactionTypeChange(value as TransactionType)
                   }
                 >
-                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
+                  <SelectTrigger
+                    id="transactionType"
+                    className="border-gray-300 w-full cursor-pointer"
+                  >
                     <SelectValue
                       placeholder={t("i18n.TransactionsPage.SelectType")}
                     />
@@ -247,7 +251,10 @@ export function CreateTransactionDialog({
                     )
                   }
                 >
-                  <SelectTrigger className="border-gray-300 w-full cursor-pointer">
+                  <SelectTrigger
+                    id="category"
+                    className="border-gray-300 w-full cursor-pointer"
+                  >
                     <SelectValue
                       placeholder={t("i18n.TransactionsPage.SelectCategory")}
                     />
@@ -316,9 +323,20 @@ export function CreateTransactionDialog({
                     handleAmountInputChange(e.target.value);
                   }}
                   placeholder={t("i18n.Common.CashPlaceholder")}
+                  aria-invalid={!!formErrors?.amount}
+                  aria-describedby={
+                    formErrors?.amount
+                      ? "create-transaction-amount-error"
+                      : undefined
+                  }
                 />
                 {formErrors?.amount && (
-                  <p className="text-xs text-red-500">{formErrors.amount}</p>
+                  <p
+                    id="create-transaction-amount-error"
+                    className="text-xs text-red-500"
+                  >
+                    {formErrors.amount}
+                  </p>
                 )}
               </div>
 
@@ -342,9 +360,20 @@ export function CreateTransactionDialog({
                   }
                   onChange={(e) => handleDateInputChange(e.target.value)}
                   placeholder={t("i18n.TransactionsPage.ChooseDate")}
+                  aria-invalid={!!formErrors?.date}
+                  aria-describedby={
+                    formErrors?.date
+                      ? "create-transaction-date-error"
+                      : undefined
+                  }
                 />
                 {formErrors?.date && (
-                  <p className="text-xs text-red-500">{formErrors?.date}</p>
+                  <p
+                    id="create-transaction-date-error"
+                    className="text-xs text-red-500"
+                  >
+                    {formErrors.date}
+                  </p>
                 )}
               </div>
             </div>

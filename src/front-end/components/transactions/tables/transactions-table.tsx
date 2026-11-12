@@ -12,7 +12,10 @@ export default function TransactionsTable({
   const locale = useLocale();
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 cursor-default font-size">
+    <table
+      className="min-w-full divide-y divide-gray-200 cursor-default font-size"
+      aria-label={t("i18n.TransactionsPage.Title")}
+    >
       <thead>
         <tr>
           <th

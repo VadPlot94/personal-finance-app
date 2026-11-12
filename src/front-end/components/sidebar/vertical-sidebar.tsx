@@ -75,8 +75,9 @@ export default function VerticalSidebar() {
                   isMenuOpened ? "opacity-100" : "opacity-0 h-0",
                 )}
                 src="assets/images/logo-large.svg"
-                alt={financeLabel}
+                alt={isMenuOpened ? financeLabel : ""}
                 title={financeLabel}
+                aria-hidden={!isMenuOpened}
               />
               <img
                 className={cn(
@@ -85,8 +86,9 @@ export default function VerticalSidebar() {
                   isMenuOpened ? "opacity-0 h-0" : "opacity-100",
                 )}
                 src="assets/images/logo-small.svg"
-                alt={financeLabel}
+                alt={isMenuOpened ? "" : financeLabel}
                 title={financeLabel}
+                aria-hidden={isMenuOpened}
               />
               <div
                 className={cn(
@@ -130,8 +132,10 @@ export default function VerticalSidebar() {
                     href={item.href}
                     prefetch={item.isPrefetch}
                     title={label}
+                    aria-label={isMenuOpened ? undefined : label}
+                    aria-current={activePath === item.href ? "page" : undefined}
                     className={`flex flex-col justify-center items-center
-                  p-3 rounded-tr-md rounded-br-md cursor-pointer w-full
+                  p-3 rounded-tr-md rounded-br-md cursor-pointer w-full focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50
                   ${
                     activePath === item.href
                       ? "bg-white text-black"
@@ -148,7 +152,12 @@ export default function VerticalSidebar() {
                         menuItemWidth,
                       )}
                     >
-                      <img src={item.iconUrl} alt={label} className="h-5 w-5" />
+                      <img
+                        src={item.iconUrl}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-5 w-5"
+                      />
                       <span
                         className={cn(
                           transition,
@@ -157,6 +166,7 @@ export default function VerticalSidebar() {
                             ? "opacity-100 translate-x-0 w-30"
                             : "opacity-0 -translate-x-20 max-w-0",
                         )}
+                        aria-hidden={!isMenuOpened}
                       >
                         {label}
                       </span>
@@ -169,9 +179,11 @@ export default function VerticalSidebar() {
         </div>
         <button
           type="button"
-          className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
+          className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           onClick={() => toggleMenu(!isMenuOpened)}
           title={menuToggleLabel}
+          aria-label={menuToggleLabel}
+          aria-expanded={isMenuOpened}
         >
           <div
             className={cn(
@@ -211,11 +223,12 @@ export default function VerticalSidebar() {
         </button>
         <button
           type="button"
-          className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md"
+          className="flex flex-col items-center h-10 justify-center cursor-pointer w-full hover:bg-gray-800 rounded-tr-md rounded-br-md focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           onClick={() => {
             void authService.signOut();
           }}
           title={signOutLabel}
+          aria-label={signOutLabel}
         >
           <div
             className={cn(

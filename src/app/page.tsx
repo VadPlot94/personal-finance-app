@@ -12,7 +12,10 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-50 to-white">
       {/* Navigation */}
-      <nav className="border-b border-slate-200 bg-white">
+      <nav
+        className="border-b border-slate-200 bg-white"
+        aria-label={t("i18n.LandingPage.Brand")}
+      >
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-black">

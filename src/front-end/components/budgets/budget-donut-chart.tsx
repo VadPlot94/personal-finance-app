@@ -130,6 +130,7 @@ export default function BudgetDonutChart({
       >
         <div
           className="col-start-1 row-start-1 w-full h-full"
+          aria-hidden="true"
           style={{ background: gradient }}
         />
 
@@ -169,6 +170,7 @@ export default function BudgetDonutChart({
                 <div
                   className="w-3.5 h-3.5 rounded-full shrink-0"
                   style={{ backgroundColor: b.theme }}
+                  aria-hidden="true"
                 />
                 <span className="font-semibold text-gray-800">
                   {categoryLabel}

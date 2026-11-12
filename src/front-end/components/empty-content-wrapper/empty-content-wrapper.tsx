@@ -13,11 +13,11 @@ export default function EmptyContentWrapper({
 }: IEmptyContentWrapperProps) {
   const t = useTranslations();
   const wrapperClassName =
-    "flex flex-col w-full min-h-25 flex-1 justify-center items-center text-app-color text-center gap-3";
+    "flex flex-col w-full min-h-25 h-full justify-center items-center text-app-color text-center gap-3";
 
   if (isLoading) {
     return (
-      <div className={wrapperClassName}>
+      <div className={wrapperClassName} role="status" aria-live="polite">
         <LoadingIndicator fullScreen={false} className="h-8 w-8" />
         <p className="font-semibold">{t("i18n.Common.Loading")}</p>
       </div>

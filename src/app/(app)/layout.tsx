@@ -27,10 +27,10 @@ export default async function AppLayout({
       </div>
       <div
         className={cn(
-          "@container/mainLayout flex min-h-0 h-full flex-col gap-4 overflow-x-hidden overflow-y-auto px-6 pt-4",
-          "md:pb-4",
-          "max-md:pb-20",
-          "sm:max-md:pb-28",
+          "@container/mainLayout flex flex-col gap-4 mx-6 my-4",
+          "md:pb-0",
+          "max-md:pb-12",
+          "sm:pb-22",
         )}
       >
         {children}
