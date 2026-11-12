@@ -95,6 +95,7 @@ function validateForm(
 export function CreateTransactionDialog({
   isDialogOpen,
   setDialogOpen,
+  isRecurringBill = false,
 }: ICreateTransactionDialogProps) {
   const t = useTranslations();
   const [formResultState, formAction, isPending] = useActionState(
@@ -103,7 +104,13 @@ export function CreateTransactionDialog({
   );
 
   const [formTransactionData, setFormData] =
-    useState<ICreateTransactionFormData | null>(null);
+    useState<ICreateTransactionFormData | null>(() =>
+      isRecurringBill
+        ? setFormTransactionData({
+            transactionType: TransactionType.Expense,
+          })
+        : null,
+    );
 
   const [formErrors, setFormErrors] = useState<Partial<
     Record<keyof ICreateTransactionValidationData, string>
@@ -111,7 +118,13 @@ export function CreateTransactionDialog({
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      setFormData(setFormTransactionData());
+      setFormData(
+        isRecurringBill
+          ? setFormTransactionData({
+              transactionType: TransactionType.Expense,
+            })
+          : setFormTransactionData(),
+      );
       setFormErrors(null);
     }
     setDialogOpen(isOpen);
@@ -187,52 +200,70 @@ export function CreateTransactionDialog({
       <DialogContent className="sm:max-w-120">
         <DialogHeader>
           <DialogTitle className="font-bold text-3xl">
-            {t("i18n.TransactionsPage.CreateTitle")}
+            {isRecurringBill
+              ? t("i18n.RecurringPage.AddRecurringBill")
+              : t("i18n.TransactionsPage.CreateTitle")}
           </DialogTitle>
         </DialogHeader>
         <form action={formAction}>
           <div className="flex flex-col gap-5">
             <DialogDescription className="text-app-color text-xs">
-              {t("i18n.TransactionsPage.CreateDescription")}
+              {isRecurringBill
+                ? t("i18n.RecurringPage.CreateRecurringDescription")
+                : t("i18n.TransactionsPage.CreateDescription")}
             </DialogDescription>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="transactionType"
-                  className="text-app-color text-xs font-bold"
-                >
-                  {t("i18n.TransactionsPage.Type")}
-                </Label>
-
-                <Select
+            {isRecurringBill && (
+              <>
+                <input type="hidden" name="recurring" value="true" />
+                <input
+                  type="hidden"
                   name="transactionType"
-                  value={formTransactionData?.transactionType}
-                  onValueChange={(value) =>
-                    handleTransactionTypeChange(value as TransactionType)
-                  }
-                >
-                  <SelectTrigger
-                    id="transactionType"
-                    className="border-gray-300 w-full cursor-pointer"
+                  value={TransactionType.Expense}
+                />
+              </>
+            )}
+            <div className="flex flex-col gap-2">
+              {!isRecurringBill && (
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="transactionType"
+                    className="text-app-color text-xs font-bold"
                   >
-                    <SelectValue
-                      placeholder={t("i18n.TransactionsPage.SelectType")}
-                    />
-                  </SelectTrigger>
+                    {t("i18n.TransactionsPage.Type")}
+                  </Label>
 
-                  <SelectContent>
-                    {Object.entries(TransactionType).map(([name, value]) => (
-                      <SelectItem
-                        key={name}
-                        value={value}
-                        className="cursor-pointer"
-                      >
-                        <span>{t(`i18n.Enums.TransactionType.${name}`)}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                  <Select
+                    name="transactionType"
+                    value={formTransactionData?.transactionType}
+                    onValueChange={(value) =>
+                      handleTransactionTypeChange(value as TransactionType)
+                    }
+                  >
+                    <SelectTrigger
+                      id="transactionType"
+                      className="border-gray-300 w-full cursor-pointer"
+                    >
+                      <SelectValue
+                        placeholder={t("i18n.TransactionsPage.SelectType")}
+                      />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {Object.entries(TransactionType).map(([name, value]) => (
+                        <SelectItem
+                          key={name}
+                          value={value}
+                          className="cursor-pointer"
+                        >
+                          <span>
+                            {t(`i18n.Enums.TransactionType.${name}`)}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 <Label

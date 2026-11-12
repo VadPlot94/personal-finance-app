@@ -21,9 +21,7 @@ export default async function OverviewLayout({
   return (
     <>
       <div className="h-15 flex items-center justify-between gap-4 font-bold text-3xl">
-        <span className="min-w-0 truncate">
-          {t("i18n.OverviewPage.Title")}
-        </span>
+        <span className="min-w-0 truncate">{t("i18n.OverviewPage.Title")}</span>
         <div className="flex shrink-0 flex-row items-center gap-3">
           <LocaleSwitcher />
           <TestAppErrorButton />

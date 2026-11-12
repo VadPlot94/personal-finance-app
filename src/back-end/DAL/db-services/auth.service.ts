@@ -94,7 +94,10 @@ class AuthService {
     password: string | undefined,
   ): boolean {
     const { email: adminEmail, password: adminPassword } = authEnv;
-    return email?.trim().toLowerCase() === adminEmail?.trim().toLowerCase() && password === adminPassword;
+    return (
+      email?.trim().toLowerCase() === adminEmail?.trim().toLowerCase() &&
+      password === adminPassword
+    );
   }
 
   private async authorizeUser(validCredentials: {

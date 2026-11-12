@@ -321,9 +321,8 @@ export default function TransactionsTableLayout({
           </EmptyContentWrapper>
         </div>
       </div>
-      <div
+      <nav
         className="grid grid-cols-[auto_1fr_auto] items-center w-full gap-10"
-        role="navigation"
         aria-label={t("i18n.Common.Pagination")}
       >
         <div className="justify-self-start">
@@ -390,7 +389,7 @@ export default function TransactionsTableLayout({
             />
           </button>
         </div>
-      </div>
+      </nav>
     </>
   );
 }

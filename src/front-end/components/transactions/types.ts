@@ -32,6 +32,7 @@ export interface ITransactionsTableLayoutProps
 export interface ICreateTransactionDialogProps {
   isDialogOpen: boolean;
   setDialogOpen: (isDialogOpen: boolean) => void;
+  isRecurringBill?: boolean;
 }
 
 export type TransactionCategory = Exclude<

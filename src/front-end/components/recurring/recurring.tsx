@@ -7,6 +7,7 @@ import ItemCard from "@/front-end/components/item-card/item-card";
 import PageHeader from "@/front-end/components/page-header/page-header";
 import { RecurringSummaryItem } from "@/front-end/components/recurring/recurring-summary-item";
 import type { IRecurringProps } from "@/front-end/components/recurring/types";
+import { CreateTransactionDialog } from "@/front-end/components/transactions/dialogs/create-transaction-dialog";
 import BillsTable from "@/front-end/components/transactions/tables/bills-table";
 import TransactionsTableLayout from "@/front-end/components/transactions/transactions-table-layout";
 import recurringService from "@/front-end/services/recurring.service";
@@ -21,7 +22,7 @@ export default function Recurring({
 }: IRecurringProps) {
   const t = useTranslations();
   const locale = useLocale();
-  const [_isAddTransactionDialogOpen, setAddRecurringBillDialogOpen] =
+  const [isAddRecurringBillDialogOpen, setAddRecurringBillDialogOpen] =
     useState(false);
   // Avoid hydration mismatch: new Date() / toLocaleString can differ SSR vs client.
   const [now, setNow] = useState<Date | null>(null);
@@ -141,6 +142,13 @@ export default function Recurring({
           </ItemCard>
         </div>
       </EmptyContentWrapper>
+      {isAddRecurringBillDialogOpen && (
+        <CreateTransactionDialog
+          isDialogOpen={isAddRecurringBillDialogOpen}
+          setDialogOpen={setAddRecurringBillDialogOpen}
+          isRecurringBill
+        />
+      )}
     </>
   );
 }

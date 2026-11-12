@@ -274,6 +274,7 @@
     "RecurringPage": {
       "Title": "Recurring Bills",
       "AddRecurringBill": "Add Recurring Bill",
+      "CreateRecurringDescription": "Create a recurring bill template. Due bills are posted automatically when the due day arrives.",
       "EmptyTitle": "No recurring bills are available.",
       "EmptyBody": "Click <bold>''Add Recurring Bill''</bold> button at the corner of the page to create it.",
       "IconAlt": "Recurring bills icon",

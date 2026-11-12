@@ -17,10 +17,10 @@ export default function EmptyContentWrapper({
 
   if (isLoading) {
     return (
-      <div className={wrapperClassName} role="status" aria-live="polite">
+      <output className={wrapperClassName} aria-live="polite">
         <LoadingIndicator fullScreen={false} className="h-8 w-8" />
         <p className="font-semibold">{t("i18n.Common.Loading")}</p>
-      </div>
+      </output>
     );
   }
 

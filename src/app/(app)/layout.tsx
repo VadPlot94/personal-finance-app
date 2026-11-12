@@ -2,6 +2,7 @@ import "@/app/globals.css";
 import { Suspense } from "react";
 import HorizontalSideBar from "@/front-end/components/sidebar/horizontal-sidebar";
 import VerticalSideBar from "@/front-end/components/sidebar/vertical-sidebar";
+import SidebarVisibilityShell from "@/front-end/components/sidebar-visibility-shell/sidebar-visibility-shell";
 import { cn } from "@/lib/utils";
 import type constants from "@/shared/services/constants.service";
 
@@ -15,7 +16,8 @@ export default async function AppLayout({
       className="grid grid-cols-[auto_1fr] h-full overflow-x-hidden custom-scroll
     "
     >
-      <div
+      <SidebarVisibilityShell
+        variant="vertical"
         className={cn(
           opacityTransition,
           "w-fit max-md:opacity-0 max-md:w-0 max-md:h-0 bg-black",
@@ -24,7 +26,7 @@ export default async function AppLayout({
         <Suspense fallback={null}>
           <VerticalSideBar />
         </Suspense>
-      </div>
+      </SidebarVisibilityShell>
       <div
         className={cn(
           "@container/mainLayout flex flex-col gap-4 mx-6 my-4",
@@ -35,7 +37,8 @@ export default async function AppLayout({
       >
         {children}
       </div>
-      <div
+      <SidebarVisibilityShell
+        variant="horizontal"
         className={cn(
           opacityTransition,
           "md:opacity-0 md:h-0 md:w-0 flex flex-col justify-end fixed bottom-0 left-0 right-0 z-50 bg-black",
@@ -44,7 +47,7 @@ export default async function AppLayout({
         <Suspense fallback={null}>
           <HorizontalSideBar />
         </Suspense>
-      </div>
+      </SidebarVisibilityShell>
     </div>
   );
 }

@@ -271,7 +271,10 @@ export function EditPotDialog({
                   }
                 />
                 {formErrors?.target && (
-                  <p id="edit-pot-target-error" className="text-xs text-red-500">
+                  <p
+                    id="edit-pot-target-error"
+                    className="text-xs text-red-500"
+                  >
                     {formErrors.target}
                   </p>
                 )}

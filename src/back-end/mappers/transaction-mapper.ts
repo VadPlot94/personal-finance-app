@@ -106,7 +106,7 @@ class TransactionMapper {
       category,
       date: dateValue ? new Date(dateValue) : new Date(),
       name: recipientOrSender,
-      recurring: false,
+      recurring: formData.get("recurring")?.toString() === "true",
     };
 
     return removeUndefinedFields(transactionModel);

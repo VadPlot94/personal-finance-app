@@ -23,9 +23,8 @@ export default function LoadingIndicator({
 
   if (fullScreen) {
     return (
-      <div
+      <output
         className="flex min-h-screen w-full items-center justify-center bg-white/80"
-        role="status"
         aria-live="polite"
         aria-label={t("i18n.Common.Loading")}
       >
@@ -35,7 +34,7 @@ export default function LoadingIndicator({
         >
           {spinner}
         </span>
-      </div>
+      </output>
     );
   }
 
