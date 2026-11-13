@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: Personal Finance App
+message: If you use this software, please cite it using these metadata.
+type: software
+authors:
+  - family-names: Plotnikau
+    given-names: Vadzim
+    alias: VadPlot94
+repository-code: "https://gitlab.com/frontendmentor4274851/personal-finance-app"
+url: "https://personal-finance-app-nine-jade.vercel.app/"
+abstract: >-
+  Full-stack personal finance dashboard (budgets, transactions, savings pots,
+  recurring bills) built with Next.js, Prisma, and Auth.js as a Frontend Mentor
+  challenge solution.
+keywords:
+  - personal-finance
+  - nextjs
+  - prisma
+  - frontend-mentor
+  - typescript
+license: MIT
+version: 0.1.0
+date-released: "2026-11-13"

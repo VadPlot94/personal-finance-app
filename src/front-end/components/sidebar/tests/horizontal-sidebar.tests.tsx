@@ -78,4 +78,52 @@ describe("HorizontalSidebar", () => {
       expect(signOutMock).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("label visibility classes (sm breakpoint)", () => {
+    it("hides label text below sm via max-sm utility classes", async () => {
+      // Arrange & Act
+      renderWithIntl(<HorizontalSidebar />);
+      const budgetsLink = await screen.findByRole("link", {
+        name: /budgets/i,
+      });
+      const label = budgetsLink.querySelector("span");
+
+      // Assert
+      expect(label).toHaveClass("max-sm:opacity-0", "max-sm:h-0");
+    });
+
+    it("shows label text from sm and up via sm utility class", async () => {
+      // Arrange & Act
+      renderWithIntl(<HorizontalSidebar />);
+      const budgetsLink = await screen.findByRole("link", {
+        name: /budgets/i,
+      });
+      const label = budgetsLink.querySelector("span");
+
+      // Assert
+      expect(label).toHaveClass("sm:opacity-100");
+    });
+
+    it("renders nav item titles in the label spans", async () => {
+      // Arrange & Act
+      renderWithIntl(<HorizontalSidebar />);
+      const budgetsLink = await screen.findByRole("link", {
+        name: /budgets/i,
+      });
+
+      // Assert
+      expect(budgetsLink.querySelector("span")).toHaveTextContent(/budgets/i);
+    });
+
+    it("tightens item gap below sm", async () => {
+      // Arrange & Act
+      renderWithIntl(<HorizontalSidebar />);
+      const budgetsLink = await screen.findByRole("link", {
+        name: /budgets/i,
+      });
+
+      // Assert
+      expect(budgetsLink).toHaveClass("max-sm:gap-0");
+    });
+  });
 });

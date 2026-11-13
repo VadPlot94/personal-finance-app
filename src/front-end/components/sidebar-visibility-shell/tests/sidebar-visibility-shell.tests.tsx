@@ -47,6 +47,40 @@ describe("SidebarVisibilityShell", () => {
       );
     });
 
+    it("keeps the vertical shell active at md and above", () => {
+      // Arrange
+      installMatchMediaMock(true);
+
+      // Act
+      render(
+        <SidebarVisibilityShell variant="vertical">
+          <button type="button">Vertical nav</button>
+        </SidebarVisibilityShell>,
+      );
+
+      // Assert
+      expect(
+        screen.getByText("Vertical nav").parentElement,
+      ).not.toHaveAttribute("inert");
+    });
+
+    it("keeps the horizontal shell active below md", () => {
+      // Arrange
+      installMatchMediaMock(false);
+
+      // Act
+      render(
+        <SidebarVisibilityShell variant="horizontal">
+          <button type="button">Horizontal nav</button>
+        </SidebarVisibilityShell>,
+      );
+
+      // Assert
+      expect(
+        screen.getByText("Horizontal nav").parentElement,
+      ).not.toHaveAttribute("inert");
+    });
+
     it("updates inert when the viewport crosses md", () => {
       // Arrange
       const media = installMatchMediaMock(false);
@@ -67,6 +101,28 @@ describe("SidebarVisibilityShell", () => {
 
       // Assert
       expect(shell).not.toHaveAttribute("inert");
+    });
+
+    it("marks the horizontal shell inert when the viewport crosses to md", () => {
+      // Arrange
+      const media = installMatchMediaMock(false);
+      render(
+        <SidebarVisibilityShell variant="horizontal">
+          <button type="button">Horizontal nav</button>
+        </SidebarVisibilityShell>,
+      );
+      const shell = screen.getByText("Horizontal nav").parentElement;
+
+      // Assert initial
+      expect(shell).not.toHaveAttribute("inert");
+
+      // Act — resize to md+
+      act(() => {
+        media.setMatches(true);
+      });
+
+      // Assert
+      expect(shell).toHaveAttribute("inert");
     });
   });
 });
