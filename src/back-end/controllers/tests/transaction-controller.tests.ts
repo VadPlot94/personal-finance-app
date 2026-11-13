@@ -31,6 +31,7 @@ import { balanceTag } from "@/back-end/DAL/cache/cache-tags";
 import authService from "@/back-end/DAL/db-services/auth.service";
 import balanceDbService from "@/back-end/DAL/db-services/balance-db.service";
 import transactionDbService from "@/back-end/DAL/db-services/transaction-db.service";
+import { TransactionUICategory } from "@/shared/services/constants.service";
 
 describe("TransactionController", () => {
   beforeEach(() => {
@@ -122,20 +123,25 @@ describe("TransactionController", () => {
   describe("getTransactionsForCategory", () => {
     it("returns category transactions from the db service", async () => {
       // Arrange
-      const items = [{ category: "Bills", transactions: [] }];
+      const items = [
+        { category: TransactionUICategory.Bills, transactions: [] },
+      ];
       vi.mocked(
         transactionDbService.getTransactionsForCategory,
       ).mockResolvedValue(items as never);
 
       // Act
       const result = await transactionController.getTransactionsForCategory({
-        categories: ["Bills"],
+        categories: [TransactionUICategory.Bills],
       });
 
       // Assert
       expect(
         transactionDbService.getTransactionsForCategory,
-      ).toHaveBeenCalledWith({ categories: ["Bills"] }, "user-1");
+      ).toHaveBeenCalledWith(
+        { categories: [TransactionUICategory.Bills] },
+        "user-1",
+      );
       expect(result.data).toEqual(items);
     });
   });

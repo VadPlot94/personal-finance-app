@@ -124,6 +124,7 @@ Unit and component tests use **Vitest** + **React Testing Library**.
 
 - Config: [`vitest.config.mts`](vitest.config.mts), setup: [`vitest.setup.ts`](vitest.setup.ts)
 - Test files: `tests/<file-under-test>.tests.ts(x)` next to the module (see `.cursor/rules/unit-tests.mdc`)
+- `next build` typechecks those test files via root `tsconfig.json` — keep them compiling so Vercel does not fail
 - Run watch: `npm run test`
 - Run once: `npm run test:run`
 - Browser UI (debug + live coverage): `npm run test:ui` → opens Vitest UI (usually `http://localhost:51204/__vitest__/`)

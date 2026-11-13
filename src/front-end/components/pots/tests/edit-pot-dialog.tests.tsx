@@ -1,7 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Pot } from "@prisma/client";
-import type { Context } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/back-end/lib/test-utils/server-only.mock";
 
@@ -11,7 +10,7 @@ const editPotSRFMock = vi.fn();
 const { PotsContext } = vi.hoisted(() => {
   const React = require("react") as typeof import("react");
   return {
-    PotsContext: React.createContext([]) as Context<Pot[]>,
+    PotsContext: React.createContext<Pot[]>([]),
   };
 });
 

@@ -1,7 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Budget } from "@prisma/client";
-import type { Context } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/back-end/lib/test-utils/server-only.mock";
 
@@ -11,7 +10,7 @@ const editBudgetSRFMock = vi.fn();
 const { BudgetsContext } = vi.hoisted(() => {
   const React = require("react") as typeof import("react");
   return {
-    BudgetsContext: React.createContext([]) as Context<Budget[]>,
+    BudgetsContext: React.createContext<Budget[]>([]),
   };
 });
 

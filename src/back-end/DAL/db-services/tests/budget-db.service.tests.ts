@@ -80,7 +80,9 @@ describe("BudgetDbService", () => {
         success: true,
         data: {},
       } as never);
-      vi.mocked(budgetRepository.create).mockResolvedValue({ id: "b-1" });
+      vi.mocked(budgetRepository.create).mockResolvedValue({
+        id: "b-1",
+      } as never);
       vi.mocked(budgetMapper.mapCreateDBBudgetToOutput).mockReturnValue({
         id: "b-1",
       });

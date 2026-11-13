@@ -95,7 +95,9 @@ describe("PotDbService", () => {
       vi.mocked(validationService.validateCreatePotSchemaServer).mockReturnValue(
         { success: true, data: {} } as never,
       );
-      vi.mocked(potRepository.createPot).mockResolvedValue({ id: "pot-1" });
+      vi.mocked(potRepository.createPot).mockResolvedValue({
+        id: "pot-1",
+      } as never);
       vi.mocked(potMapper.mapCreateDBPotToOutput).mockReturnValue({
         id: "pot-1",
       });

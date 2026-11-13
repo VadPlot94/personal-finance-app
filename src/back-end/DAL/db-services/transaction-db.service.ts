@@ -12,6 +12,7 @@ import type {
   TransactionUICategory,
 } from "@/shared/services/constants.service";
 import type {
+  IGetTransactionForCategoryParams,
   IGetTransactionsParams,
   ITransactionDataResponse,
   ITransactionsForCategoryData,
@@ -94,7 +95,7 @@ class TransactionDbService {
   }
 
   public async getTransactionsForCategory(
-    data: Partial<IGetTransactionsParams> | undefined,
+    data: Partial<IGetTransactionForCategoryParams> | undefined,
     userId: string,
   ): Promise<ITransactionsForCategoryData[]> {
     const { categories, transactionsCount } =

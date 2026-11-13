@@ -34,6 +34,8 @@ describe("BudgetsItem", () => {
         <BudgetsItem
           budget={budget}
           transactionsByCategoryList={transactionsByCategoryList}
+          onEditBudget={vi.fn()}
+          onDeleteBudget={vi.fn()}
         />,
       );
 
@@ -54,6 +56,7 @@ describe("BudgetsItem", () => {
           budget={budget}
           transactionsByCategoryList={transactionsByCategoryList}
           onEditBudget={onEditBudget}
+          onDeleteBudget={vi.fn()}
         />,
       );
 
