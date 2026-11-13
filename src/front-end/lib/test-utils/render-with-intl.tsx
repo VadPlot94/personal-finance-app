@@ -1,4 +1,4 @@
-import { render, type RenderOptions } from "@testing-library/react";
+import { type RenderOptions, render } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactElement, ReactNode } from "react";
 import translationService from "@/shared/services/translation.service";

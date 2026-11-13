@@ -233,8 +233,8 @@ Use the **Sign Out** control in the sidebar / bottom nav when you are done.
 
 ### Requirements
 
-- Node.js **20+**
-- npm **10+**
+- Node.js **20.9+** (Next.js 16 minimum; Current releases such as Node 26 are fine)
+- npm **10+** (npm 11 supported)
 - PostgreSQL, SQLite, or another Prisma-compatible database
 
 ### Install

@@ -1,6 +1,6 @@
+import type { Pot } from "@prisma/client";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Pot } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/front-end/components/pots/dialogs/edit-pot-dialog", () => ({

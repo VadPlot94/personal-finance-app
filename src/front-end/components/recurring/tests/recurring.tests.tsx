@@ -1,6 +1,6 @@
+import type { Transaction } from "@prisma/client";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Transaction } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 import "@/back-end/lib/test-utils/server-only.mock";
 
@@ -25,9 +25,7 @@ vi.mock(
   "@/front-end/components/transactions/dialogs/create-transaction-dialog",
   () => ({
     CreateTransactionDialog: ({ isDialogOpen }: { isDialogOpen: boolean }) =>
-      isDialogOpen ? (
-        <div role="dialog">Add recurring bill dialog</div>
-      ) : null,
+      isDialogOpen ? <div role="dialog">Add recurring bill dialog</div> : null,
   }),
 );
 

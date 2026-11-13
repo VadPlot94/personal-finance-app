@@ -92,9 +92,9 @@ describe("PotDbService", () => {
       };
       vi.mocked(potMapper.mapCreatePotInputToDBPot).mockReturnValue(potModel);
       vi.mocked(potRepository.isUnique).mockResolvedValue(true);
-      vi.mocked(validationService.validateCreatePotSchemaServer).mockReturnValue(
-        { success: true, data: {} } as never,
-      );
+      vi.mocked(
+        validationService.validateCreatePotSchemaServer,
+      ).mockReturnValue({ success: true, data: {} } as never);
       vi.mocked(potRepository.createPot).mockResolvedValue({
         id: "pot-1",
       } as never);
@@ -192,9 +192,9 @@ describe("PotDbService", () => {
         theme: Theme.Green,
       });
       vi.mocked(potRepository.isUnique).mockResolvedValue(true);
-      vi.mocked(validationService.validateCreatePotSchemaServer).mockReturnValue(
-        { success: true, data: {} } as never,
-      );
+      vi.mocked(
+        validationService.validateCreatePotSchemaServer,
+      ).mockReturnValue({ success: true, data: {} } as never);
       vi.mocked(potRepository.updateOwned).mockResolvedValue({ id: "pot-1" });
       vi.mocked(potMapper.mapEditDBPotToOutput).mockReturnValue({
         id: "pot-1",
@@ -217,9 +217,9 @@ describe("PotDbService", () => {
         theme: Theme.Green,
       });
       vi.mocked(potRepository.isUnique).mockResolvedValue(true);
-      vi.mocked(validationService.validateCreatePotSchemaServer).mockReturnValue(
-        { success: true, data: {} } as never,
-      );
+      vi.mocked(
+        validationService.validateCreatePotSchemaServer,
+      ).mockReturnValue({ success: true, data: {} } as never);
       vi.mocked(potRepository.updateOwned).mockResolvedValue(null);
 
       // Act & Assert

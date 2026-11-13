@@ -1,6 +1,6 @@
+import type { Pot } from "@prisma/client";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Pot } from "@prisma/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const forceGridAnimationMock = vi.fn();
@@ -29,8 +29,8 @@ vi.mock("@/back-end/server-actions/locale-actions", () => ({
 }));
 
 import Pots from "@/front-end/components/pots/pots";
-import { installResizeObserverMock } from "@/front-end/lib/test-utils/resize-observer.mock";
 import { renderWithIntl } from "@/front-end/lib/test-utils/render-with-intl";
+import { installResizeObserverMock } from "@/front-end/lib/test-utils/resize-observer.mock";
 import constants, { Theme } from "@/shared/services/constants.service";
 
 const pots = [

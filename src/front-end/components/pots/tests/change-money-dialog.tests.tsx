@@ -1,6 +1,6 @@
+import type { Pot } from "@prisma/client";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Pot } from "@prisma/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const setPotTotalSRFMock = vi.fn();
@@ -40,9 +40,7 @@ describe("ChangeMoneyDialog", () => {
 
       // Assert
       expect(screen.getByRole("dialog")).toHaveTextContent(/vacation/i);
-      expect(
-        screen.getByRole("button", { name: /confirm/i }),
-      ).toBeDisabled();
+      expect(screen.getByRole("button", { name: /confirm/i })).toBeDisabled();
     });
 
     it("updates the projected total when amount is entered", async () => {
@@ -62,9 +60,7 @@ describe("ChangeMoneyDialog", () => {
 
       // Assert
       expect(screen.getByText(/75/)).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: /confirm/i }),
-      ).toBeEnabled();
+      expect(screen.getByRole("button", { name: /confirm/i })).toBeEnabled();
     });
 
     it("submits the new total on confirm", async () => {

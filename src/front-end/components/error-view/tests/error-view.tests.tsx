@@ -15,7 +15,10 @@ describe("ErrorView", () => {
     it("shows the error title and try-again action", () => {
       // Arrange & Act
       renderWithIntl(
-        <ErrorView error={{ message: "boom", name: "Error" }} retry={vi.fn()} />,
+        <ErrorView
+          error={{ message: "boom", name: "Error" }}
+          retry={vi.fn()}
+        />,
       );
 
       // Assert

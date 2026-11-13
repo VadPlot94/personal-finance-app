@@ -60,9 +60,7 @@ describe("TransactionMapper", () => {
         transactionMapper.mapCreateTransactionInputToDBTransaction(formData);
 
       // Assert
-      expect(result?.avatar).toBe(
-        `./${constants.DefaultUserAvatarIconUrl}`,
-      );
+      expect(result?.avatar).toBe(`./${constants.DefaultUserAvatarIconUrl}`);
     });
   });
 

@@ -50,11 +50,9 @@ describe("BaseController", () => {
 
     it("skips auth when requireAuth is false", async () => {
       // Arrange & Act
-      const result = await controller.run(
-        "create",
-        async () => "created",
-        { requireAuth: false },
-      );
+      const result = await controller.run("create", async () => "created", {
+        requireAuth: false,
+      });
 
       // Assert
       expect(authService.getAuthenticatedSession).not.toHaveBeenCalled();

@@ -1,6 +1,6 @@
+import type { Budget } from "@prisma/client";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Budget } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 import { BudgetsMenu } from "@/front-end/components/budgets/budgets-menu";
 import { renderWithIntl } from "@/front-end/lib/test-utils/render-with-intl";

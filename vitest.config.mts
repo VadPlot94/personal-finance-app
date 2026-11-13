@@ -14,14 +14,7 @@ export default defineConfig({
     },
     coverage: {
       provider: "v8",
-      reporter: [
-        "text",
-        "html",
-        "lcov",
-        "cobertura",
-        "json",
-        "json-summary",
-      ],
+      reporter: ["text", "html", "lcov", "cobertura", "json", "json-summary"],
       reportsDirectory: "./coverage",
       // App logic + feature components. App Router pages stay out (drown MR %).
       // shadcn UI kit is excluded below — not app-owned.

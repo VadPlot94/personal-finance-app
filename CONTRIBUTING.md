@@ -15,7 +15,7 @@ If you only need to run the app locally, start with [README.md](README.md). Deep
 ## Development setup
 
 1. Fork and clone the repository
-2. Install Node.js 20+ and npm 10+
+2. Install Node.js 20.9+ and npm 10+ (Node 26 / npm 11 are fine)
 3. Copy `.env.example` → `.env` and fill required values (`DATABASE_URL`, `NEXTAUTH_*`, `AUTH_*`)
 4. `npm install` (or `npm ci --ignore-scripts` then `npm run recreate-db` if DB is not ready during install)
 5. `npm run dev`

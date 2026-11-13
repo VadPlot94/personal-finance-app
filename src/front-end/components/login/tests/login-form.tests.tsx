@@ -31,8 +31,7 @@ vi.mock("sonner", () => ({
 
 import LoginForm from "@/front-end/components/login/login-form";
 import { renderWithIntl } from "@/front-end/lib/test-utils/render-with-intl";
-import { AuthMode } from "@/shared/services/constants.service";
-import constants from "@/shared/services/constants.service";
+import constants, { AuthMode } from "@/shared/services/constants.service";
 
 describe("LoginForm", () => {
   beforeEach(() => {

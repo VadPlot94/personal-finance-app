@@ -1,5 +1,5 @@
-import { screen } from "@testing-library/react";
 import type { Transaction } from "@prisma/client";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import TransactionsTable from "@/front-end/components/transactions/tables/transactions-table";
 import { renderWithIntl } from "@/front-end/lib/test-utils/render-with-intl";

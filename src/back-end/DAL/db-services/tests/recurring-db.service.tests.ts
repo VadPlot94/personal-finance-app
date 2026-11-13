@@ -19,9 +19,7 @@ import balanceDbService from "@/back-end/DAL/db-services/balance-db.service";
 import recurringDbService from "@/back-end/DAL/db-services/recurring-db.service";
 import { transactionRepository } from "@/back-end/DAL/repositories/transaction.repository";
 
-function createExpense(
-  overrides: Partial<Transaction> = {},
-): Transaction {
+function createExpense(overrides: Partial<Transaction> = {}): Transaction {
   return {
     id: "tx-1",
     userId: "user-1",

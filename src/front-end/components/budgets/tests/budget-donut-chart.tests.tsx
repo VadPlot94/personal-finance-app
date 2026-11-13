@@ -1,5 +1,5 @@
-import { act, screen } from "@testing-library/react";
 import type { Budget } from "@prisma/client";
+import { act, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import BudgetDonutChart from "@/front-end/components/budgets/budget-donut-chart";
 import { installMatchMediaMock } from "@/front-end/lib/test-utils/match-media.mock";
@@ -66,9 +66,7 @@ describe("BudgetDonutChart", () => {
       const donut = container.querySelector(".rounded-full") as HTMLElement;
 
       // Assert
-      expect(donut.style.width).toBe(
-        `${constants.DefaultDonutChartSize}px`,
-      );
+      expect(donut.style.width).toBe(`${constants.DefaultDonutChartSize}px`);
     });
 
     it("switches to the requested size when the viewport grows", () => {

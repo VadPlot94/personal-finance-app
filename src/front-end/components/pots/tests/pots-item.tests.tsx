@@ -1,6 +1,6 @@
+import type { Pot } from "@prisma/client";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Pot } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/back-end/server-actions/pot-actions", () => ({
@@ -18,7 +18,9 @@ vi.mock("@/front-end/components/pots/dialogs/change-money-dialog", () => ({
     isDialogOpen: boolean;
   }) =>
     isDialogOpen ? (
-      <div role="dialog">{isWithdraw ? "Withdraw dialog" : "Add money dialog"}</div>
+      <div role="dialog">
+        {isWithdraw ? "Withdraw dialog" : "Add money dialog"}
+      </div>
     ) : null,
 }));
 

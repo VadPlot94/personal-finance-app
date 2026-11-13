@@ -290,9 +290,9 @@ describe("TransactionDbService", () => {
           transactionsCount: 3,
         },
       } as never);
-      vi.mocked(transactionMapper.mapGetTransactionsToOutput).mockImplementation(
-        (response) => response,
-      );
+      vi.mocked(
+        transactionMapper.mapGetTransactionsToOutput,
+      ).mockImplementation((response) => response);
       vi.mocked(
         transactionMapper.mapGetTransactionsForCategoryToOutput,
       ).mockImplementation((items) => items);

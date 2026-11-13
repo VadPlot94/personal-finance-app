@@ -1,6 +1,6 @@
+import type { Pot } from "@prisma/client";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Pot } from "@prisma/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/back-end/lib/test-utils/server-only.mock";
 

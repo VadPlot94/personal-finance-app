@@ -169,9 +169,9 @@ describe("UserService", () => {
       vi.mocked(auth).mockResolvedValue(null as never);
 
       // Act & Assert
-      await expect(userService.getAuthenticatedSession()).rejects.toBeInstanceOf(
-        CustomError,
-      );
+      await expect(
+        userService.getAuthenticatedSession(),
+      ).rejects.toBeInstanceOf(CustomError);
     });
 
     it("returns the session when authenticated", async () => {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
 import type { ISidebarVisibilityShellProps } from "@/front-end/components/sidebar-visibility-shell/types";
+import { cn } from "@/lib/utils";
 
 const MD_MIN_WIDTH_QUERY = "(min-width: 768px)";
 

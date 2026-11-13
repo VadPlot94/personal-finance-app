@@ -9,7 +9,9 @@ describe("LoggerService", () => {
   describe("logError", () => {
     it("writes to console.error", () => {
       // Arrange
-      const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const spy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
 
       // Act
       logger.logError("boom", { id: 1 });

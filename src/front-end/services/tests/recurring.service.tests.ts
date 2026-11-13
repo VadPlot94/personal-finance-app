@@ -110,10 +110,7 @@ describe("RecurringService", () => {
       const transaction = createRecurringExpense();
 
       // Act
-      const result = recurringService.getTransactionStatus(
-        transaction,
-        null,
-      );
+      const result = recurringService.getTransactionStatus(transaction, null);
 
       // Assert
       expect(result).toBe(RecurringStatus.Upcoming);
@@ -209,10 +206,7 @@ describe("RecurringService", () => {
       const transactions = [createRecurringExpense()];
 
       // Act
-      const result = recurringService.computeRecurringStats(
-        transactions,
-        null,
-      );
+      const result = recurringService.computeRecurringStats(transactions, null);
 
       // Assert
       expect(result.referenceDate).toBeNull();

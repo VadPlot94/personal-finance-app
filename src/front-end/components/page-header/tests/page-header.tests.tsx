@@ -44,7 +44,9 @@ describe("PageHeader", () => {
       renderWithIntl(<PageHeader name="Pots" />);
 
       // Assert
-      expect(screen.queryByRole("button", { name: /add/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /add/i }),
+      ).not.toBeInTheDocument();
     });
 
     it("calls handleButtonClick when the action button is pressed", async () => {

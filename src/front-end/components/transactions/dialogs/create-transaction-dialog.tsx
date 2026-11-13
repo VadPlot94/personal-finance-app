@@ -255,9 +255,7 @@ export function CreateTransactionDialog({
                           value={value}
                           className="cursor-pointer"
                         >
-                          <span>
-                            {t(`i18n.Enums.TransactionType.${name}`)}
-                          </span>
+                          <span>{t(`i18n.Enums.TransactionType.${name}`)}</span>
                         </SelectItem>
                       ))}
                     </SelectContent>

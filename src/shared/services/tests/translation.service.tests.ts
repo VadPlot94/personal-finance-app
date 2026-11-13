@@ -34,15 +34,16 @@ describe("TranslationService", () => {
       );
 
       // Assert
-      expect(result).toBe(
-        'i18n.Validation.ExceedsTarget::{"target":100}',
-      );
+      expect(result).toBe('i18n.Validation.ExceedsTarget::{"target":100}');
     });
 
     it("throws when params are empty", () => {
       // Arrange & Act & Assert
       expect(() =>
-        translationService.joinKeyWithParams("i18n.Validation.ExceedsTarget", {}),
+        translationService.joinKeyWithParams(
+          "i18n.Validation.ExceedsTarget",
+          {},
+        ),
       ).toThrow(/non-empty params/);
     });
   });

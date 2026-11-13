@@ -1,6 +1,6 @@
+import type { Transaction } from "@prisma/client";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Transaction } from "@prisma/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const getAllTransactionsSRFMock = vi.fn();
@@ -130,9 +130,7 @@ describe("TransactionsTableLayout", () => {
         name: /sort by/i,
       });
       await user.click(sortTriggers[0]);
-      await user.click(
-        await screen.findByRole("option", { name: /oldest/i }),
-      );
+      await user.click(await screen.findByRole("option", { name: /oldest/i }));
 
       // Assert
       await waitFor(() => {
@@ -294,10 +292,7 @@ describe("TransactionsTableLayout", () => {
       );
 
       // Act
-      await user.type(
-        screen.getByRole("searchbox", { name: /search/i }),
-        "x",
-      );
+      await user.type(screen.getByRole("searchbox", { name: /search/i }), "x");
 
       // Assert
       await waitFor(() => {

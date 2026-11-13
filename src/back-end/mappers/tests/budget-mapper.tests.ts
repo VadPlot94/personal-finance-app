@@ -2,7 +2,10 @@ import type { Budget } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 import "@/back-end/lib/test-utils/server-only.mock";
 import budgetMapper from "@/back-end/mappers/budget-mapper";
-import { Theme, TransactionUICategory } from "@/shared/services/constants.service";
+import {
+  Theme,
+  TransactionUICategory,
+} from "@/shared/services/constants.service";
 
 describe("BudgetMapper", () => {
   describe("mapCreateBudgetInputToDBBudget", () => {

@@ -1,6 +1,5 @@
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import type { Transaction } from "@prisma/client";
+import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/front-end/components/recurring/recurring-menu", () => ({

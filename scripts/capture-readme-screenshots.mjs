@@ -1,7 +1,7 @@
-﻿import { chromium } from "@playwright/test";
-import dotenv from "dotenv";
-import fs from "node:fs";
+﻿import fs from "node:fs";
 import path from "node:path";
+import { chromium } from "@playwright/test";
+import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 dotenv.config({ path: ".env" });

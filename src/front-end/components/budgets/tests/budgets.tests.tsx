@@ -1,6 +1,6 @@
+import type { Budget } from "@prisma/client";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Budget } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("next/navigation", () => ({
@@ -34,9 +34,7 @@ vi.mock("@/front-end/components/budgets/dialogs/delete-budget-dialog", () => ({
     isDialogOpen: boolean;
     budget?: Budget | null;
   }) =>
-    isDialogOpen ? (
-      <div role="dialog">Delete {budget?.category}</div>
-    ) : null,
+    isDialogOpen ? <div role="dialog">Delete {budget?.category}</div> : null,
 }));
 
 vi.mock("@/front-end/components/budgets/budget-donut-chart", () => ({
@@ -106,7 +104,9 @@ describe("Budgets", () => {
       );
 
       // Assert
-      expect(screen.getByRole("dialog")).toHaveTextContent(/edit entertainment/i);
+      expect(screen.getByRole("dialog")).toHaveTextContent(
+        /edit entertainment/i,
+      );
     });
 
     it("opens the delete dialog from a budget menu", async () => {
@@ -121,7 +121,9 @@ describe("Budgets", () => {
       );
 
       // Assert
-      expect(screen.getByRole("dialog")).toHaveTextContent(/delete entertainment/i);
+      expect(screen.getByRole("dialog")).toHaveTextContent(
+        /delete entertainment/i,
+      );
     });
   });
 });

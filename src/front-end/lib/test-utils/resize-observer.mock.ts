@@ -35,7 +35,17 @@ export function installResizeObserverMock(): IResizeObserverControl {
         return;
       }
       const entry = {
-        contentRect: { width, height, top: 0, left: 0, bottom: height, right: width, x: 0, y: 0, toJSON: () => ({}) },
+        contentRect: {
+          width,
+          height,
+          top: 0,
+          left: 0,
+          bottom: height,
+          right: width,
+          x: 0,
+          y: 0,
+          toJSON: () => ({}),
+        },
         borderBoxSize: [],
         contentBoxSize: [],
         devicePixelContentBoxSize: [],

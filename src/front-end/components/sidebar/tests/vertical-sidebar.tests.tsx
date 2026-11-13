@@ -41,9 +41,10 @@ describe("VerticalSidebar", () => {
 
       // Assert
       await waitFor(() => {
-        expect(
-          screen.getByRole("link", { name: /overview/i }),
-        ).toHaveAttribute("aria-current", "page");
+        expect(screen.getByRole("link", { name: /overview/i })).toHaveAttribute(
+          "aria-current",
+          "page",
+        );
       });
     });
   });
@@ -117,9 +118,7 @@ describe("VerticalSidebar", () => {
       expect(overviewLink).toHaveAttribute("aria-label");
 
       // Act
-      await user.click(
-        screen.getByRole("button", { name: /maximize menu/i }),
-      );
+      await user.click(screen.getByRole("button", { name: /maximize menu/i }));
 
       // Assert
       expect(
@@ -136,9 +135,7 @@ describe("VerticalSidebar", () => {
       );
 
       // Act
-      await user.click(
-        screen.getByRole("button", { name: /minimize menu/i }),
-      );
+      await user.click(screen.getByRole("button", { name: /minimize menu/i }));
 
       // Assert
       expect(
